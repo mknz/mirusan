@@ -1,4 +1,7 @@
 'use strict';
+
+require("babel-polyfill");
+
 // does not work if PDFJS is in local. Fix later.
 var PDFJS = require('./node_modules/pdfjs-dist');
 PDFJS.workerSrc = './node_modules/pdfjs-dist/build/pdf.worker.js';
@@ -6,8 +9,8 @@ PDFJS.cMapUrl = '../cmaps/';
 PDFJS.cMapPacked = true;
 
 var vpdf2txt = (function () {
-  var fs = require('fs');
-  var path = require('path');
+  const fs = require('fs');
+  const path = require('path');
 
   // Concatinate text items to single text
   var catText = function (textItems) {
@@ -81,7 +84,7 @@ var vpdf2txt = (function () {
     // Extract and save all pages
     extractSaveAll: function (pdfPath, saveDir) {
       console.log(pdfPath);
-      PDFJS.getDocument(pdfPath).then(
+      return PDFJS.getDocument(pdfPath).then(
         (pdfDoc) => {
           var pageNums = pdfDoc.numPages;
           var promises = [];
@@ -94,7 +97,7 @@ var vpdf2txt = (function () {
                   return saveText;
                 }))
           }
-          Promise.all(promises).then(
+          return Promise.all(promises).then(
             (saveTexts) => {
               for (var i=0; i < saveTexts.length; i++) {
                 var pdfName = path.basename(pdfPath).split('.').shift();
@@ -104,9 +107,11 @@ var vpdf2txt = (function () {
                 fs.writeFileSync(savePath, saveTexts[i]);
               }
               console.log('Finished.');
+              return true;
             })
         })
     },
+
 
     // process all pdf files in docDir
     processAll: function (docDir, saveDir) {
@@ -118,20 +123,31 @@ var vpdf2txt = (function () {
       }
       var filePaths = fs.readdirSync(docDir);
       var pdfPaths = [];
-      for (var filePath of filePaths) {
+      for (let filePath of filePaths) {
         var fileName = path.basename(filePath);
         if (['pdf', 'PDF'].indexOf(fileName.split('.').pop()) >= 0) {
           pdfPaths.push(path.join(docDir, fileName));
         }
       }
+      (async () => {
+        for (let pdfPath of pdfPaths) {
+          await vpdf2txt.extractSaveAll(pdfPath, saveDir);
+        }
+      })().then(() => {
+        console.log('Finished all.');
+      }).catch(() => {
+        console.log('Failed');
+      });
+      /*
       for (var pdfPath of pdfPaths) {
         vpdf2txt.extractSaveAll(pdfPath, saveDir);
       }
+      */
     }
   }
 })()
 
-//var docDir =  './data/pdf';
-var docDir =  '.';
+var docDir =  './data/pdf';
+//var docDir =  '.';
 var saveDir = './data/text';
 vpdf2txt.processAll(docDir, saveDir);
