@@ -130,6 +130,6 @@ vpdf2txt = (function () {
   }
 })()
 
-var docDir =  '.';
+var docDir =  './data/pdf';
 var saveDir = './data/text';
 vpdf2txt.processAll(docDir, saveDir);
