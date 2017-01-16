@@ -1,10 +1,11 @@
+'use strict';
 // does not work if PDFJS is in local. Fix later.
 var PDFJS = require('./node_modules/pdfjs-dist');
 PDFJS.workerSrc = './node_modules/pdfjs-dist/build/pdf.worker.js';
 PDFJS.cMapUrl = '../cmaps/';
 PDFJS.cMapPacked = true;
 
-vpdf2txt = (function () {
+var vpdf2txt = (function () {
   var fs = require('fs');
   var path = require('path');
 
@@ -50,7 +51,7 @@ vpdf2txt = (function () {
       var uniqueItems = [];
       var isSame = false;
       for (var i=0; i < items.length; i++) {
-        targetStr = strExp(items[i]);
+        var targetStr = strExp(items[i]);
         for (var uniqueItem of uniqueItems) {
           if (strExp(uniqueItem) == targetStr) {
             isSame = true;
@@ -123,13 +124,14 @@ vpdf2txt = (function () {
           pdfPaths.push(path.join(docDir, fileName));
         }
       }
-      for (pdfPath of pdfPaths) {
+      for (var pdfPath of pdfPaths) {
         vpdf2txt.extractSaveAll(pdfPath, saveDir);
       }
     }
   }
 })()
 
-var docDir =  './data/pdf';
+//var docDir =  './data/pdf';
+var docDir =  '.';
 var saveDir = './data/text';
 vpdf2txt.processAll(docDir, saveDir);
