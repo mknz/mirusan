@@ -34,9 +34,9 @@ var vpdf2txt = (function () {
 
       // Remove spaces surrounded by non-ascii character
       function removeSpace (str) {
-        const re1 = /([^\x00-\x7F]) +/g;
-        const re2 = / +([^\x00-\x7F])/g;
-        const re3 = / +/g;
+        const re1 = /([^\x00-\x7F]) +/g; // non-ascii + space
+        const re2 = / +([^\x00-\x7F])/g; // space + non-ascii
+        const re3 = / +/g;               // trailing spaces
         return str.replace(re1, '$1').replace(re2, '$1').replace(re3, ' ');
       }
 
