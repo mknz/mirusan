@@ -32,6 +32,14 @@ var vpdf2txt = (function () {
         return str.replace(re, restoreChar);
       }
 
+      // Remove spaces surrounded by non-ascii character
+      function removeSpace (str) {
+        const re1 = /([^\x00-\x7F]) +/g;
+        const re2 = / +([^\x00-\x7F])/g;
+        const re3 = / +/g;
+        return str.replace(re1, '$1').replace(re2, '$1').replace(re3, ' ');
+      }
+
       // Keep some expressions
       var strKeep = keepExpr(str, /。\n/g, '#punctNewLine');
       strKeep = keepExpr(strKeep, /\n\n/g, '#dubbleNewLine');
@@ -39,6 +47,9 @@ var vpdf2txt = (function () {
 
       // Remove remaining all newlines
       var strConv = strKeep.replace(/\n/g, '');
+
+      // Remove redundant spaces
+      strConv = removeSpace(strConv);
 
       // Restore expr
       strConv = restoreExpr(strConv, '#punctNewLine', '。\n');
@@ -138,11 +149,6 @@ var vpdf2txt = (function () {
       }).catch(() => {
         console.log('Failed');
       });
-      /*
-      for (var pdfPath of pdfPaths) {
-        vpdf2txt.extractSaveAll(pdfPath, saveDir);
-      }
-      */
     }
   }
 })()
