@@ -14,16 +14,15 @@ class Config:
 
 
 class IndexManager:
-    ngram_tokenizer = NgramTokenizer(minsize=2, maxsize=2)
-
-    def create_index(self):
+    def create_index(self, ngram_min, ngram_max):
         if not os.path.exists(Config.database_dir):
             os.mkdir(Config.database_dir)
 
+        ngram_tokenizer = NgramTokenizer(minsize=ngram_min, maxsize=ngram_max)
         schema = Schema(file_name=TEXT(stored=True,
-                                       analyzer=self.ngram_tokenizer),
+                                       analyzer=ngram_tokenizer),
                         content=TEXT(stored=True,
-                                     analyzer=self.ngram_tokenizer))
+                                     analyzer=ngram_tokenizer))
 
         ix = create_in(Config.database_dir, schema)
         print('Created db: ' + Config.database_dir)
@@ -83,11 +82,35 @@ class Search:
             results = searcher.search(query)
             for r in results:
                 print(r['file_name'])
+                print(r['content'])
 
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--query', default='')
+    parser.add_argument('--init', help='Initialize database',
+                        action='store_true')
+    parser.add_argument('--add-dir', default=None)
+    parser.add_argument('--ngram-min', default=1)
+    parser.add_argument('--ngram-max', default=2)
+    args = parser.parse_args()
+    if args.init:
+        im = IndexManager()
+        im.create_index(ngram_min=args.ngram_min, ngram_max=args.ngram_max)
+        return
+
+    if args.query != '':
+        s = Search()
+        s.search(args.query)
+        return
+
+    if args.add_dir is not None:
+        im = IndexManager()
+        im.add_dir(args.add_dir)
+        return
+
+    parser.print_help()
+    return
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--query')
-    args = parser.parse_args()
-    s = Search()
-    s.search(args.query)
+    main()
