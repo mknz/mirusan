@@ -80,9 +80,23 @@ class Search:
             query = MultifieldParser(['title', 'content'],
                                      self.ix.schema).parse(query_str)
             results = searcher.search(query)
+            res_list = []
+            for r in results:
+                d = {}
+                d['file_name'] = r['file_name']
+                d['body'] = r.highlights('content')
+                res_list.append(d)
+            return res_list
+
+    def search_print(self, query_str):
+        with self.ix.searcher() as searcher:
+            query = MultifieldParser(['title', 'content'],
+                                     self.ix.schema).parse(query_str)
+            results = searcher.search(query)
             for r in results:
                 print(r['file_name'])
-                print(r['content'])
+                print(r.highlights('content'))
+                print('')
 
 
 def main():
@@ -94,6 +108,7 @@ def main():
     parser.add_argument('--ngram-min', default=1)
     parser.add_argument('--ngram-max', default=2)
     args = parser.parse_args()
+
     if args.init:
         im = IndexManager()
         im.create_index(ngram_min=args.ngram_min, ngram_max=args.ngram_max)
@@ -101,7 +116,7 @@ def main():
 
     if args.query != '':
         s = Search()
-        s.search(args.query)
+        s.search_print(args.query)
         return
 
     if args.add_dir is not None:
