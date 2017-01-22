@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Elm Electron</title>
+    <script type="text/javascript" src="elm.js"></script>
+    <script>window.Elm = require('./elm.js');</script>
+  </head>
+
+  <body style="overflow:hidden">
+    <div id="main"></div>
+    <div id="search"></div>
+    <iframe id="pdf-viewer" style="width:100%;height:100%" src='./pdfjs/web/viewer.html?file=../../test2.pdf'></iframe>
+  </body>
+
+  <script type="text/javascript">
+    // Adjust inline frame size with window
+    let heightMargin = 50;
+    function resizeFrame() {
+      let tmp_height	= document.documentElement.clientHeight - heightMargin;
+      let elem	= document.getElementById('pdf-viewer');
+      elem.style.height = tmp_height + 'px';
+    }
+    resizeFrame();
+  </script>
+  <script>
+    //Elm.Main.fullscreen();
+    var app = Elm.Main.embed(document.getElementById('search'));
+    app.ports.openNewFile.subscribe(function(fileName) {
+      openNewPDF(fileName);
+    });
+    function openNewPDF(fileName) {
+      document.getElementById('pdf-viewer').contentWindow.location.replace('./pdfjs/web/viewer.html?file=../../' + fileName);
+    }
+  </script>
+</html>

@@ -2,6 +2,10 @@ data/
 *.pdf
 legacy/
 
+### Elm
+elm.js
+elm-stuff/
+
 ### Python
 
 # Byte-compiled / optimized / DLL files
