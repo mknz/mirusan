@@ -153,7 +153,8 @@ var vpdf2txt = (function () {
   }
 })()
 
-var docDir =  './data/pdf';
-//var docDir =  '.';
-var saveDir = './data/text';
+//var docDir =  '../data/pdf';
+//var saveDir = '../data/text';
+var docDir =  '.';
+var saveDir = '.';
 vpdf2txt.processAll(docDir, saveDir);

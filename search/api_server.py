@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-import falcon
 from search import Search
+
+import falcon
 
 import json
 from wsgiref import simple_server
