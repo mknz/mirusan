@@ -83,7 +83,7 @@ class Search:
             res_list = []
             for r in results:
                 d = {}
-                d['file_name'] = r['file_name']
+                d['file-name'] = r['file_name']
                 d['body'] = r.highlights('content')
                 res_list.append(d)
             return res_list

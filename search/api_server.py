@@ -12,8 +12,10 @@ class SearchDB:
 
     def on_get(self, req, resp):
         items = self.search.search(req.get_param('query'))
+        resp_json = {}
+        resp_json['results'] = items
 
-        resp.body = json.dumps(items, ensure_ascii=False)
+        resp.body = json.dumps(resp_json, ensure_ascii=False)
 
 api = falcon.API()
 api.add_route('/search', SearchDB())
