@@ -24,6 +24,7 @@
         return {filePath: path.resolve(path.join('../data/pdf', fileName)), pageNum: pageNum};
     }
 
+
     // Adjust inline frame size with window
     let heightMargin = 50;
     function resizeFrame() {
@@ -42,7 +43,7 @@
     function openNewPDF(fileName) {
       pdfFilePath = getPDFfileName(fileName).filePath;
       pageNum = getPDFfileName(fileName).pageNum;
-      document.getElementById('pdf-viewer').contentWindow.location.replace('./pdfjs/web/viewer.html?file=' + pdfFilePath);
+      document.getElementById('pdf-viewer').contentWindow.location.replace('./pdfjs/web/viewer.html?file=' + pdfFilePath + '&page=' + pageNum.toString());
     }
   </script>
 </html>
