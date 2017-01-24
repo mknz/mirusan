@@ -6487,7 +6487,12 @@ var pdfjsWebLibs;
     var queryString = document.location.search.substring(1);
     var params = parseQueryString(queryString);
     file = 'file' in params ? params.file : DEFAULT_URL;
+
+    /// Set Inital Page
+    var initPageNum = 'page' in params ? params.page : 1;
     validateFileURL(file);
+    PDFViewerApplication.initialBookmark = "page=" + initPageNum.toString();
+
     var waitForBeforeOpening = [];
     var appConfig = PDFViewerApplication.appConfig;
     var fileInput = document.createElement('input');
