@@ -6,8 +6,7 @@ import Html exposing (Html, program, text, button, h1, h2, div, input)
 import Html.Attributes exposing (class, type_, placeholder)
 import Html.Events exposing (onClick, onInput)
 import Json.Encode
-import Json.Decode exposing (int, string, float, nullable, map, Decoder)
-import Json.Decode as Decode
+import Json.Decode exposing (int, string, float, nullable, map, map2, field, at, list, Decoder)
 import Json.Decode.Pipeline exposing (decode, required, optional, hardcoded)
 import Http
 import Debug
@@ -72,28 +71,34 @@ decodeResponse =
 
 type Msg
   = Send String
-  | OnResponse TimeResponse
   | SetNewFile String
   | SendSearch String
   | NewSearchResult (Result Http.Error SearchResult)
+  | OpenPdf
 
 port openNewFile : String -> Cmd msg
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
-  case msg of
-    Send format ->
-      ( model, IPC.send "time-request" <| encodeRequest { format = format } )
-    OnResponse response ->
-      ( { model | currentTime = response.time }, Cmd.none )
-    SetNewFile fileName ->
-      ( { model | pdfFilename = fileName }, openNewFile fileName )
-    SendSearch query ->
-      ( model, search query )
-    NewSearchResult (Ok res) ->
-      ( { model | searchResult = res }, Cmd.none )
-    NewSearchResult (Err _) ->
-      ( model, Cmd.none )
+  let
+      pdfFilename =
+        case (List.head model.searchResult) of
+          Nothing -> ""
+          Just row -> row.fileName
+  in
+      case msg of
+        Send format ->
+          ( model, IPC.send "time-request" <| encodeRequest { format = format } )
+        SetNewFile fileName ->
+          ( { model | pdfFilename = fileName }, openNewFile fileName )
+        SendSearch query ->
+          ( model, search query )
+        NewSearchResult (Ok res) ->
+          ( { model | searchResult = res }, Cmd.none )
+        NewSearchResult (Err _) ->
+          ( model, Cmd.none )
+        OpenPdf ->
+          ( model, openNewFile ("../data/text/" ++ pdfFilename))
 
 
 -- VIEW
@@ -111,20 +116,18 @@ view model =
       div []
         [ h1 [] [ text "PDF collection reader" ]
         , div [] [ text ("result: " ++ pdfFilename) ]
-        , h2 [] [ text model.currentTime ]
-        , button [ class "btn btn-default btn-lg btn-block", onClick (Send "timestamp") ] [ text "Get timestamp" ]
-        , button [ class "btn btn-default btn-lg btn-block", onClick (Send "date") ] [ text "Get date" ]
         , input [ type_ "text", placeholder "Filename", onInput SetNewFile ] []
         , input [ type_ "text", placeholder "Search", onInput SendSearch ] []
+        , button [ class "btn btn-default btn-lg btn-block", onClick (OpenPdf) ] [ text "Open PDF" ]
         ]
 
 -- SUBSCRIPTIONS
 
-
 subscriptions : Model -> Sub Msg
 subscriptions model =
   Sub.batch
-  [ IPC.on "time-response" (map OnResponse decodeResponse)
+  [ --IPC.on "time-response" (map OnResponse decodeResponse)
+    Sub.none
   ]
 
 
@@ -138,9 +141,12 @@ search query =
   in
       Http.send NewSearchResult (Http.get url searchResponseDecoder)
 
+
+-- JSON decoders
+
 rowDecoder =
-  Decode.map2 SearchResultRow (Decode.field "file-name" Decode.string) (Decode.field "body" Decode.string)
+  map2 SearchResultRow (field "file-name" string) (field "body" string)
 
 searchResponseDecoder : Decoder SearchResult
 searchResponseDecoder =
-  Decode.at ["results"] <| Decode.list rowDecoder
+  at ["results"] <| list rowDecoder
