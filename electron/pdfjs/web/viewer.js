@@ -13,7 +13,8 @@
  * limitations under the License.
  */
 'use strict';
-var DEFAULT_URL = 'compressed.tracemonkey-pldi-09.pdf';
+//var DEFAULT_URL = 'compressed.tracemonkey-pldi-09.pdf';
+var DEFAULT_URL = '';
 ;
 var pdfjsWebLibs;
 {
