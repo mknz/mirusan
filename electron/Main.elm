@@ -26,7 +26,7 @@ main =
 
 type alias Model =
   { currentTime: String,
-    pdfFilename: String,
+    topHitFileName: String,
     searchResult: SearchResult
   }
 
@@ -39,7 +39,7 @@ type alias SearchResult = List SearchResultRow
 
 init : ( Model, Cmd Msg )
 init =
-  ({ currentTime = "None", pdfFilename = "", searchResult = [] }, Cmd.none)
+  ({ currentTime = "None", topHitFileName = "", searchResult = [] }, Cmd.none)
 
 
 type alias TimeRequest =
@@ -70,35 +70,29 @@ decodeResponse =
 
 
 type Msg
-  = Send String
-  | SetNewFile String
-  | SendSearch String
+  = SendSearch String
   | NewSearchResult (Result Http.Error SearchResult)
-  | OpenPdf
+  | OpenDocument
 
 port openNewFile : String -> Cmd msg
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   let
-      pdfFilename =
+      topHitFileName =
         case (List.head model.searchResult) of
           Nothing -> ""
           Just row -> row.fileName
   in
       case msg of
-        Send format ->
-          ( model, IPC.send "time-request" <| encodeRequest { format = format } )
-        SetNewFile fileName ->
-          ( { model | pdfFilename = fileName }, openNewFile fileName )
         SendSearch query ->
           ( model, search query )
         NewSearchResult (Ok res) ->
           ( { model | searchResult = res }, Cmd.none )
         NewSearchResult (Err _) ->
           ( model, Cmd.none )
-        OpenPdf ->
-          ( model, openNewFile ("../data/text/" ++ pdfFilename))
+        OpenDocument ->
+          ( model, openNewFile (topHitFileName))
 
 
 -- VIEW
@@ -107,18 +101,17 @@ update msg model =
 view : Model -> Html Msg
 view model =
   let
-      pdfFilename =
+      topHitFileName =
         case (List.head model.searchResult) of
           Nothing -> ""
           Just row -> row.fileName
 
   in
       div []
-        [ h1 [] [ text "PDF collection reader" ]
-        , div [] [ text ("result: " ++ pdfFilename) ]
-        , input [ type_ "text", placeholder "Filename", onInput SetNewFile ] []
+        [ h1 [] [ text "Document collection reader" ]
+        , div [] [ text ("result: " ++ topHitFileName) ]
         , input [ type_ "text", placeholder "Search", onInput SendSearch ] []
-        , button [ class "btn btn-default btn-lg btn-block", onClick (OpenPdf) ] [ text "Open PDF" ]
+        , button [ class "btn btn-default btn-lg btn-block", onClick (OpenDocument) ] [ text "Open Document" ]
         ]
 
 -- SUBSCRIPTIONS
