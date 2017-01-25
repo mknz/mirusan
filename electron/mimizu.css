@@ -1,0 +1,20 @@
+div.search-result {
+  color:#1111cc;
+  text-decoration:none;
+}
+
+div.search-result:hover {
+  color:#1111cc;
+  text-decoration:underline;
+}
+
+b.match {
+  color:#1111cc;
+  font-weight: bold;
+}
+
+b.match:hover {
+  color:#1111cc;
+  text-decoration:underline;
+}
+

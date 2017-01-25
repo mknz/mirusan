@@ -2,8 +2,8 @@ port module Main exposing (..)
 
 import Electron.IpcRenderer as IPC exposing (on, send)
 
-import Html exposing (Html, program, text, button, h1, h2, div, input)
-import Html.Attributes exposing (class, type_, placeholder, value)
+import Html exposing (Html, program, text, button, h1, h2, div, input, a)
+import Html.Attributes exposing (class, type_, placeholder, value, href, style)
 import Html.Events exposing (onClick, onInput)
 import Json.Encode
 import Json.Decode exposing (int, string, float, nullable, map, map2, field, at, list, Decoder)
@@ -26,7 +26,6 @@ main =
 
 type alias Model =
   { currentQuery: String,
-    topHitFileName: String,
     searchResult: SearchResult
   }
 
@@ -39,7 +38,7 @@ type alias SearchResult = List SearchResultRow
 
 init : ( Model, Cmd Msg )
 init =
-  ({ currentQuery = "", topHitFileName = "", searchResult = [] }, Cmd.none)
+  ({ currentQuery = "", searchResult = [] }, Cmd.none)
 
 
 -- UPDATE
@@ -71,9 +70,11 @@ view : Model -> Html Msg
 view model =
   let
       createComponent row =
-        div [] [ button [ class "btn btn-default btn-lg btn-block", onClick (OpenDocument row.fileName) ] [ text "Open Document" ]
-        , div [] [ Markdown.toHtml [] row.body ]
-        ]
+        let
+          sBody = row.fileName ++ ": " ++ row.body
+        in
+          div [] [ div [ class "search-result", onClick (OpenDocument row.fileName) ] [ Markdown.toHtml [] sBody ]
+          ]
 
       searchResultDisplay =
         List.map createComponent model.searchResult
