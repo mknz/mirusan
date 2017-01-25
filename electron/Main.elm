@@ -3,7 +3,7 @@ port module Main exposing (..)
 import Electron.IpcRenderer as IPC exposing (on, send)
 
 import Html exposing (Html, program, text, button, h1, h2, div, input)
-import Html.Attributes exposing (class, type_, placeholder)
+import Html.Attributes exposing (class, type_, placeholder, value)
 import Html.Events exposing (onClick, onInput)
 import Json.Encode
 import Json.Decode exposing (int, string, float, nullable, map, map2, field, at, list, Decoder)
@@ -25,7 +25,7 @@ main =
 
 
 type alias Model =
-  { currentTime: String,
+  { currentQuery: String,
     topHitFileName: String,
     searchResult: SearchResult
   }
@@ -39,31 +39,7 @@ type alias SearchResult = List SearchResultRow
 
 init : ( Model, Cmd Msg )
 init =
-  ({ currentTime = "None", topHitFileName = "", searchResult = [] }, Cmd.none)
-
-
-type alias TimeRequest =
-    { format : String
-    }
-
-
-encodeRequest : TimeRequest -> Json.Encode.Value
-encodeRequest request =
-    Json.Encode.object
-      [ ( "format", Json.Encode.string request.format ) ]
-
-
-type alias TimeResponse =
-    { status : String
-    , time : String
-    }
-
-
-decodeResponse : Decoder TimeResponse
-decodeResponse =
-    decode TimeResponse
-        |> required "status" string
-        |> required "time" string
+  ({ currentQuery = "", topHitFileName = "", searchResult = [] }, Cmd.none)
 
 
 -- UPDATE
@@ -72,47 +48,41 @@ decodeResponse =
 type Msg
   = SendSearch String
   | NewSearchResult (Result Http.Error SearchResult)
-  | OpenDocument
+  | OpenDocument String
 
 port openNewFile : String -> Cmd msg
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
-  let
-      topHitFileName =
-        case (List.head model.searchResult) of
-          Nothing -> ""
-          Just row -> row.fileName
-  in
-      case msg of
-        SendSearch query ->
-          ( model, search query )
-        NewSearchResult (Ok res) ->
-          ( { model | searchResult = res }, Cmd.none )
-        NewSearchResult (Err _) ->
-          ( model, Cmd.none )
-        OpenDocument ->
-          ( model, openNewFile (topHitFileName))
+  case msg of
+    SendSearch query ->
+      ( { model | currentQuery = query }, search query )
+    NewSearchResult (Ok res) ->
+      ( { model | searchResult = res }, Cmd.none )
+    NewSearchResult (Err _) ->
+      ( { model | searchResult = [] }, Cmd.none )
+    OpenDocument fileName->
+      ( model, openNewFile fileName )
 
 
 -- VIEW
 
-
 view : Model -> Html Msg
 view model =
   let
-      topHitFileName =
-        case (List.head model.searchResult) of
-          Nothing -> ""
-          Just row -> row.fileName
+      createComponent row =
+        div [] [ button [ class "btn btn-default btn-lg btn-block", onClick (OpenDocument row.fileName) ] [ text "Open Document" ] ]
+
+      searchResultDisplay =
+        List.map createComponent model.searchResult
+
+      mainDivs =
+        List.append
+        [ input [ type_ "text", placeholder "Search", value model.currentQuery, onInput SendSearch ] []
+        ] searchResultDisplay
 
   in
-      div []
-        [ h1 [] [ text "Document collection reader" ]
-        , div [] [ text ("result: " ++ topHitFileName) ]
-        , input [ type_ "text", placeholder "Search", onInput SendSearch ] []
-        , button [ class "btn btn-default btn-lg btn-block", onClick (OpenDocument) ] [ text "Open Document" ]
-        ]
+      div [] mainDivs
 
 -- SUBSCRIPTIONS
 
