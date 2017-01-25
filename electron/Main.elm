@@ -9,7 +9,7 @@ import Json.Encode
 import Json.Decode exposing (int, string, float, nullable, map, map2, field, at, list, Decoder)
 import Json.Decode.Pipeline exposing (decode, required, optional, hardcoded)
 import Http
-import Debug
+import Markdown
 
 
 main =
@@ -71,14 +71,16 @@ view : Model -> Html Msg
 view model =
   let
       createComponent row =
-        div [] [ button [ class "btn btn-default btn-lg btn-block", onClick (OpenDocument row.fileName) ] [ text "Open Document" ] ]
+        div [] [ button [ class "btn btn-default btn-lg btn-block", onClick (OpenDocument row.fileName) ] [ text "Open Document" ]
+        , div [] [ Markdown.toHtml [] row.body ]
+        ]
 
       searchResultDisplay =
         List.map createComponent model.searchResult
 
       mainDivs =
         List.append
-        [ input [ type_ "text", placeholder "Search", value model.currentQuery, onInput SendSearch ] []
+        [ input [ type_ "text", placeholder "Search", onInput SendSearch ] []
         ] searchResultDisplay
 
   in
