@@ -2,7 +2,7 @@ port module Main exposing (..)
 
 import Electron.IpcRenderer as IPC exposing (on, send)
 
-import Html exposing (Html, program, text, button, h1, h2, div, input, a)
+import Html exposing (Html, program, text, button, h1, h2, div, input, a, span, p)
 import Html.Attributes exposing (class, type_, placeholder, value, href, style)
 import Html.Events exposing (onClick, onInput)
 import Json.Encode
@@ -82,6 +82,8 @@ view model =
       mainDivs =
         List.append
         [ input [ type_ "text", placeholder "Search", onInput SendSearch ] []
+        , span [ style [ ("font-size", "15pt") ] ] [ text " " ]
+        , span [ class "icon icon-search", style [("vertical-align", "middle"), ("font-size", "15pt")]] []
         ] searchResultDisplay
 
   in

@@ -1,12 +1,16 @@
 div#main-container {
   float: left;
-  width: 18%;
+  margin: 5px;
+  width: 19%;
 }
+
 div#pdf-viewer-container {
   float: right;
   width: 80%;
 }
+
 div.search-result {
+  margin-top: 10px;
   color:#1111cc;
   text-decoration:none;
 }

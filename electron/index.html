@@ -4,17 +4,38 @@
     <meta charset="UTF-8">
     <title>Mimizu - PDF collection reader</title>
     <script type="text/javascript" src="elm.js"></script>
-    <link rel="stylesheet" type="text/css" href="mimizu.css">
+    <link rel="stylesheet" type="text/css" href="./css/mimizu.css">
+    <link rel="stylesheet" type="text/css" href="./css/photon.min.css">
     <script>window.Elm = require('./elm.js');</script>
   </head>
 
   <body>
-    <div id="main-container">
-      <div id="main"></div>
-      <div id="search"></div>
-    </div>
-    <div id="pdf-viewer-container">
-      <iframe id="pdf-viewer" style="width:100%;height:100%" src='./pdfjs/web/viewer.html'></iframe>
+
+    <div class="window">
+      <div class="window-content">
+        <div class="pane-group">
+          <div class="pane pane-sm sidebar">
+            <nav class="nav-group">
+              <h5 class="nav-group-title">Menu</h5>
+              <span class="nav-group-item">
+                <span class="icon icon-doc-text"></span>
+                History
+              </span>
+              <span class="nav-group-item">
+                <span class="icon icon-folder"></span>
+                Documents
+              </span>
+            </nav>
+          </div>
+            <div id="main-container">
+              <div id="main"></div>
+              <div id="search"></div>
+            </div>
+            <div id="pdf-viewer-container">
+              <iframe id="pdf-viewer" style="width:100%;height:100%" src='./pdfjs/web/viewer.html'></iframe>
+            </div>
+        </div>
+      </div>
     </div>
   </body>
   <script type="text/javascript">
