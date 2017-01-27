@@ -84,9 +84,17 @@ class Search:
             for r in results:
                 d = {}
                 d['file-name'] = r['file_name']
-                d['body'] = r.highlights('content')
+
+                # remove garbled characters
+                d['body'] = self.remove_garble(r.highlights('content'))
+
                 res_list.append(d)
             return res_list
+
+    def remove_garble(self, str):
+        """Remove (visually annoying) unicode replacement characters."""
+        # TODO: remove with nearby characters (to delete imcomplete words)
+        return str.replace('\uFFFD', '')
 
     def search_print(self, query_str):
         with self.ix.searcher() as searcher:

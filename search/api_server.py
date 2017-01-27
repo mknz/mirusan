@@ -11,10 +11,10 @@ class SearchDB:
     search = Search()
 
     def on_get(self, req, resp):
-        items = self.search.search(req.get_param('query'))
+        query_str = req.get_param('query')
+        items = self.search.search(query_str)
         resp_json = {}
         resp_json['results'] = items
-
         resp.body = json.dumps(resp_json, ensure_ascii=False)
 
 api = falcon.API()
