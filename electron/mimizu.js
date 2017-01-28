@@ -13,19 +13,18 @@ function getPDFfileName(textFileName) {
 
 // Adjust inline frame size with window
 function resizeFrame() {
+  const margin = 0;
   var windowHeight = document.documentElement.clientHeight;
-  var mainHeight = document.getElementById('main-container').clientHeight;
-  if (windowHeight > mainHeight) {
-    var pdfHeight = windowHeight;
-  } else {
-    var pdfHeight = mainHeight;
-  }
   var elem = document.getElementById('pdf-viewer-container');
-  elem.style.height = pdfHeight + 'px';
-  var elem = document.getElementById('pdf-viewer');
-  elem.style.height = pdfHeight + 'px';
+  elem.style.height = windowHeight - margin + 'px';
+  var elem = document.getElementById('search');
+  elem.style.height = windowHeight - margin + 'px';
 }
-resizeFrame();
+resizeFrame(); // init window size
+
+window.addEventListener('resize', function(e) {
+  resizeFrame()
+}, false);
 
 // Embed elm
 var app = Elm.Main.embed(document.getElementById('search'));
@@ -35,7 +34,6 @@ app.ports.openNewFile.subscribe(function(fileName) {
   var pdfFilePath = getPDFfileName(fileName).filePath;
   var pageNum = getPDFfileName(fileName).pageNum;
   document.getElementById('pdf-viewer').contentWindow.location.replace('./pdfjs/web/viewer.html?file=' + pdfFilePath + '&page=' + pageNum.toString());
-  resizeFrame();
 });
 
 // Get document paths to add DB by dialog, send them back to elm
@@ -55,4 +53,3 @@ app.ports.getFilesToAddDB.subscribe(function() {
   var elem = document.getElementById('getFilesToAddDB');
   elem.click();
 });
-

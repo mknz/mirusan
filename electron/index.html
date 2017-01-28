@@ -8,21 +8,14 @@
     <script>window.Elm = require('./elm.js');</script>
   </head>
   <body>
-    <div class="invisible">
-      <input type="file" id="getFilesToAddDB" multiple><!-- invisible. used only from elm -->
-    </div>
-    <div class="window">
-      <div class="window-content">
-        <div class="pane-group">
-            <div id="main-container">
-              <div id="main"></div>
-              <div id="search"></div>
-            </div>
-            <div id="pdf-viewer-container">
-              <iframe id="pdf-viewer" style="width:100%;height:100%" src='./pdfjs/web/viewer.html'></iframe>
-            </div>
-        </div>
+    <div id="window">
+        <div id="search"></div>
+      <div id="pdf-viewer-container">
+        <iframe id="pdf-viewer" style="width:100%;height:100%" src='./pdfjs/web/viewer.html'></iframe>
       </div>
+    </div>
+    <div class="invisible"> <!-- accessed only from elm -->
+      <input type="file" id="getFilesToAddDB" multiple>
     </div>
   </body>
   <script type="text/javascript" src="mimizu.js"> </script>

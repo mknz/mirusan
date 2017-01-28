@@ -96,6 +96,7 @@ view model =
         [ input [ type_ "text", placeholder "Search", onInput SendSearch ] []
         , span [ style [ ("font-size", "15pt") ] ] [ text " " ]
         , span [ class "icon icon-search", style [("vertical-align", "middle"), ("font-size", "15pt")]] []
+        , p[] []
         , button [ onClick GetFilesToAddDB ] [ text "Add Files to DB"]
         ] searchResultDisplay
 
