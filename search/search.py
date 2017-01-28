@@ -47,8 +47,10 @@ class IndexManager:
             writer.commit()
             print('Added :' + text_file_path)
             ix.close()
+            return True
         except:
             ix.close()
+            return False
 
     def add_dir(self, text_dir_path):
         if not os.path.exists(Config.database_dir):
