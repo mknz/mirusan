@@ -6,7 +6,7 @@ import Html exposing (Html, program, text, button, h1, h2, div, input, a, span, 
 import Html.Attributes exposing (class, type_, placeholder, value, href, style)
 import Html.Events exposing (onClick, onInput)
 import Json.Encode
-import Json.Decode exposing (int, string, float, nullable, map, map2, field, at, list, Decoder)
+import Json.Decode exposing (int, string, float, bool, nullable, map, map2, field, at, list, Decoder)
 import Json.Decode.Pipeline exposing (decode, required, optional, hardcoded)
 import Http
 import Markdown
@@ -26,7 +26,8 @@ main =
 
 type alias Model =
   { currentQuery: String,
-    searchResult: SearchResult
+    searchResult: SearchResult,
+    serverMessage: String
   }
 
 type alias SearchResultRow =
@@ -38,7 +39,7 @@ type alias SearchResult = List SearchResultRow
 
 init : ( Model, Cmd Msg )
 init =
-  ({ currentQuery = "", searchResult = [] }, Cmd.none)
+  ({ currentQuery = "", searchResult = [], serverMessage = "" }, Cmd.none)
 
 
 -- UPDATE
@@ -48,8 +49,12 @@ type Msg
   = SendSearch String
   | NewSearchResult (Result Http.Error SearchResult)
   | OpenDocument String
+  | GetFilesToAddDB
+  | FilesToAddDB (List String)
+  | AddDBResult (Result Http.Error String)
 
 port openNewFile : String -> Cmd msg
+port getFilesToAddDB : Bool -> Cmd msg
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -62,7 +67,14 @@ update msg model =
       ( { model | searchResult = [] }, Cmd.none )
     OpenDocument fileName->
       ( model, openNewFile fileName )
-
+    GetFilesToAddDB ->
+      ( model, getFilesToAddDB True)
+    FilesToAddDB paths ->
+      ( model, addFilesToDB paths )
+    AddDBResult (Ok res) ->
+      ( { model | serverMessage = res }, Cmd.none )
+    AddDBResult (Err _) ->
+      ( { model | serverMessage = "error" }, Cmd.none )
 
 -- VIEW
 
@@ -84,6 +96,7 @@ view model =
         [ input [ type_ "text", placeholder "Search", onInput SendSearch ] []
         , span [ style [ ("font-size", "15pt") ] ] [ text " " ]
         , span [ class "icon icon-search", style [("vertical-align", "middle"), ("font-size", "15pt")]] []
+        , button [ onClick GetFilesToAddDB ] [ text "Add Files to DB"]
         ] searchResultDisplay
 
   in
@@ -91,11 +104,13 @@ view model =
 
 -- SUBSCRIPTIONS
 
+port filesToAddDB : (List String -> msg) -> Sub msg
+
 subscriptions : Model -> Sub Msg
 subscriptions model =
   Sub.batch
-  [ --IPC.on "time-response" (map OnResponse decodeResponse)
-    Sub.none
+  [
+    filesToAddDB FilesToAddDB
   ]
 
 
@@ -109,6 +124,18 @@ search query =
   in
       Http.send NewSearchResult (Http.get url searchResponseDecoder)
 
+addFileToDB : String -> Cmd Msg
+addFileToDB path =
+  let
+      url =
+        "http://localhost:8000/add-file?file=" ++ path
+  in
+      Http.send AddDBResult (Http.get url addFileToDBResponseDecoder)
+
+addFilesToDB : (List String) -> Cmd Msg
+addFilesToDB paths =
+  Cmd.batch (List.map addFileToDB paths)
+
 
 -- JSON decoders
 
@@ -118,3 +145,7 @@ rowDecoder =
 searchResponseDecoder : Decoder SearchResult
 searchResponseDecoder =
   at ["results"] <| list rowDecoder
+
+addFileToDBResponseDecoder : Decoder String
+addFileToDBResponseDecoder =
+  at ["exit-status"] <| string
