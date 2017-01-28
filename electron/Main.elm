@@ -2,8 +2,8 @@ port module Main exposing (..)
 
 import Electron.IpcRenderer as IPC exposing (on, send)
 
-import Html exposing (Html, program, text, button, h1, h2, div, input, a, span, p)
-import Html.Attributes exposing (class, type_, placeholder, value, href, style)
+import Html exposing (Html, program, text, button, h1, h2, div, input, a, span, p, header, iframe, nav)
+import Html.Attributes exposing (class, id, type_, placeholder, value, href, style, src, title)
 import Html.Events exposing (onClick, onInput)
 import Json.Encode
 import Json.Decode exposing (int, string, float, bool, nullable, map, map2, field, at, list, Decoder)
@@ -91,17 +91,35 @@ view model =
       searchResultDisplay =
         List.map createComponent model.searchResult
 
-      mainDivs =
-        List.append
-        [ input [ type_ "text", placeholder "Search", onInput SendSearch ] []
+      toolbarHeader =
+        header [ class "toolbar toolbar-header" ] [ toolbarActions ]
+
+      addFileButton =
+        button [ class "btn btn-default", onClick GetFilesToAddDB, title "Add files to database" ] [ span [ class "icon icon-folder" ] [] ]
+
+      toolButtons =
+        div [ class "btn-group" ] [ addFileButton ]
+
+      toolbarActions =
+        div [ class "toolbar-actions" ] [ div [ class "btn-group" ] [ searchWindow ], toolButtons ]
+
+      sidebarContainer =
+        div [ id "sidebar-container" ] [ div [ id "search" ]  searchResultDisplay ]
+
+      viewerIframe =
+        iframe [ id "pdf-viewer", style [ ("width", "100%"), ("height", "100%") ], src "./pdfjs/web/viewer.html" ] []
+
+      viewerContainer =
+        div [ id "pdf-viewer-container" ] [ viewerIframe ]
+
+      searchWindow =
+        span [] [ input [ type_ "text", placeholder "Search", onInput SendSearch ] []
         , span [ style [ ("font-size", "15pt") ] ] [ text " " ]
-        , span [ class "icon icon-search", style [("vertical-align", "middle"), ("font-size", "15pt")]] []
-        , p[] []
-        , button [ onClick GetFilesToAddDB ] [ text "Add Files to DB"]
-        ] searchResultDisplay
+        , span [ class "icon icon-search", style [ ("vertical-align", "middle"), ("font-size", "15pt") ] ] []
+        ]
 
   in
-      div [] mainDivs
+      div []  [toolbarHeader, sidebarContainer, viewerContainer]
 
 -- SUBSCRIPTIONS
 
