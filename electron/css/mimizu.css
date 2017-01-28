@@ -100,12 +100,16 @@ html {
   overflow: hidden;
 }
 
-div#search {
+div#sidebar-container {
   float: left;
-  margin: 5px;
-  width: 28%;
-  line-height: 1.2;
+  width: 30%;
   overflow-y: scroll;
+  overflow-x: hidden;
+
+}
+div#search {
+  margin: 10px;
+  line-height: 1.2;
 }
 
 div#pdf-viewer-container {

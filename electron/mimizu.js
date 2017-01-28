@@ -17,7 +17,7 @@ function resizeFrame() {
   var windowHeight = document.documentElement.clientHeight;
   var elem = document.getElementById('pdf-viewer-container');
   elem.style.height = windowHeight - margin + 'px';
-  var elem = document.getElementById('search');
+  var elem = document.getElementById('sidebar-container');
   elem.style.height = windowHeight - margin + 'px';
 }
 resizeFrame(); // init window size
