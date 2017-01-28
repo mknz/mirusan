@@ -5,11 +5,12 @@
     <title>Mimizu - PDF collection reader</title>
     <script type="text/javascript" src="elm.js"></script>
     <link rel="stylesheet" type="text/css" href="./css/mimizu.css">
-    <link rel="stylesheet" type="text/css" href="./css/photon.min.css">
     <script>window.Elm = require('./elm.js');</script>
   </head>
   <body>
-    <input type="file" id="getFilesToAddDB" multiple><!-- invisible. used only from elm -->
+    <div class="invisible">
+      <input type="file" id="getFilesToAddDB" multiple><!-- invisible. used only from elm -->
+    </div>
     <div class="window">
       <div class="window-content">
         <div class="pane-group">

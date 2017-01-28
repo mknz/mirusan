@@ -1,12 +1,29 @@
+html {
+  overflow: hidden;
+}
+
+div#window {
+}
+
+div#window-content {
+}
+
 div#main-container {
   float: left;
   margin: 5px;
-  width: 19%;
+  width: 29%;
+  height: 600px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+div#search {
+  float: left;
 }
 
 div#pdf-viewer-container {
   float: right;
-  width: 80%;
+  width: 65%;
 }
 
 div.search-result {
@@ -30,3 +47,6 @@ b.match:hover {
   text-decoration:underline;
 }
 
+div.invisible {
+  display: none;
+}
