@@ -6,7 +6,7 @@ import Html exposing (Html, program, text, button, h1, h2, div, input, a, span, 
 import Html.Attributes exposing (class, id, type_, placeholder, value, href, style, src, title)
 import Html.Events exposing (onClick, onInput)
 import Json.Encode
-import Json.Decode exposing (int, string, float, bool, nullable, map, map2, field, at, list, Decoder)
+import Json.Decode exposing (int, string, float, bool, nullable, map, map2, map3, field, at, list, Decoder)
 import Json.Decode.Pipeline exposing (decode, required, optional, hardcoded)
 import Http
 import Markdown
@@ -32,6 +32,7 @@ type alias Model =
 
 type alias SearchResultRow =
   { fileName: String,
+    numPage: Int,
     body: String
   }
 
@@ -48,12 +49,12 @@ init =
 type Msg
   = SendSearch String
   | NewSearchResult (Result Http.Error SearchResult)
-  | OpenDocument String
+  | OpenDocument (String, Int)
   | GetFilesToAddDB
   | FilesToAddDB (List String)
   | AddDBResult (Result Http.Error String)
 
-port openNewFile : String -> Cmd msg
+port openNewFile : (String, Int) -> Cmd msg
 port getFilesToAddDB : Bool -> Cmd msg
 
 update : Msg -> Model -> (Model, Cmd Msg)
@@ -65,8 +66,8 @@ update msg model =
       ( { model | searchResult = res }, Cmd.none )
     NewSearchResult (Err _) ->
       ( { model | searchResult = [] }, Cmd.none )
-    OpenDocument fileName->
-      ( model, openNewFile fileName )
+    OpenDocument (fileName, numPage) ->
+      ( model, openNewFile (fileName, numPage) )
     GetFilesToAddDB ->
       ( model, getFilesToAddDB True)
     FilesToAddDB paths ->
@@ -74,7 +75,7 @@ update msg model =
     AddDBResult (Ok res) ->
       ( { model | serverMessage = res }, Cmd.none )
     AddDBResult (Err _) ->
-      ( { model | serverMessage = "error" }, Cmd.none )
+      ( { model | serverMessage = "Server error" }, Cmd.none )
 
 -- VIEW
 
@@ -85,7 +86,7 @@ view model =
         let
           sBody = row.fileName ++ ": " ++ row.body
         in
-          div [] [ div [ class "search-result", onClick (OpenDocument row.fileName) ] [ Markdown.toHtml [] sBody ]
+          div [] [ div [ class "search-result", onClick (OpenDocument (row.fileName, row.numPage)) ] [ Markdown.toHtml [] sBody ]
           ]
 
       searchResultDisplay =
@@ -101,7 +102,7 @@ view model =
         div [ class "btn-group" ] [ addFileButton ]
 
       toolbarActions =
-        div [ class "toolbar-actions" ] [ div [ class "btn-group" ] [ searchWindow ], toolButtons ]
+        div [ class "toolbar-actions" ] [ div [ class "btn-group" ] [ searchWindow ], toolButtons, span [] [ text model.serverMessage ] ]
 
       sidebarContainer =
         div [ id "sidebar-container" ] [ div [ id "search" ]  searchResultDisplay ]
@@ -159,7 +160,7 @@ addFilesToDB paths =
 -- JSON decoders
 
 rowDecoder =
-  map2 SearchResultRow (field "file-name" string) (field "body" string)
+  map3 SearchResultRow (field "document_file_name" string) (field "page" int) (field "highlighted_body" string)
 
 searchResponseDecoder : Decoder SearchResult
 searchResponseDecoder =

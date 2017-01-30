@@ -1,16 +1,6 @@
 'use strict';
 const path = require('path');
 
-// Convert text file name, return pdf filename and page
-// "FILE_pN.txt" -> {filePath: "FILE.pdf", pageNum: N}
-function getPDFfileName(textFileName) {
-  var fileName = textFileName.split('_').slice(0, -1).join('_') + '.pdf';
-  var pageNum = parseInt(textFileName.split('_').pop().split('.')[0].slice(1));
-  var filePath = path.resolve(path.join('../data/pdf', fileName));
-  console.log(filePath);
-    return {filePath: path.resolve(path.join('../data/pdf', fileName)), pageNum: pageNum};
-}
-
 // Adjust inline frame size with window
 function resizeFrame() {
   const margin = 50; // Influenced by header's height
@@ -33,9 +23,9 @@ window.addEventListener('resize', function(e) {
 var app = Elm.Main.embed(document.getElementById('window'));
 
 // Open new pdf when openNewFile msg comes from elm
-app.ports.openNewFile.subscribe(function(fileName) {
-  var pdfFilePath = getPDFfileName(fileName).filePath;
-  var pageNum = getPDFfileName(fileName).pageNum;
+app.ports.openNewFile.subscribe(function(resp) {
+  var pdfFilePath = path.resolve(path.join('../data/pdf', resp[0]));
+  var pageNum = resp[1];
   document.getElementById('pdf-viewer').contentWindow.location.replace('./pdfjs/web/viewer.html?file=' + pdfFilePath + '&page=' + pageNum.toString());
 });
 

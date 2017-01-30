@@ -1,10 +1,12 @@
 from whoosh.index import create_in, open_dir
-from whoosh.fields import TEXT, Schema
+from whoosh.fields import TEXT, DATETIME, NUMERIC, Schema
 from whoosh.analysis import NgramTokenizer
 from whoosh.qparser import QueryParser, MultifieldParser
 
 import argparse
 import os
+import datetime
+import re
 
 
 class Config:
@@ -19,16 +21,23 @@ class IndexManager:
             os.mkdir(Config.database_dir)
 
         ngram_tokenizer = NgramTokenizer(minsize=ngram_min, maxsize=ngram_max)
-        schema = Schema(file_name=TEXT(stored=True,
-                                       analyzer=ngram_tokenizer),
-                        content=TEXT(stored=True,
-                                     analyzer=ngram_tokenizer))
+
+        stored_text_field = TEXT(stored=True, analyzer=ngram_tokenizer)
+        no_stored_text_field = TEXT(stored=False)
+
+        schema = Schema(text_file_name     = stored_text_field,
+                        document_file_name = stored_text_field,
+                        title              = stored_text_field,
+                        content            = stored_text_field,
+                        page               = NUMERIC(stored=True),
+                        memo               = stored_text_field,
+                        created_at         = DATETIME(stored=True))
 
         ix = create_in(Config.database_dir, schema)
         print('Created db: ' + Config.database_dir)
         ix.close()
 
-    def add_file(self, text_file_path):
+    def add_text_file(self, text_file_path, document_file_name, num_page=1):
         if not os.path.exists(Config.database_dir):
             raise ValueError('DB dir does not exist: ' + Config.database_dir)
 
@@ -37,20 +46,33 @@ class IndexManager:
             raise ValueError('Input file is not text file: ' + text_file_path)
 
         with open(text_file_path, 'r') as f:
-            text = f.read()
+            content_text = f.read()
 
         ix = open_dir(Config.database_dir)
-        try:
-            writer = ix.writer()
-            writer.add_document(file_name=os.path.basename(text_file_path),
-                                content=text)
-            writer.commit()
-            print('Added :' + text_file_path)
-            ix.close()
-            return True
-        except:
-            ix.close()
-            return False
+        writer = ix.writer()
+        writer.add_document(text_file_name     = os.path.basename(text_file_path),
+                            document_file_name = document_file_name,
+                            title              = document_file_name,
+                            content            = content_text,
+                            page               = num_page,
+                            memo               = '',
+                            created_at         = datetime.datetime.now())
+        writer.commit()
+        print('Added :' + text_file_path)
+        ix.close()
+
+    def add_text_page_file(self, text_file_path):
+        """Add database page-wise text file.
+        filename format: {DOCUMENT_NAME}_p{NUM_PAGE}.txt
+        """
+        filename = os.path.basename(text_file_path)
+        m = re.search(r'(.+)_p(\d+).txt', filename)
+        if m is None:
+            raise ValueError('Invalid file format: ' + text_file_path)
+        doc_filename = m.group(1) + '.pdf'
+        num_page = int(m.group(2))
+
+        self.add_text_file(text_file_path, doc_filename, num_page)
 
     def add_dir(self, text_dir_path):
         if not os.path.exists(Config.database_dir):
@@ -67,7 +89,7 @@ class IndexManager:
             raise ValueError('No text files in: ' + text_dir_path)
 
         for i, path in enumerate(text_file_paths):
-            self.add_file(path)
+            self.add_text_page_file(path)
             print(str(i + 1) + ' / ' + str(len(text_file_paths)))
 
 
@@ -85,17 +107,21 @@ class Search:
             res_list = []
             for r in results:
                 d = {}
-                d['file-name'] = r['file_name']
+                for key in r.keys():  # copy all fields
+                    if type(r[key]) == datetime.datetime:
+                        d[key] = r[key].isoformat()
+                    else:
+                        d[key] = r[key]
 
                 # remove garbled characters
-                d['body'] = self.remove_garble(r.highlights('content'))
+                d['highlighted_body'] = self.remove_garble(r.highlights('content'))
 
                 res_list.append(d)
             return res_list
 
     def remove_garble(self, str):
         """Remove (visually annoying) unicode replacement characters."""
-        # TODO: remove with nearby characters (to delete imcomplete words)
+        # TODO: remove with nearby characters (to erase imcomplete words)
         return str.replace('\uFFFD', '')
 
     def search_print(self, query_str):
@@ -104,7 +130,7 @@ class Search:
                                      self.ix.schema).parse(query_str)
             results = searcher.search(query)
             for r in results:
-                print(r['file_name'])
+                print(r['text_file_name'])
                 print(r.highlights('content'))
                 print('')
 

@@ -1,10 +1,16 @@
 # -*- coding: utf-8 -*-
-from search import Search, IndexManager
+from search import Config, Search, IndexManager
 
 import falcon
 
-import json
 from wsgiref import simple_server
+import json
+import traceback
+
+
+class DataBaseResource:
+    def on_delete(self, req, resp):
+        pass
 
 
 class SearchDB:
@@ -23,9 +29,14 @@ class AddFileToDB:
 
     def on_get(self, req, resp):
         file_path = req.get_param('file')
-        exit_status = self.im.add_file(file_path)
+        try:
+            self.im.add_text_page_file(file_path)
+            exit_status_str = 'Success'
+        except Exception as e:
+            traceback.print_exc()
+            exit_status_str = e.args
         resp_json = {}
-        resp_json['exit-status'] = exit_status
+        resp_json['exit-status'] = exit_status_str
         resp.body = json.dumps(resp_json, ensure_ascii=False)
 
 api = falcon.API()
