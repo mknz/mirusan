@@ -84,7 +84,7 @@ view model =
   let
       createComponent row =
         let
-          sBody = row.fileName ++ ": " ++ row.body
+          sBody = row.fileName ++ " (p" ++ toString row.numPage ++  "): " ++ row.body
         in
           div [] [ div [ class "search-result", onClick (OpenDocument (row.fileName, row.numPage)) ] [ Markdown.toHtml [] sBody ]
           ]
