@@ -6,6 +6,7 @@ import falcon
 from wsgiref import simple_server
 import json
 import traceback
+import subprocess
 
 
 class DataBaseResource:
@@ -28,15 +29,16 @@ class AddFileToDB:
     im = IndexManager()
 
     def on_get(self, req, resp):
-        file_path = req.get_param('file')
-        try:
-            self.im.add_text_page_file(file_path)
-            exit_status_str = 'Success'
-        except Exception as e:
-            traceback.print_exc()
-            exit_status_str = e.args
+        json_str = req.get_param('json')
+        json_file_paths = json.loads(json_str)
+        file_paths = json_file_paths['paths']
+
+        # start async process
+        if Config.platform == 'linux':
+            pid = subprocess.Popen(['python3', './search.py', '--add-files'] + file_paths).pid
+
         resp_json = {}
-        resp_json['exit-status'] = exit_status_str
+        resp_json['message'] = 'Start adding files.'
         resp.body = json.dumps(resp_json, ensure_ascii=False)
 
 api = falcon.API()

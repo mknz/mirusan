@@ -8,6 +8,7 @@ import Html.Events exposing (onClick, onInput)
 import Json.Encode
 import Json.Decode exposing (int, string, float, bool, nullable, map, map2, map3, field, at, list, Decoder)
 import Json.Decode.Pipeline exposing (decode, required, optional, hardcoded)
+import Json.Encode
 import Http
 import Markdown
 
@@ -145,16 +146,24 @@ search query =
       Http.send NewSearchResult (Http.get url searchResponseDecoder)
 
 addFileToDB : String -> Cmd Msg
-addFileToDB path =
+addFileToDB jsonPathsString =
   let
       url =
-        "http://localhost:8000/add-file?file=" ++ path
+        "http://localhost:8000/add-file?json=" ++ (Http.encodeUri jsonPathsString)
   in
       Http.send AddDBResult (Http.get url addFileToDBResponseDecoder)
 
+
 addFilesToDB : (List String) -> Cmd Msg
 addFilesToDB paths =
-  Cmd.batch (List.map addFileToDB paths)
+  let
+      jsList =
+        List.map Json.Encode.string paths
+          |> Json.Encode.list
+      jsObj =
+        Json.Encode.object [ ("paths", jsList) ]
+  in
+      addFileToDB (Json.Encode.encode 0 jsObj)
 
 
 -- JSON decoders
