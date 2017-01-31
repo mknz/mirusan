@@ -7,10 +7,12 @@ import argparse
 import os
 import datetime
 import re
+import sys
 
 
 class Config:
     database_dir = os.environ.get('DATABASE_DIR')
+    platform = sys.platform
     if database_dir is None:
         raise ValueError('DATABASE_DIR is not set in env.')
 
@@ -141,6 +143,7 @@ def main():
     parser.add_argument('--init', help='Initialize database',
                         action='store_true')
     parser.add_argument('--add-dir', default=None)
+    parser.add_argument('--add-files', default=None, nargs='+')
     parser.add_argument('--ngram-min', default=1)
     parser.add_argument('--ngram-max', default=2)
     args = parser.parse_args()
@@ -153,6 +156,12 @@ def main():
     if args.query != '':
         s = Search()
         s.search_print(args.query)
+        return
+
+    if args.add_files is not None:
+        im = IndexManager()
+        for path in args.add_files:
+            im.add_text_page_file(path)
         return
 
     if args.add_dir is not None:
