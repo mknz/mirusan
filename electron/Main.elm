@@ -6,7 +6,7 @@ import Html exposing (Html, program, text, button, h1, h2, div, input, a, span, 
 import Html.Attributes exposing (class, id, type_, placeholder, value, href, style, src, title)
 import Html.Events exposing (onClick, onInput)
 import Json.Encode
-import Json.Decode exposing (int, string, float, bool, nullable, map, map2, map3, field, at, list, Decoder)
+import Json.Decode exposing (int, string, float, bool, nullable, map, map2, map4, field, at, list, Decoder)
 import Json.Decode.Pipeline exposing (decode, required, optional, hardcoded)
 import Json.Encode
 import Http
@@ -32,7 +32,8 @@ type alias Model =
   }
 
 type alias SearchResultRow =
-  { fileName: String,
+  { title: String,
+    fileName: String,
     numPage: Int,
     body: String
   }
@@ -85,7 +86,7 @@ view model =
   let
       createComponent row =
         let
-          sBody = row.fileName ++ " (p" ++ toString row.numPage ++  "): " ++ row.body
+          sBody = row.title ++ " (p" ++ toString row.numPage ++  "): " ++ row.body
         in
           div [] [ div [ class "search-result", onClick (OpenDocument (row.fileName, row.numPage)) ] [ Markdown.toHtml [] sBody ]
           ]
@@ -169,7 +170,7 @@ addFilesToDB paths =
 -- JSON decoders
 
 rowDecoder =
-  map3 SearchResultRow (field "document_file_name" string) (field "page" int) (field "highlighted_body" string)
+  map4 SearchResultRow (field "title" string) (field "document_file_path" string) (field "page" int) (field "highlighted_body" string)
 
 searchResponseDecoder : Decoder SearchResult
 searchResponseDecoder =

@@ -34,22 +34,22 @@ class IndexManager:
 
         ngram_tokenizer = NgramTokenizer(minsize=ngram_min, maxsize=ngram_max)
 
-        stored_text_field = TEXT(stored=True, analyzer=ngram_tokenizer)
-        no_stored_text_field = TEXT(stored=False)
+        stored_text_field = TEXT(stored=True)
+        stored_indexed_text_field = TEXT(stored=True, analyzer=ngram_tokenizer)
 
-        schema = Schema(text_file_name     = stored_text_field,
-                        document_file_name = stored_text_field,
-                        title              = stored_text_field,
-                        content            = stored_text_field,
+        schema = Schema(text_file_path     = stored_text_field,
+                        document_file_path = stored_text_field,
+                        title              = stored_indexed_text_field,
+                        content            = stored_indexed_text_field,
                         page               = NUMERIC(stored=True),
-                        memo               = stored_text_field,
+                        memo               = stored_indexed_text_field,
                         created_at         = DATETIME(stored=True))
 
         ix = create_in(Config.database_dir, schema)
         print('Created db: ' + Config.database_dir)
         ix.close()
 
-    def add_text_file(self, text_file_path, document_file_name, num_page=1):
+    def add_text_file(self, text_file_path, document_file_path, num_page=1):
         if not os.path.exists(Config.database_dir):
             raise ValueError('DB dir does not exist: ' + Config.database_dir)
 
@@ -60,16 +60,20 @@ class IndexManager:
         with open(text_file_path, 'r') as f:
             content_text = f.read()
 
+        # set initial title: filename without ext
+        title = os.path.splitext(os.path.basename(document_file_path))[0]
+
         ix = open_dir(Config.database_dir)
         writer = ix.writer()
-        writer.add_document(text_file_name     = os.path.basename(text_file_path),
-                            document_file_name = document_file_name,
-                            title              = document_file_name,
+        writer.add_document(text_file_path     = text_file_path,
+                            document_file_path = document_file_path,
+                            title              = title,
                             content            = content_text,
                             page               = num_page,
                             memo               = '',
                             created_at         = datetime.datetime.now())
         writer.commit()
+
         print('Added :' + text_file_path)
         ix.close()
 
@@ -77,14 +81,22 @@ class IndexManager:
         """Add database page-wise text file.
         filename format: {DOCUMENT_NAME}_p{NUM_PAGE}.txt
         """
+        if not os.path.exists(text_file_path):
+            raise ValueError('File does not exist: ' + text_file_path)
+
         filename = os.path.basename(text_file_path)
         m = re.search(r'(.+)_p(\d+).txt', filename)
         if m is None:
             raise ValueError('Invalid file format: ' + text_file_path)
+
         doc_filename = m.group(1) + '.pdf'
+        doc_file_path = os.path.join(Config.pdf_dir, doc_filename)
         num_page = int(m.group(2))
 
-        self.add_text_file(text_file_path, doc_filename, num_page)
+        if not os.path.exists(doc_file_path):
+            raise ValueError('Document file does not exist: ' + doc_file_path)
+
+        self.add_text_file(text_file_path, doc_file_path, num_page)
 
     def add_dir(self, text_dir_path):
         if not os.path.exists(Config.database_dir):
@@ -102,6 +114,7 @@ class IndexManager:
 
         for i, path in enumerate(text_file_paths):
             self.add_text_page_file(path)
+            # show progress
             print(str(i + 1) + ' / ' + str(len(text_file_paths)))
 
 
@@ -142,7 +155,7 @@ class Search:
                                      self.ix.schema).parse(query_str)
             results = searcher.search(query)
             for r in results:
-                print(r['text_file_name'])
+                print(r['title'])
                 print(r.highlights('content'))
                 print('')
 

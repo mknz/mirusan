@@ -24,7 +24,7 @@ var app = Elm.Main.embed(document.getElementById('window'));
 
 // Open new pdf when openNewFile msg comes from elm
 app.ports.openNewFile.subscribe(function(resp) {
-  var pdfFilePath = path.resolve(path.join('../data/pdf', resp[0]));
+  var pdfFilePath = resp[0];
   var pageNum = resp[1];
   document.getElementById('pdf-viewer').contentWindow.location.replace('./pdfjs/web/viewer.html?file=' + pdfFilePath + '&page=' + pageNum.toString());
 });
@@ -46,4 +46,3 @@ app.ports.getFilesToAddDB.subscribe(function() {
   var elem = document.getElementById('getFilesToAddDB');
   elem.click();
 });
-
