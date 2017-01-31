@@ -19,6 +19,10 @@ class SearchDB:
 
     def on_get(self, req, resp):
         query_str = req.get_param('query')
+        if query_str is None:
+            return
+        if query_str is "":
+            return
         items = self.search.search(query_str)
         resp_json = {}
         resp_json['results'] = items
