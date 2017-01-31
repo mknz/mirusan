@@ -11,15 +11,25 @@ import sys
 
 
 class Config:
-    database_dir = os.environ.get('DATABASE_DIR')
+    data_dir = os.environ.get('DATA_DIR')
+    if data_dir is None:
+        raise ValueError('DATA_DIR is not set in env.')
+
+    if not os.path.exists(data_dir):
+        print('Create DATA_DIR: ' + data_dir)
+        os.mkdir(data_dir)
+
+    database_dir = os.path.join(data_dir, 'database')
+    pdf_dir = os.path.join(data_dir, 'pdf')
+    txt_dir = os.path.join(data_dir, 'txt')
+
     platform = sys.platform
-    if database_dir is None:
-        raise ValueError('DATABASE_DIR is not set in env.')
 
 
 class IndexManager:
     def create_index(self, ngram_min, ngram_max):
         if not os.path.exists(Config.database_dir):
+            print('Create DATABASE_DIR: ' + Config.database_dir)
             os.mkdir(Config.database_dir)
 
         ngram_tokenizer = NgramTokenizer(minsize=ngram_min, maxsize=ngram_max)
