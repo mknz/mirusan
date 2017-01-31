@@ -21,10 +21,12 @@
   },
   "homepage": "https://github.com/elm-electron/electron#readme",
   "devDependencies": {
+    "babel-cli": "^6.22.2",
+    "babel-preset-latest": "^6.22.0",
     "devtron": "^1.4.0",
+    "electron-debug": "^1.1.0",
     "eslint": "^3.11.1",
-    "eslint-config-google": "^0.7.1",
-    "electron-debug": "^1.1.0"
+    "eslint-config-google": "^0.7.1"
   },
   "dependencies": {
     "electron-prebuilt": "^0.36.0"
