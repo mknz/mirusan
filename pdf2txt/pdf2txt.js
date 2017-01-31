@@ -8,7 +8,7 @@ PDFJS.workerSrc = './node_modules/pdfjs-dist/build/pdf.worker.js';
 PDFJS.cMapUrl = '../cmaps/';
 PDFJS.cMapPacked = true;
 
-var vpdf2txt = (function () {
+var pdf2txt = (function () {
   const fs = require('fs');
   const path = require('path');
 
@@ -142,7 +142,7 @@ var vpdf2txt = (function () {
       }
       (async () => {
         for (let pdfPath of pdfPaths) {
-          await vpdf2txt.extractSaveAll(pdfPath, saveDir);
+          await pdf2txt.extractSaveAll(pdfPath, saveDir);
         }
       })().then(() => {
         console.log('Finished all.');
@@ -157,4 +157,4 @@ var vpdf2txt = (function () {
 //var saveDir = '../data/text';
 var docDir =  '.';
 var saveDir = '.';
-vpdf2txt.processAll(docDir, saveDir);
+pdf2txt.processAll(docDir, saveDir);
