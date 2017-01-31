@@ -112,15 +112,17 @@ var pdf2txt = (function () {
           }
           return Promise.all(promises).then(
             (saveTexts) => {
+              var savePaths = [];
               for (var i=0; i < saveTexts.length; i++) {
                 var pdfName = path.basename(pdfPath).split('.').shift();
                 var saveFileName = pdfName + '_p' + (i + 1).toString() + '.txt';
                 var savePath =  path.join(saveDir, saveFileName);
                 console.log(savePath);
+                savePaths.push(savePath);
                 fs.writeFileSync(savePath, saveTexts[i]);
               }
               console.log('Finished.');
-              return true;
+              return savePaths;
             })
         })
     },
@@ -146,13 +148,17 @@ var pdf2txt = (function () {
     },
 
     // extract texts from multiple pdf files
-    pdfFilesTotxt: function (pdfPaths, saveDir) {
+    pdfFilesTotxt: function (pdfPaths, saveDir, callback) {
       (async () => {
+        var savePaths = [];
         for (let pdfPath of pdfPaths) {
-          await pdf2txt.extractSaveAll(pdfPath, saveDir);
+          var res = await pdf2txt.extractSaveAll(pdfPath, saveDir);
+          savePaths = savePaths.concat(res);
         }
-      })().then(() => {
+        return savePaths;
+      })().then(savePaths => {
         console.log('Finished all.');
+        callback(savePaths);
       }).catch(() => {
         console.log('Failed');
       });

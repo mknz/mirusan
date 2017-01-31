@@ -34,16 +34,38 @@
     document.getElementById('pdf-viewer').contentWindow.location.replace('./pdfjs/web/viewer.html?file=' + pdfFilePath + '&page=' + pageNum.toString());
   });
 
-  // Get document paths to add DB by dialog, send them back to elm
+  // Get document paths to add DB by dialog
   var elem = document.getElementById('getFilesToAddDB');
   elem.addEventListener('change', function(e) {
     var files = e.target.files;
     var filePaths = [];
-    for (var i = 0 ; i < files.length ; i++ )
+    // Check all files are pdf
+    for (var i = 0 ; i < files.length; i++ )
     {
-      filePaths.push(files[i].path);
+      var filePath = files[i].path;
+      var fileName = path.basename(filePath);
+      if (['pdf', 'PDF'].indexOf(fileName.split('.').pop()) >= 0) {
+          filePaths.push(filePath);
+      }
     }
-    app.ports.filesToAddDB.send(filePaths);
+    if (files.length != filePaths.length) {
+      alert('Please select only pdf files.');
+      return;
+    }
+
+    // Copy pdf files to data dir
+    var pdfPaths = [];
+    for (var i = 0; i < filePaths.length; i++) {
+      var filePath = filePaths[i];
+      var dstPath = path.join(Config.pdf_dir, path.basename(filePath));
+      console.log('Copy to: ' + dstPath);
+      fs.createReadStream(filePath).pipe(fs.createWriteStream(dstPath));
+      pdfPaths.push(dstPath);
+    }
+
+    // Extract text from pdf, call elm when finished
+    pdf2txt.pdfFilesTotxt(pdfPaths, Config.txt_dir, app.ports.filesToAddDB.send)
+
   }, false);
 
   // Invoke file open dialog.
