@@ -5,7 +5,6 @@ import falcon
 
 from wsgiref import simple_server
 import json
-import traceback
 import subprocess
 
 
@@ -45,10 +44,12 @@ class AddFileToDB:
         resp_json['message'] = 'Start adding files.'
         resp.body = json.dumps(resp_json, ensure_ascii=False)
 
-api = falcon.API()
-api.add_route('/search', SearchDB())
-api.add_route('/add-file', AddFileToDB())
 
-if __name__ == "__main__":
-    httpd = simple_server.make_server("127.0.0.1", 8000, api)
-    httpd.serve_forever()
+class Server:
+    api = falcon.API()
+    api.add_route('/search', SearchDB())
+    api.add_route('/add-file', AddFileToDB())
+
+    def start(self):
+        httpd = simple_server.make_server("127.0.0.1", 8000, self.api)
+        httpd.serve_forever()

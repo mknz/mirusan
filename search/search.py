@@ -1,3 +1,5 @@
+import api_server
+
 from whoosh.index import create_in, open_dir
 from whoosh.fields import TEXT, DATETIME, NUMERIC, Schema
 from whoosh.analysis import NgramTokenizer
@@ -169,7 +171,15 @@ def main():
     parser.add_argument('--add-files', default=None, nargs='+')
     parser.add_argument('--ngram-min', default=1)
     parser.add_argument('--ngram-max', default=2)
+
+    parser.add_argument('--server', action='store_true')
+
     args = parser.parse_args()
+
+    if args.server:
+        server = api_server.Server()
+        server.start()
+        return
 
     if args.init:
         im = IndexManager()
