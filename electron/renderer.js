@@ -31,7 +31,9 @@
   app.ports.openNewFile.subscribe(function(resp) {
     var pdfFileName = resp[0];
     var pageNum = resp[1];
-    var pdfFilePath = path.join(Config.pdf_dir, pdfFileName);
+    // abs path
+    var pdfFilePath = path.resolve(path.join(Config.pdf_dir, pdfFileName));
+    console.log(pdfFilePath);
     document.getElementById('pdf-viewer').contentWindow.location.replace('./pdfjs/web/viewer.html?file=' + pdfFilePath + '&page=' + pageNum.toString());
   });
 
@@ -61,11 +63,11 @@
       var dstPath = path.join(Config.pdf_dir, path.basename(filePath));
       console.log('Copy to: ' + dstPath);
       fs.createReadStream(filePath).pipe(fs.createWriteStream(dstPath));
-      pdfPaths.push(dstPath);
+      pdfPaths.push(path.resolve(dstPath));
     }
 
     // Extract text from pdf, call elm when finished
-    pdf2txt.pdfFilesTotxt(pdfPaths, Config.txt_dir, app.ports.filesToAddDB.send)
+    pdf2txt.pdfFilesTotxt(pdfPaths, path.resolve(Config.txt_dir), app.ports.filesToAddDB.send)
 
   }, false);
 

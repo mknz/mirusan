@@ -13,13 +13,17 @@ const BrowserWindow = electron.BrowserWindow;
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 
+if (process.platform == 'win32') {
+  var subpy = require('child_process').spawn('./mirusan_search.exe', ['--server']);
+}
+
 /**
  * [createWindow description]
  * @method createWindow
  */
 function createWindow() {
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 800, height: 640});
+  mainWindow = new BrowserWindow({width: 1000, height: 700});
   //mainWindow.setMenu(null);
 
   // and load the index.html of the app.
@@ -30,10 +34,17 @@ function createWindow() {
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function() {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
-    mainWindow = null;
+    if (process.platform == 'win32') {
+      console.log('Killing subprocess.');
+      const killer = require('child_process').execSync;
+      killer('taskkill /im mirusan_search.exe /f /t', (err, stdout, stderr) => {
+        console.log(err);
+        console.log(stderr);
+        console.log(stdout);
+      });
+   }
+   console.log('Closing window.');
+   mainWindow = null;
   });
 }
 

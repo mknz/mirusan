@@ -17,7 +17,8 @@
   "dependencies": {
     "electron": "^1.4.15",
     "babel-preset-latest": "^6.22.0",
-    "babel-polyfill": "*"
+    "babel-polyfill": "*",
+    "child-process": "*"
   },
   "babel": {
   "sourceMaps": "inline",
