@@ -1,25 +1,11 @@
 {
-  "name": "elm-electron-ipc",
+  "name": "mirusan",
   "version": "0.1.0",
-  "description": "Example of how to use elm-electron for IPC communication",
+  "description": "",
   "main": "main.js",
   "scripts": {
     "start": "electron main.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/elm-electron/electron.git"
-  },
-  "keywords": [
-    "Electron",
-    "Elm"
-  ],
-  "author": "oleiade",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/elm-electron/electron/issues"
-  },
-  "homepage": "https://github.com/elm-electron/electron#readme",
   "devDependencies": {
     "babel-cli": "^6.22.2",
     "babel-preset-latest": "^6.22.0",
@@ -29,6 +15,14 @@
     "eslint-config-google": "^0.7.1"
   },
   "dependencies": {
-    "electron-prebuilt": "^0.36.0"
+    "electron": "^1.4.15",
+    "babel-preset-latest": "^6.22.0",
+    "babel-polyfill": "*"
+  },
+  "babel": {
+  "sourceMaps": "inline",
+  "presets": [
+    "es2015"
+  ]
   }
 }
