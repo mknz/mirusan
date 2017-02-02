@@ -1,5 +1,3 @@
-import api_server
-
 from whoosh.index import create_in, open_dir
 from whoosh.fields import TEXT, DATETIME, NUMERIC, Schema
 from whoosh.analysis import NgramTokenizer
@@ -10,20 +8,36 @@ import os
 import datetime
 import re
 import sys
+import json
 
 
 class Config:
-    data_dir = os.environ.get('DATA_DIR')
-    if data_dir is None:
-        raise ValueError('DATA_DIR is not set in env.')
+    def check_and_create_dir(dirpath):
+        if not os.path.exists(dirpath):
+            print('Create dir: ' + dirpath)
+            os.mkdir(dirpath)
 
-    if not os.path.exists(data_dir):
-        print('Create DATA_DIR: ' + data_dir)
-        os.mkdir(data_dir)
+    config_filename = './config.json'
+    if not os.path.exists(config_filename):
+        raise ValueError('config.json does not exist.')
+
+    with open(config_filename) as f:
+        config = json.load(f)
+
+    data_dir = config['data_dir']
+    if data_dir == '':
+        raise ValueError('data_dir is not properly set in config file.')
+
+    check_and_create_dir(data_dir)
 
     database_dir = os.path.join(data_dir, 'database')
-    pdf_dir = os.path.join(data_dir, 'pdf')
-    txt_dir = os.path.join(data_dir, 'txt')
+    check_and_create_dir(database_dir)
+
+    pdf_dir = config['pdf_dir']
+    check_and_create_dir(pdf_dir)
+
+    txt_dir = config['txt_dir']
+    check_and_create_dir(txt_dir)
 
     platform = sys.platform
 
@@ -177,7 +191,9 @@ def main():
     args = parser.parse_args()
 
     if args.server:
+        import api_server
         server = api_server.Server()
+        print('Starting api server')
         server.start()
         return
 
