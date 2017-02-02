@@ -55,6 +55,8 @@ class IndexManager:
 
         schema = Schema(text_file_path     = stored_text_field,
                         document_file_path = stored_text_field,
+                        text_file_name     = stored_text_field,
+                        document_file_name = stored_text_field,
                         title              = stored_indexed_text_field,
                         content            = stored_indexed_text_field,
                         page               = NUMERIC(stored=True),
@@ -83,6 +85,8 @@ class IndexManager:
         writer = ix.writer()
         writer.add_document(text_file_path     = text_file_path,
                             document_file_path = document_file_path,
+                            text_file_name     = os.path.basename(text_file_path),
+                            document_file_name = os.path.basename(document_file_path),
                             title              = title,
                             content            = content_text,
                             page               = num_page,
