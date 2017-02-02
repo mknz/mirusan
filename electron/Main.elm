@@ -170,7 +170,7 @@ addFilesToDB paths =
 -- JSON decoders
 
 rowDecoder =
-  map4 SearchResultRow (field "title" string) (field "document_file_path" string) (field "page" int) (field "highlighted_body" string)
+  map4 SearchResultRow (field "title" string) (field "document_file_name" string) (field "page" int) (field "highlighted_body" string)
 
 searchResponseDecoder : Decoder SearchResult
 searchResponseDecoder =

@@ -29,8 +29,9 @@
 
   // Open new pdf when openNewFile msg comes from elm
   app.ports.openNewFile.subscribe(function(resp) {
-    var pdfFilePath = resp[0];
+    var pdfFileName = resp[0];
     var pageNum = resp[1];
+    var pdfFilePath = path.join(Config.pdf_dir, pdfFileName);
     document.getElementById('pdf-viewer').contentWindow.location.replace('./pdfjs/web/viewer.html?file=' + pdfFilePath + '&page=' + pageNum.toString());
   });
 
