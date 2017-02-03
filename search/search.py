@@ -3,6 +3,7 @@ from whoosh.fields import TEXT, DATETIME, NUMERIC, Schema
 from whoosh.analysis import NgramTokenizer
 from whoosh.qparser import QueryParser, MultifieldParser
 
+import logging
 import argparse
 import os
 import datetime
@@ -11,10 +12,23 @@ import sys
 import json
 
 
+# logging
+logger = logging.getLogger('search')
+logger.setLevel(logging.DEBUG)
+file_handler = logging.FileHandler('search.log')
+formatter = logging.Formatter(
+    '%(asctime)s %(levelname)s: %(message)s '
+    '[in %(pathname)s:%(lineno)d]'
+)
+file_handler.setFormatter(formatter)
+file_handler.setLevel(logging.DEBUG)
+logger.addHandler(file_handler)
+logger.info('Start logging')
+
 class Config:
     def check_and_create_dir(dirpath):
         if not os.path.exists(dirpath):
-            print('Create dir: ' + dirpath)
+            logger.info('Create dir: ' + dirpath)
             os.mkdir(dirpath)
 
     config_filename = './config.json'
@@ -45,7 +59,7 @@ class Config:
 class IndexManager:
     def create_index(self, ngram_min, ngram_max):
         if not os.path.exists(Config.database_dir):
-            print('Create DATABASE_DIR: ' + Config.database_dir)
+            logger.info('Create DATABASE_DIR: ' + Config.database_dir)
             os.mkdir(Config.database_dir)
 
         ngram_tokenizer = NgramTokenizer(minsize=ngram_min, maxsize=ngram_max)
@@ -64,7 +78,7 @@ class IndexManager:
                         created_at         = DATETIME(stored=True))
 
         ix = create_in(Config.database_dir, schema)
-        print('Created db: ' + Config.database_dir)
+        logger.info('Created db: ' + Config.database_dir)
         ix.close()
 
     def add_text_file(self, text_file_path, document_file_path, num_page=1):
@@ -94,7 +108,7 @@ class IndexManager:
                             created_at         = datetime.datetime.now())
         writer.commit()
 
-        print('Added :' + text_file_path)
+        logger.info('Added :' + text_file_path)
         ix.close()
 
     def add_text_page_file(self, text_file_path):
@@ -197,7 +211,7 @@ def main():
     if args.server:
         import api_server
         server = api_server.Server()
-        print('Starting api server')
+        logger.info('Starting api server')
         server.start()
         return
 
