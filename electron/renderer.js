@@ -59,16 +59,18 @@
     // Copy pdf files to data dir
     var pdfPaths = [];
     for (var i = 0; i < filePaths.length; i++) {
-      var filePath = filePaths[i];
+      var filePath = path.resolve(filePaths[i]);
       var dstPath = path.join(Config.pdf_dir, path.basename(filePath));
-      console.log('Copy to: ' + dstPath);
-      fs.createReadStream(filePath).pipe(fs.createWriteStream(dstPath));
       pdfPaths.push(path.resolve(dstPath));
+      fs.readFile(filePath, (err, data) => {
+        if (err) throw err;
+        fs.writeFile(dstPath, data, (err) => {
+          if (err) throw err;
+          console.log('Copy complete: ' + dstPath);
+          pdf2txt.pdfFilesTotxt([filePath], path.resolve(Config.txt_dir), app.ports.filesToAddDB.send);
+        })
+      })
     }
-
-    // Extract text from pdf, call elm when finished
-    pdf2txt.pdfFilesTotxt(pdfPaths, path.resolve(Config.txt_dir), app.ports.filesToAddDB.send)
-
   }, false);
 
   // Invoke file open dialog.
