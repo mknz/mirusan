@@ -158,11 +158,12 @@ class Search:
             raise ValueError('DB dir does not exist: ' + Config.database_dir)
         self.ix = open_dir(Config.database_dir)
 
-    def search(self, query_str):
+    def search(self, query_str, n_page=1):
         with self.ix.searcher() as searcher:
             query = MultifieldParser(['title', 'content'],
                                      self.ix.schema).parse(query_str)
-            results = searcher.search(query)
+            results = searcher.search_page(query, n_page, pagelen=10)
+            n_hits = len(results)  # number of total hit documents
             res_list = []
             for r in results:
                 d = {}
@@ -176,7 +177,7 @@ class Search:
                 d['highlighted_body'] = self.remove_garble(r.highlights('content'))
 
                 res_list.append(d)
-            return res_list
+            return {'results': res_list, 'n_hits': n_hits}
 
     def remove_garble(self, str):
         """Remove (visually annoying) unicode replacement characters."""

@@ -24,7 +24,8 @@ class SearchDB:
             return
         items = self.search.search(query_str)
         resp_json = {}
-        resp_json['results'] = items
+        resp_json['results'] = items['results']
+        resp_json['n_hits'] =  items['n_hits']
         resp.body = json.dumps(resp_json, ensure_ascii=False)
 
 
