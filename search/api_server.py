@@ -22,7 +22,20 @@ class SearchDB:
             return
         if qstr is "":
             return
-        items = self.search.search(qstr)
+
+        rp = req.get_param('resultPage')
+        if rp is None:
+            n_result_page = 1
+        else:
+            n_result_page = int(rp)
+
+        pl = req.get_param('pagelen')
+        if pl is None:
+            pagelen = 10  # number of articles per result page
+        else:
+            pagelen = int(pl)
+
+        items = self.search.search(qstr, n_result_page, pagelen)
         resp_json = {}
         resp_json['results'] = items['results']
         resp_json['n_hits'] = items['n_hits']

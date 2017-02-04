@@ -158,11 +158,11 @@ class Search:
             raise ValueError('DB dir does not exist: ' + Config.database_dir)
         self.ix = open_dir(Config.database_dir)
 
-    def search(self, query_str, n_page=1):
+    def search(self, query_str, n_page=1, pagelen=10):
         with self.ix.searcher() as searcher:
             query = MultifieldParser(['title', 'content'],
                                      self.ix.schema).parse(query_str)
-            results = searcher.search_page(query, n_page, pagelen=10)
+            results = searcher.search_page(query, n_page, pagelen=pagelen)
             n_hits = len(results)  # number of total hit documents
             res_list = []
             for r in results:

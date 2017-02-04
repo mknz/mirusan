@@ -1,6 +1,6 @@
 'use strict';
 
-const debug=false;
+const debug=true;
 
 // Electron libraries
 const electron = require('electron');
