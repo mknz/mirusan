@@ -57,10 +57,8 @@ class Config:
 
 
 class IndexManager:
-    def __init__(self):
-        if not os.path.exists(Config.database_dir):
-            logger.info('Create DATABASE_DIR: ' + Config.database_dir)
-            os.mkdir(Config.database_dir)
+    def check_and_init_db(self):
+        if os.listdir(Config.database_dir) == []:
             self.create_index()
 
     def create_index(self, ngram_min=1, ngram_max=2):
@@ -211,6 +209,10 @@ def main():
     args = parser.parse_args()
 
     if args.server:
+        # Initialize db if not exist
+        im = IndexManager()
+        im.check_and_init_db()
+
         import api_server
         server = api_server.Server()
         logger.info('Starting api server')
@@ -230,6 +232,7 @@ def main():
     if args.add_files is not None:
         try:
             im = IndexManager()
+            im.check_and_init_db()
             for path in args.add_files:
                 im.add_text_page_file(path)
         except Exception as err:

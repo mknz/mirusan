@@ -51,5 +51,9 @@ class Server:
     api.add_route('/add-file', AddFileToDB())
 
     def start(self):
+        # Initialize db if not exist
+        im = IndexManager()
+        im.check_and_init_db()
+
         httpd = simple_server.make_server("127.0.0.1", 8000, self.api)
         httpd.serve_forever()
