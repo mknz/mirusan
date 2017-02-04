@@ -57,11 +57,12 @@ class Config:
 
 
 class IndexManager:
-    def create_index(self, ngram_min, ngram_max):
+    def __init__(self):
         if not os.path.exists(Config.database_dir):
             logger.info('Create DATABASE_DIR: ' + Config.database_dir)
             os.mkdir(Config.database_dir)
 
+    def create_index(self, ngram_min, ngram_max):
         ngram_tokenizer = NgramTokenizer(minsize=ngram_min, maxsize=ngram_max)
 
         stored_text_field = TEXT(stored=True)
@@ -226,9 +227,12 @@ def main():
         return
 
     if args.add_files is not None:
-        im = IndexManager()
-        for path in args.add_files:
-            im.add_text_page_file(path)
+        try:
+            im = IndexManager()
+            for path in args.add_files:
+                im.add_text_page_file(path)
+        except Exception as err:
+            logger.exception('Error at add_files: %s', err)
         return
 
     if args.add_dir is not None:
