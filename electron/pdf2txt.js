@@ -14,7 +14,7 @@ var pdf2txt = (function () {
   const fs = require('fs');
   const path = require('path');
 
-  // Concatinate text items to single text
+  // Concatenate text items to single text
   var catText = function (textItems) {
       var text = '';
       for (var i=0; i < textItems.length; i++) {
