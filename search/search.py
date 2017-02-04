@@ -61,8 +61,9 @@ class IndexManager:
         if not os.path.exists(Config.database_dir):
             logger.info('Create DATABASE_DIR: ' + Config.database_dir)
             os.mkdir(Config.database_dir)
+            self.create_index()
 
-    def create_index(self, ngram_min, ngram_max):
+    def create_index(self, ngram_min=1, ngram_max=2):
         ngram_tokenizer = NgramTokenizer(minsize=ngram_min, maxsize=ngram_max)
 
         stored_text_field = TEXT(stored=True)
@@ -90,7 +91,7 @@ class IndexManager:
         if ext != '.txt':
             raise ValueError('Input file is not text file: ' + text_file_path)
 
-        with open(text_file_path, 'r') as f:
+        with open(text_file_path, 'r', encoding='utf-8') as f:
             content_text = f.read()
 
         # set initial title: filename without ext
