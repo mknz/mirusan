@@ -52,12 +52,9 @@ type Msg
   = SendSearch String
   | NewSearchResult (Result Http.Error SearchResult)
   | OpenDocument (String, Int)
-  | GetFilesToAddDB
-  | FilesToAddDB (List String)
-  | AddDBResult (Result Http.Error String)
+  | AddFilesToDB
 
 port openNewFile : (String, Int) -> Cmd msg
-port getFilesToAddDB : Bool -> Cmd msg
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -70,14 +67,9 @@ update msg model =
       ( { model | searchResult = [] }, Cmd.none )
     OpenDocument (fileName, numPage) ->
       ( model, openNewFile (fileName, numPage) )
-    GetFilesToAddDB ->
-      ( model, getFilesToAddDB True)
-    FilesToAddDB paths ->
-      ( model, addFilesToDB paths )
-    AddDBResult (Ok res) ->
-      ( { model | serverMessage = res }, Cmd.none )
-    AddDBResult (Err _) ->
-      ( { model | serverMessage = "Server error" }, Cmd.none )
+    AddFilesToDB ->
+    -- send request to electron main process
+      ( model, IPC.send "pdf-extract-request-main" Json.Encode.null)
 
 -- VIEW
 
@@ -98,7 +90,7 @@ view model =
         header [ class "toolbar toolbar-header" ] [ toolbarActions ]
 
       addFileButton =
-        button [ class "btn btn-default", onClick GetFilesToAddDB, title "Add files to database" ] [ span [ class "icon icon-folder" ] [] ]
+        button [ class "btn btn-default", onClick AddFilesToDB, title "Add files to database" ] [ span [ class "icon icon-folder" ] [] ]
 
       toolButtons =
         div [ class "btn-group" ] [ addFileButton ]
@@ -125,14 +117,13 @@ view model =
       div []  [toolbarHeader, sidebarContainer, viewerContainer]
 
 -- SUBSCRIPTIONS
-
-port filesToAddDB : (List String -> msg) -> Sub msg
+--port filesToAddDB : (List String -> msg) -> Sub msg
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
   Sub.batch
   [
-    filesToAddDB FilesToAddDB
+    --filesToAddDB FilesToAddDB
   ]
 
 
@@ -146,26 +137,6 @@ search query =
   in
       Http.send NewSearchResult (Http.get url searchResponseDecoder)
 
-addFileToDB : String -> Cmd Msg
-addFileToDB jsonPathsString =
-  let
-      url =
-        "http://localhost:8000/add-file?json=" ++ (Http.encodeUri jsonPathsString)
-  in
-      Http.send AddDBResult (Http.get url addFileToDBResponseDecoder)
-
-
-addFilesToDB : (List String) -> Cmd Msg
-addFilesToDB paths =
-  let
-      jsList =
-        List.map Json.Encode.string paths
-          |> Json.Encode.list
-      jsObj =
-        Json.Encode.object [ ("paths", jsList) ]
-  in
-      addFileToDB (Json.Encode.encode 0 jsObj)
-
 
 -- JSON decoders
 
@@ -175,7 +146,3 @@ rowDecoder =
 searchResponseDecoder : Decoder SearchResult
 searchResponseDecoder =
   at ["results"] <| list rowDecoder
-
-addFileToDBResponseDecoder : Decoder String
-addFileToDBResponseDecoder =
-  at ["exit-status"] <| string

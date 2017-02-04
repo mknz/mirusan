@@ -37,45 +37,4 @@
     document.getElementById('pdf-viewer').contentWindow.location.replace('./pdfjs/web/viewer.html?file=' + pdfFilePath + '&page=' + pageNum.toString());
   });
 
-  // Get document paths to add DB by dialog
-  var elem = document.getElementById('getFilesToAddDB');
-  elem.addEventListener('change', function(e) {
-    var files = e.target.files;
-    var filePaths = [];
-    // Check all files are pdf
-    for (var i = 0 ; i < files.length; i++ )
-    {
-      var filePath = files[i].path;
-      var fileName = path.basename(filePath);
-      if (['pdf', 'PDF'].indexOf(fileName.split('.').pop()) >= 0) {
-          filePaths.push(filePath);
-      }
-    }
-    if (files.length != filePaths.length) {
-      alert('Please select only pdf files.');
-      return;
-    }
-
-    // Copy pdf files to data dir
-    var pdfPaths = [];
-    for (var i = 0; i < filePaths.length; i++) {
-      var filePath = path.resolve(filePaths[i]);
-      var dstPath = path.join(Config.pdf_dir, path.basename(filePath));
-      pdfPaths.push(path.resolve(dstPath));
-      fs.readFile(filePath, (err, data) => {
-        if (err) throw err;
-        fs.writeFile(dstPath, data, (err) => {
-          if (err) throw err;
-          console.log('Copy complete: ' + dstPath);
-          pdf2txt.pdfFilesTotxt([filePath], path.resolve(Config.txt_dir), app.ports.filesToAddDB.send);
-        })
-      })
-    }
-  }, false);
-
-  // Invoke file open dialog.
-  app.ports.getFilesToAddDB.subscribe(function() {
-    var elem = document.getElementById('getFilesToAddDB');
-    elem.click();
-  });
 })()

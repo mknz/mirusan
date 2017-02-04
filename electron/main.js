@@ -1,8 +1,10 @@
 'use strict';
 
+const debug=false;
+
 // Electron libraries
 const electron = require('electron');
-const {ipcMain} = require('electron');
+const {ipcMain, dialog} = require('electron');
 
 // Module to control application life.
 const app = electron.app;
@@ -15,6 +17,8 @@ let mainWindow;
 
 if (process.platform == 'win32') {
   var subpy = require('child_process').spawn('./mirusan_search.exe', ['--server']);
+} else if (process.platform == 'linux') {
+  var subpy = require('child_process').spawn('python3', ['../search/search.py', '--server']);
 }
 
 /**
@@ -23,43 +27,57 @@ if (process.platform == 'win32') {
  */
 function createWindow() {
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 1000, height: 700});
-  //mainWindow.setMenu(null);
+  let win = new BrowserWindow({width: 1000, height: 700});
+
+  if (!debug) { win.setMenu(null); }
 
   // and load the index.html of the app.
-  mainWindow.loadURL('file://' + __dirname + '/index.html');
+  win.loadURL('file://' + __dirname + '/index.html');
 
-  // for debug
-  mainWindow.webContents.openDevTools()
+  if (debug) { win.webContents.openDevTools(); }
 
   // Emitted when the window is closed.
-  mainWindow.on('closed', function() {
-    if (process.platform == 'win32') {
-      console.log('Killing subprocess.');
-      const killer = require('child_process').execSync;
-      killer('taskkill /im mirusan_search.exe /f /t', (err, stdout, stderr) => {
-        console.log(err);
-        console.log(stderr);
-        console.log(stdout);
-      });
-   }
+  win.on('closed', function() {
    console.log('Closing window.');
-   mainWindow = null;
+   win = null;
   });
+  return win;
 }
 
-/**
- * Initializes the app:
- *   - Get or create user settings database
- *   - Create app main windows
- */
-function initialize() {
-  createWindow();
-};
+function createBackgroundWindow(parentWindow) {
+  if (debug) {
+    var win = new BrowserWindow({width: 300, height: 700, parent: parentWindow});
+  } else {
+    var win = new BrowserWindow({width: 0, height: 0, show: false, parent: parentWindow});
+  }
+
+  // and load the index.html of the app.
+  win.loadURL('file://' + __dirname + '/bg.html');
+
+  if (debug) { win.webContents.openDevTools(); }
+
+  // Emitted when the window is closed.
+  win.on('closed', function() {
+   console.log('Closing window.');
+   win = null;
+  });
+  return win;
+}
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
-app.on('ready', initialize);
+app.on('ready', () => {
+  const mainWindow = createWindow();
+  const bgWindow = createBackgroundWindow(mainWindow);
+  ipcMain.on('pdf-extract-request-main', (event, arg) => {
+    dialog.showOpenDialog({filters: [{name: 'PDF files', extensions: ['pdf', 'PDF']}],
+                           properties: ['openFile', 'multiSelections']},
+                           (filePaths) => {
+                             bgWindow.webContents.send('pdf-extract-request-background',
+                             { pdfPaths: filePaths });
+                           })
+  });
+})
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function() {
@@ -67,6 +85,18 @@ app.on('window-all-closed', function() {
   // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== 'darwin') {
     app.quit();
+  }
+  if (process.platform == 'win32') {
+    console.log('Killing subprocess.');
+    const killer = require('child_process').execSync;
+    killer('taskkill /im mirusan_search.exe /f /t', (err, stdout, stderr) => {
+      console.log(err);
+      console.log(stderr);
+      console.log(stdout);
+    });
+  } else if (process.platform == 'linux') {
+    console.log('Killing subprocess.');
+    subpy.kill('SIGINT');
   }
 });
 
@@ -76,22 +106,4 @@ app.on('activate', function() {
   if (mainWindow === null) {
     createWindow();
   }
-});
-
-
-ipcMain.on('time-request', (event, arg) => {
-  let t;
-
-  if (arg['format'] == "timestamp") {
-    t = Date.now().toString();
-  } else if (arg['format'] == 'openPdf') {
-
-  } else {
-    t = Date().toLocaleString();
-  }
-
-  event.sender.send('time-response', {
-    status: "success",
-    time: t
-  });
 });
