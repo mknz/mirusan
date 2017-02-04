@@ -17,15 +17,15 @@ class SearchDB:
     search = Search()
 
     def on_get(self, req, resp):
-        query_str = req.get_param('query')
-        if query_str is None:
+        qstr = req.get_param('q')
+        if qstr is None:
             return
-        if query_str is "":
+        if qstr is "":
             return
-        items = self.search.search(query_str)
+        items = self.search.search(qstr)
         resp_json = {}
         resp_json['results'] = items['results']
-        resp_json['n_hits'] =  items['n_hits']
+        resp_json['n_hits'] = items['n_hits']
         resp.body = json.dumps(resp_json, ensure_ascii=False)
 
 

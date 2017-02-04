@@ -24,11 +24,15 @@ main =
 
 -- MODEL
 
-
 type alias Model =
   { currentQuery: String,
     searchResult: SearchResult,
     serverMessage: String
+  }
+
+type alias SearchResult =
+  { rows: List SearchResultRow,
+    nHits: Int
   }
 
 type alias SearchResultRow =
@@ -38,15 +42,25 @@ type alias SearchResultRow =
     body: String
   }
 
-type alias SearchResult = List SearchResultRow
+
+-- JSON decoders
+
+rowDecoder =
+  map4 SearchResultRow (field "title" string) (field "document_file_name" string) (field "page" int) (field "highlighted_body" string)
+
+searchResponseDecoder : Decoder SearchResult
+searchResponseDecoder =
+  map2 SearchResult (at ["results"] <| list rowDecoder) (at ["n_hits"] <| int)
+
+
+-- Init
 
 init : ( Model, Cmd Msg )
 init =
-  ({ currentQuery = "", searchResult = [], serverMessage = "" }, Cmd.none)
+  ({ currentQuery = "", searchResult = { rows = [ ], nHits = 0 }, serverMessage = "" }, Cmd.none)
 
 
 -- UPDATE
-
 
 type Msg
   = SendSearch String
@@ -64,7 +78,7 @@ update msg model =
     NewSearchResult (Ok res) ->
       ( { model | searchResult = res }, Cmd.none )
     NewSearchResult (Err _) ->
-      ( { model | searchResult = [] }, Cmd.none )
+      ( { model | searchResult = { rows = [], nHits = 0 } }, Cmd.none )
     OpenDocument (fileName, numPage) ->
       ( model, openNewFile (fileName, numPage) )
     AddFilesToDB ->
@@ -84,7 +98,7 @@ view model =
           ]
 
       searchResultDisplay =
-        List.map createComponent model.searchResult
+        List.map createComponent model.searchResult.rows
 
       toolbarHeader =
         header [ class "toolbar toolbar-header" ] [ toolbarActions ]
@@ -98,8 +112,11 @@ view model =
       toolbarActions =
         div [ class "toolbar-actions" ] [ div [ class "btn-group" ] [ searchWindow ], toolButtons, span [] [ text model.serverMessage ] ]
 
+      searchResultSummary =
+        div [] [ text ( (toString model.searchResult.nHits) ++ " hits." ) ]
+
       sidebarContainer =
-        div [ id "sidebar-container" ] [ div [ id "search" ]  searchResultDisplay ]
+        div [ id "sidebar-container" ] [ div [ id "search" ]  ( List.append [ searchResultSummary ] searchResultDisplay )  ]
 
       viewerIframe =
         iframe [ id "pdf-viewer", style [ ("width", "100%"), ("height", "100%") ], src "./pdfjs/web/viewer.html" ] []
@@ -133,16 +150,8 @@ search : String -> Cmd Msg
 search query =
   let
       url =
-        "http://localhost:8000/search?query=" ++ query
+        "http://localhost:8000/search?q=" ++ query
   in
       Http.send NewSearchResult (Http.get url searchResponseDecoder)
 
 
--- JSON decoders
-
-rowDecoder =
-  map4 SearchResultRow (field "title" string) (field "document_file_name" string) (field "page" int) (field "highlighted_body" string)
-
-searchResponseDecoder : Decoder SearchResult
-searchResponseDecoder =
-  at ["results"] <| list rowDecoder
