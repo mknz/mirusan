@@ -14,14 +14,14 @@ import json
 
 # logging
 logger = logging.getLogger('search')
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 file_handler = logging.FileHandler('search.log')
 formatter = logging.Formatter(
     '%(asctime)s %(levelname)s: %(message)s '
     '[in %(pathname)s:%(lineno)d]'
 )
 file_handler.setFormatter(formatter)
-file_handler.setLevel(logging.DEBUG)
+file_handler.setLevel(logging.INFO)
 logger.addHandler(file_handler)
 logger.info('Start logging')
 
