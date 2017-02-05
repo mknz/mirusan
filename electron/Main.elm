@@ -3,7 +3,7 @@ port module Main exposing (..)
 import Electron.IpcRenderer as IPC exposing (on, send)
 
 import Html exposing (Html, program, text, button, h1, h2, div, input, a, span, p, header, iframe, nav)
-import Html.Attributes exposing (class, id, type_, placeholder, value, href, style, src, title)
+import Html.Attributes exposing (class, id, type_, placeholder, value, href, style, src, title, size)
 import Html.Events exposing (onClick, onInput)
 import Json.Encode
 import Json.Decode exposing (int, string, float, bool, nullable, map, map2, map3, map4, field, at, list, Decoder)
@@ -158,25 +158,34 @@ view model =
         let
           resPageStr = (toString model.numResultPage) ++ " page of " ++ (toString model.searchResult.totalPages)
           hitsStr = "(" ++ (toString model.searchResult.nHits) ++ " hits" ++ ")"
+
+          summary =
+            if model.searchResult.totalPages == 0 then
+              ""
+            else
+              resPageStr ++ " " ++ hitsStr
         in
-          div [] [ div [] [ text (resPageStr ++ " " ++ hitsStr) ] ]
+          div [] [ div [ style [ ("height", "15px") ] ] [ text summary ] ]
 
       pagenation =
         let
-          prevPageButton = button [ class "btn btn-default", onClick GetPrevResultPage ] [ text "Prev" ]
-          nextPageButton = button [ class "btn btn-default", onClick GetNextResultPage ] [ text "Next" ]
-          prevPageButtonDisabled = button [ class "btn btn-default gray" ] [ text "Prev" ]
-          nextPageButtonDisabled = button [ class "btn btn-default gray" ] [ text "Next" ]
-          inputPage = input [ type_ "text", placeholder "page", onInput GotoResultPage ] []
+          prevPageButton = button [ class "btn btn-default", onClick GetPrevResultPage ] [ span [ class "icon icon-left" ] [] ]
+          nextPageButton = button [ class "btn btn-default", onClick GetNextResultPage ] [ span [ class "icon icon-right" ] [] ]
+          prevPageButtonDisabled = button [ class "btn btn-default gray" ] [ span [ class "icon icon-left" ] [] ]
+          nextPageButtonDisabled = button [ class "btn btn-default gray" ] [ span [ class "icon icon-right" ] [] ]
+          inputPage = input [ style [ ("margin-left", "10px"), ("line-height", "18px") ], type_ "text", placeholder "page", size 6, onInput GotoResultPage ] []
+
+          parts =
+            if model.numResultPage == 1 then
+              [ prevPageButtonDisabled, nextPageButton, inputPage ]
+            else if model.numResultPage == model.searchResult.totalPages then
+              [ prevPageButton, nextPageButtonDisabled, inputPage ]
+            else if model.searchResult.nHits == 0 then
+              [ prevPageButtonDisabled, nextPageButtonDisabled, inputPage ]
+            else
+              [ prevPageButton, nextPageButton, inputPage ]
         in
-          if model.numResultPage == 1 then
-            div [] [ prevPageButtonDisabled, nextPageButton, inputPage ]
-          else if model.numResultPage == model.searchResult.totalPages then
-            div [] [ prevPageButton, nextPageButtonDisabled, inputPage ]
-          else if model.searchResult.nHits == 0 then
-            div [] [ prevPageButtonDisabled, nextPageButtonDisabled, inputPage ]
-          else
-            div [] [ prevPageButton, nextPageButton, inputPage ]
+          div [ style [ ("margin-top", "5px") ] ] [ span [] parts ]
 
       sidebarContainer =
         div [ id "sidebar-container" ] [ div [ id "search" ]  ( List.append [ searchResultSummary, pagenation ] searchResultDisplay )  ]
