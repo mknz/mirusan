@@ -80,8 +80,10 @@ update msg model =
   case msg of
     SendSearch query ->
       ( { model | currentQuery = query }, search query model.numResultPage )
+
     NewSearchResult (Ok res) ->
       ( { model | searchResult = res }, Cmd.none )
+
     NewSearchResult (Err _) ->
       ( { model | numResultPage = 1, searchResult = { rows = [], nHits = 0, totalPages = 0 } }, Cmd.none )
 
@@ -173,7 +175,9 @@ view model =
           nextPageButton = button [ class "btn btn-default", onClick GetNextResultPage ] [ span [ class "icon icon-right" ] [] ]
           prevPageButtonDisabled = button [ class "btn btn-default gray" ] [ span [ class "icon icon-left" ] [] ]
           nextPageButtonDisabled = button [ class "btn btn-default gray" ] [ span [ class "icon icon-right" ] [] ]
-          inputPage = input [ style [ ("margin-left", "10px"), ("line-height", "18px") ], type_ "text", placeholder "page", size 6, onInput GotoResultPage ] []
+          inputPage = input [ style [ ("margin-left", "10px"), ("line-height", "18px") ]
+                            , type_ "text"
+                            , placeholder "page", size 6, onInput GotoResultPage ] []
 
           parts =
             if model.numResultPage == 1 then
@@ -188,7 +192,7 @@ view model =
           div [ style [ ("margin-top", "5px") ] ] [ span [] parts ]
 
       sidebarContainer =
-        div [ id "sidebar-container" ] [ div [ id "search" ]  ( List.append [ searchResultSummary, pagenation ] searchResultDisplay )  ]
+        div [ id "sidebar-container" ] [ div [ id "search" ]  ( List.append [ pagenation, searchResultSummary ] searchResultDisplay )  ]
 
       viewerIframe =
         iframe [ id "pdf-viewer", style [ ("width", "100%"), ("height", "100%") ], src "./pdfjs/web/viewer.html" ] []
