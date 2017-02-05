@@ -69,6 +69,7 @@ type Msg
   | NewSearchResult (Result Http.Error SearchResult)
   | GetNextResultPage
   | GetPrevResultPage
+  | GotoResultPage String
   | OpenDocument (String, Int)
   | AddFilesToDB
 
@@ -97,6 +98,22 @@ update msg model =
         ( { model | numResultPage = model.numResultPage - 1 }, search model.currentQuery model.numResultPage )
       else  -- last page
         ( model , Cmd.none )
+
+    GotoResultPage inputStr ->
+      case String.toInt inputStr of
+        (Ok n) ->
+          if n < 1 then
+          -- Go to first page
+            ( { model | numResultPage = 1 }, search model.currentQuery 1 )
+          else if n >= 1 && n <= model.searchResult.totalPages then
+          -- Go to specified page
+            ( { model | numResultPage = n }, search model.currentQuery n )
+          else
+          -- Go to last page
+            ( { model | numResultPage = model.searchResult.totalPages }, search model.currentQuery model.searchResult.totalPages )
+
+        (Err str) ->
+          ( model , Cmd.none )
 
     OpenDocument (fileName, numPage) ->
       ( model, openNewFile (fileName, numPage) )
@@ -144,18 +161,16 @@ view model =
           nextPageButton = button [ class "btn btn-default", onClick GetNextResultPage ] [ text "Next" ]
           prevPageButtonDisabled = button [ class "btn btn-default gray" ] [ text "Prev" ]
           nextPageButtonDisabled = button [ class "btn btn-default gray" ] [ text "Next" ]
+          inputPage = input [ type_ "text", placeholder "page", onInput GotoResultPage ] []
         in
           if model.numResultPage == 1 then
-            --div [] [ nextPageButton, prevPageButtonDisabled]
-            div [] [ prevPageButtonDisabled, nextPageButton ]
+            div [] [ prevPageButtonDisabled, nextPageButton, inputPage ]
           else if model.numResultPage == model.searchResult.totalPages then
-            --div [] [ nextPageButtonDisabled, prevPageButton ]
-            div [] [ prevPageButton, nextPageButtonDisabled ]
+            div [] [ prevPageButton, nextPageButtonDisabled, inputPage ]
           else if model.searchResult.nHits == 0 then
-            div [] [ prevPageButtonDisabled, nextPageButtonDisabled ]
+            div [] [ prevPageButtonDisabled, nextPageButtonDisabled, inputPage ]
           else
-            --div [] [ nextPageButton, prevPageButton ]
-            div [] [ prevPageButton, nextPageButton ]
+            div [] [ prevPageButton, nextPageButton, inputPage ]
 
       sidebarContainer =
         div [ id "sidebar-container" ] [ div [ id "search" ]  ( List.append [ searchResultSummary, pagenation ] searchResultDisplay )  ]
