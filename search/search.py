@@ -243,8 +243,11 @@ def main():
         return
 
     if args.query != '':
-        s = Search()
-        s.search_print(args.query)
+        try:
+            s = Search()
+            s.search_print(args.query)
+        except Exception as err:
+            Config.logger.exception('Error at search: %s', err)
         return
 
     if args.add_files is not None:
@@ -254,7 +257,7 @@ def main():
             for path in args.add_files:
                 im.add_text_page_file(path)
         except Exception as err:
-            logger.exception('Error at add_files: %s', err)
+            Config.logger.exception('Error at add_files: %s', err)
         return
 
     if args.add_dir is not None:
