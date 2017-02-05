@@ -87,17 +87,23 @@ update msg model =
 
     GetNextResultPage ->
     -- pagenation
-      if model.numResultPage < model.searchResult.totalPages then
-        ( { model | numResultPage = model.numResultPage + 1 }, search model.currentQuery model.numResultPage )
-      else  -- last page
-        ( model , Cmd.none )
+      let
+        nPage = model.numResultPage + 1
+      in
+        if model.numResultPage < model.searchResult.totalPages then
+          ( { model | numResultPage = nPage }, search model.currentQuery nPage )
+        else  -- last page
+          ( model , Cmd.none )
 
     GetPrevResultPage ->
     -- pagenation
-      if model.numResultPage > 1 then
-        ( { model | numResultPage = model.numResultPage - 1 }, search model.currentQuery model.numResultPage )
-      else  -- last page
-        ( model , Cmd.none )
+      let
+        nPage = model.numResultPage - 1
+      in
+        if model.numResultPage > 1 then
+          ( { model | numResultPage = nPage }, search model.currentQuery nPage )
+        else  -- last page
+          ( model , Cmd.none )
 
     GotoResultPage inputStr ->
       case String.toInt inputStr of

@@ -182,6 +182,8 @@ class Search:
             results = searcher.search_page(query, n_page, pagelen=pagelen)
             n_hits = len(results)  # number of total hit documents
             total_pages = n_hits // pagelen + 1  # number of search result pages
+            if n_page > total_pages:
+                raise ValueError
 
             res_list = []
             for r in results:
