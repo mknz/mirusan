@@ -68,6 +68,7 @@ type Msg
   = SendSearch String
   | NewSearchResult (Result Http.Error SearchResult)
   | GetNextResultPage
+  | GetPrevResultPage
   | OpenDocument (String, Int)
   | AddFilesToDB
 
@@ -82,10 +83,18 @@ update msg model =
       ( { model | searchResult = res }, Cmd.none )
     NewSearchResult (Err _) ->
       ( { model | numResultPage = 1, searchResult = { rows = [], nHits = 0, totalPages = 0 } }, Cmd.none )
+
     GetNextResultPage ->
     -- pagenation
       if model.numResultPage < model.searchResult.totalPages then
         ( { model | numResultPage = model.numResultPage + 1 }, search model.currentQuery model.numResultPage )
+      else  -- last page
+        ( model , Cmd.none )
+
+    GetPrevResultPage ->
+    -- pagenation
+      if model.numResultPage > 1 then
+        ( { model | numResultPage = model.numResultPage - 1 }, search model.currentQuery model.numResultPage )
       else  -- last page
         ( model , Cmd.none )
 
@@ -130,7 +139,23 @@ view model =
           div [] [ div [] [ text (resPageStr ++ " " ++ hitsStr) ] ]
 
       pagenation =
-        div [] [ button [ class "btn btn-default", onClick GetNextResultPage ] [ text "Next" ] ]
+        let
+          prevPageButton = button [ class "btn btn-default", onClick GetPrevResultPage ] [ text "Prev" ]
+          nextPageButton = button [ class "btn btn-default", onClick GetNextResultPage ] [ text "Next" ]
+          prevPageButtonDisabled = button [ class "btn btn-default gray" ] [ text "Prev" ]
+          nextPageButtonDisabled = button [ class "btn btn-default gray" ] [ text "Next" ]
+        in
+          if model.numResultPage == 1 then
+            --div [] [ nextPageButton, prevPageButtonDisabled]
+            div [] [ prevPageButtonDisabled, nextPageButton ]
+          else if model.numResultPage == model.searchResult.totalPages then
+            --div [] [ nextPageButtonDisabled, prevPageButton ]
+            div [] [ prevPageButton, nextPageButtonDisabled ]
+          else if model.searchResult.nHits == 0 then
+            div [] [ prevPageButtonDisabled, nextPageButtonDisabled ]
+          else
+            --div [] [ nextPageButton, prevPageButton ]
+            div [] [ prevPageButton, nextPageButton ]
 
       sidebarContainer =
         div [ id "sidebar-container" ] [ div [ id "search" ]  ( List.append [ searchResultSummary, pagenation ] searchResultDisplay )  ]

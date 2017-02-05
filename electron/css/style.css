@@ -43,3 +43,7 @@ b.match:hover {
 div.invisible {
   display: none;
 }
+
+button.gray {
+  color:#AAAAAA;
+}
