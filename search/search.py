@@ -1,5 +1,5 @@
 from whoosh.index import create_in, open_dir
-from whoosh.fields import TEXT, DATETIME, NUMERIC, Schema
+from whoosh.fields import TEXT, DATETIME, NUMERIC, KEYWORD, ID, Schema
 from whoosh.analysis import NgramTokenizer
 from whoosh.qparser import QueryParser, MultifieldParser
 
@@ -79,18 +79,21 @@ class IndexManager:
 
     def create_index(self, ngram_min=1, ngram_max=2):
         ngram_tokenizer = NgramTokenizer(minsize=ngram_min, maxsize=ngram_max)
-
-        stored_text_field = TEXT(stored=True)
-        stored_indexed_text_field = TEXT(stored=True, analyzer=ngram_tokenizer)
-
-        schema = Schema(text_file_path     = stored_text_field,
-                        document_file_path = stored_text_field,
-                        text_file_name     = stored_text_field,
-                        document_file_name = stored_text_field,
-                        title              = stored_indexed_text_field,
-                        content            = stored_indexed_text_field,
+        schema = Schema(text_file_path     = ID(stored=True),
+                        document_file_path = ID(stored=True),
+                        text_file_name     = ID(stored=True),
+                        document_file_name = ID(stored=True),
+                        title              = TEXT(stored=True, sortable=True, analyzer=ngram_tokenizer),
+                        author             = TEXT(stored=True, sortable=True, analyzer=ngram_tokenizer),
+                        publisher          = TEXT(stored=True, sortable=True, analyzer=ngram_tokenizer),
+                        content            = TEXT(stored=True, sortable=True, analyzer=ngram_tokenizer),
                         page               = NUMERIC(stored=True),
-                        memo               = stored_indexed_text_field,
+                        total_pages        = NUMERIC(stored=True),
+                        tags               = KEYWORD(stored=True, lowercase=True, scorable=True),
+                        memo               = TEXT(stored=True, sortable=True, analyzer=ngram_tokenizer),
+                        language           = ID(stored=True),
+                        document_format    = ID(stored=True),
+                        identifier         = ID(stored=True),
                         published_at       = DATETIME(stored=True, sortable=True),
                         created_at         = DATETIME(stored=True, sortable=True))
 
@@ -122,7 +125,6 @@ class IndexManager:
                             title              = title,
                             content            = content_text,
                             page               = num_page,
-                            memo               = '',
                             published_at       = published_at,
                             created_at         = datetime.datetime.now())
         writer.commit()
