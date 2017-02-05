@@ -2,6 +2,7 @@ from whoosh.index import create_in, open_dir
 from whoosh.fields import TEXT, DATETIME, NUMERIC, KEYWORD, ID, Schema
 from whoosh.analysis import NgramTokenizer
 from whoosh.qparser import QueryParser, MultifieldParser
+from whoosh.query import Every
 
 import logging
 import argparse
@@ -202,10 +203,31 @@ class Search:
 
                 # remove garbled characters
                 d['highlighted_body'] = self.remove_garble(r.highlights('content'))
-
                 res_list.append(d)
 
             return {'rows': res_list, 'n_hits': n_hits, 'total_pages': total_pages}
+
+    def get_sorted_index(self, field, n_page=1, pagelen=10, reverse=False):
+        with self.ix.searcher() as searcher:
+            query = Every()
+            results = searcher.search_page(query, n_page, pagelen=pagelen,
+                                           sortedby=field, reverse=reverse)
+            n_docs = len(results)  # number of total documents
+            total_pages = n_docs // pagelen + 1  # number of result pages
+            if n_page > total_pages:
+                raise ValueError
+
+            res_list = []
+            for r in results:
+                d = {}
+                for key in r.keys():  # copy all fields
+                    if type(r[key]) == datetime.datetime:
+                        d[key] = r[key].isoformat()
+                    else:
+                        d[key] = r[key]
+                res_list.append(d)
+
+            return {'rows': res_list, 'n_docs': n_docs, 'total_pages': total_pages}
 
     def remove_garble(self, str):
         """Remove (visually annoying) unicode replacement characters."""

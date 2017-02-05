@@ -39,6 +39,39 @@ class SearchDB:
         resp.body = json.dumps(search_result, ensure_ascii=False)
 
 
+class SortedIndex:
+    search = Search()
+
+    def on_get(self, req, resp):
+        field = req.get_param('field')
+        if field is None:
+            return
+        if field is '':
+            return
+
+        rev = req.get_param('reverse')
+        if rev == '1':
+            reverse = True
+        else:
+            reverse = False
+
+        rp = req.get_param('resultPage')
+        if rp is None:
+            n_result_page = 1
+        else:
+            n_result_page = int(rp)
+
+        pl = req.get_param('pagelen')
+        if pl is None:
+            pagelen = 10  # number of articles per result page
+        else:
+            pagelen = int(pl)
+
+        res = self.search.get_sorted_index(field=field, n_page=n_result_page,
+                                           pagelen=pagelen, reverse=reverse)
+        resp.body = json.dumps(res, ensure_ascii=False)
+
+
 class AddFileToDB:
     im = IndexManager()
 
@@ -60,6 +93,7 @@ class Server:
     api = falcon.API()
     api.add_route('/search', SearchDB())
     api.add_route('/add-file', AddFileToDB())
+    api.add_route('/sorted-index', SortedIndex())
 
     def start(self):
         # Initialize db if not exist
