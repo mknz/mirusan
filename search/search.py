@@ -12,48 +12,64 @@ import sys
 import json
 
 
-# logging
-logger = logging.getLogger('search')
-logger.setLevel(logging.INFO)
-file_handler = logging.FileHandler('search.log')
-formatter = logging.Formatter(
-    '%(asctime)s %(levelname)s: %(message)s '
-    '[in %(pathname)s:%(lineno)d]'
-)
-file_handler.setFormatter(formatter)
-file_handler.setLevel(logging.INFO)
-logger.addHandler(file_handler)
-logger.info('Start logging')
-
 class Config:
-    def check_and_create_dir(dirpath):
-        if not os.path.exists(dirpath):
-            logger.info('Create dir: ' + dirpath)
-            os.mkdir(dirpath)
-
     config_filename = './config.json'
     if not os.path.exists(config_filename):
         raise ValueError('config.json does not exist.')
 
+    # read config from json file
     with open(config_filename) as f:
         config = json.load(f)
+
+    if config['mode'] == 'debug':
+        debug = True
+    else:
+        debug = False
+
+    platform = sys.platform
+
+    def create_logger(debug):
+        logger = logging.getLogger()
+
+        file_handler = logging.FileHandler('search.log')
+        formatter = logging.Formatter(
+            '%(asctime)s %(levelname)s: %(message)s '
+            '[in %(pathname)s:%(lineno)d]'
+        )
+        file_handler.setFormatter(formatter)
+
+        if debug:
+            logger.setLevel(logging.DEBUG)
+            file_handler.setLevel(logging.DEBUG)
+        else:
+            logger.setLevel(logging.INFO)
+            file_handler.setLevel(logging.INFO)
+
+        logger.addHandler(file_handler)
+        logger.info('Start logging')
+        return logger
+
+    logger = create_logger(debug)
+
+    def check_and_create_dir(dirpath, logger):
+        if not os.path.exists(dirpath):
+            logger.info('Create dir: ' + dirpath)
+            os.mkdir(dirpath)
 
     data_dir = config['data_dir']
     if data_dir == '':
         raise ValueError('data_dir is not properly set in config file.')
 
-    check_and_create_dir(data_dir)
+    check_and_create_dir(data_dir, logger)
 
     database_dir = os.path.join(data_dir, 'database')
-    check_and_create_dir(database_dir)
+    check_and_create_dir(database_dir, logger)
 
     pdf_dir = config['pdf_dir']
-    check_and_create_dir(pdf_dir)
+    check_and_create_dir(pdf_dir, logger)
 
     txt_dir = config['txt_dir']
-    check_and_create_dir(txt_dir)
-
-    platform = sys.platform
+    check_and_create_dir(txt_dir, logger)
 
 
 class IndexManager:
@@ -78,7 +94,7 @@ class IndexManager:
                         created_at         = DATETIME(stored=True))
 
         ix = create_in(Config.database_dir, schema)
-        logger.info('Created db: ' + Config.database_dir)
+        Config.logger.info('Created db: ' + Config.database_dir)
         ix.close()
 
     def add_text_file(self, text_file_path, document_file_path, num_page=1):
@@ -108,7 +124,7 @@ class IndexManager:
                             created_at         = datetime.datetime.now())
         writer.commit()
 
-        logger.info('Added :' + text_file_path)
+        Config.logger.info('Added :' + text_file_path)
         ix.close()
 
     def add_text_page_file(self, text_file_path):
@@ -159,6 +175,7 @@ class Search:
         self.ix = open_dir(Config.database_dir)
 
     def search(self, query_str, n_page=1, pagelen=10):
+        Config.logger.debug('Get query: ' + query_str)
         with self.ix.searcher() as searcher:
             query = MultifieldParser(['title', 'content'],
                                      self.ix.schema).parse(query_str)
@@ -216,7 +233,7 @@ def main():
 
         import api_server
         server = api_server.Server()
-        logger.info('Starting api server')
+        Config.logger.info('Starting api server')
         server.start()
         return
 
