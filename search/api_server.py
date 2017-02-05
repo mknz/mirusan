@@ -20,7 +20,7 @@ class SearchDB:
         qstr = req.get_param('q')
         if qstr is None:
             return
-        if qstr is "":
+        if qstr is '':
             return
 
         rp = req.get_param('resultPage')
@@ -35,11 +35,8 @@ class SearchDB:
         else:
             pagelen = int(pl)
 
-        items = self.search.search(qstr, n_result_page, pagelen)
-        resp_json = {}
-        resp_json['results'] = items['results']
-        resp_json['n_hits'] = items['n_hits']
-        resp.body = json.dumps(resp_json, ensure_ascii=False)
+        search_result = self.search.search(qstr, n_result_page, pagelen)
+        resp.body = json.dumps(search_result, ensure_ascii=False)
 
 
 class AddFileToDB:

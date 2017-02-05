@@ -6,7 +6,7 @@ import Html exposing (Html, program, text, button, h1, h2, div, input, a, span, 
 import Html.Attributes exposing (class, id, type_, placeholder, value, href, style, src, title)
 import Html.Events exposing (onClick, onInput)
 import Json.Encode
-import Json.Decode exposing (int, string, float, bool, nullable, map, map3, map2, map4, field, at, list, Decoder)
+import Json.Decode exposing (int, string, float, bool, nullable, map, map2, map3, map4, field, at, list, Decoder)
 import Json.Decode.Pipeline exposing (decode, required, optional, hardcoded)
 import Json.Encode
 import Http
@@ -27,14 +27,14 @@ main =
 type alias Model =
   { currentQuery: String,
     numResultPage: Int,
-    pagelen: Int,
     searchResult: SearchResult,
     serverMessage: String
   }
 
 type alias SearchResult =
   { rows: List SearchResultRow,
-    nHits: Int
+    nHits: Int,
+    totalPages: Int
   }
 
 type alias SearchResultRow =
@@ -52,14 +52,14 @@ rowDecoder =
 
 searchResponseDecoder : Decoder SearchResult
 searchResponseDecoder =
-  map2 SearchResult (at ["results"] <| list rowDecoder) (at ["n_hits"] <| int)
+  map3 SearchResult (at ["rows"] <| list rowDecoder) (at ["n_hits"] <| int) (at ["total_pages"] <| int)
 
 
 -- Init
 
 init : ( Model, Cmd Msg )
 init =
-  ({ currentQuery = "", numResultPage = 1, pagelen = 10, searchResult = { rows = [], nHits = 0 }, serverMessage = "" }, Cmd.none)
+  ({ currentQuery = "", numResultPage = 1, searchResult = { rows = [], nHits = 0, totalPages = 0 }, serverMessage = "" }, Cmd.none)
 
 
 -- UPDATE
@@ -77,20 +77,17 @@ update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
     SendSearch query ->
-      ( { model | currentQuery = query }, search query model.numResultPage model.pagelen)
+      ( { model | currentQuery = query }, search query model.numResultPage )
     NewSearchResult (Ok res) ->
       ( { model | searchResult = res }, Cmd.none )
     NewSearchResult (Err _) ->
-      ( { model | numResultPage = 1, searchResult = { rows = [], nHits = 0 } }, Cmd.none )
+      ( { model | numResultPage = 1, searchResult = { rows = [], nHits = 0, totalPages = 0 } }, Cmd.none )
     GetNextResultPage ->
     -- pagenation
-      let
-        totalPage =  model.searchResult.nHits // model.pagelen + 1
-      in
-        if model.numResultPage < totalPage then
-          ( { model | numResultPage = model.numResultPage + 1 }, search model.currentQuery model.numResultPage model.pagelen)
-        else  -- last page
-          ( model , Cmd.none )
+      if model.numResultPage < model.searchResult.totalPages then
+        ( { model | numResultPage = model.numResultPage + 1 }, search model.currentQuery model.numResultPage )
+      else  -- last page
+        ( model , Cmd.none )
 
     OpenDocument (fileName, numPage) ->
       ( model, openNewFile (fileName, numPage) )
@@ -127,11 +124,10 @@ view model =
 
       searchResultSummary =
         let
-          totalPage =  model.searchResult.nHits // model.pagelen + 1
+          resPageStr = (toString model.numResultPage) ++ " page of " ++ (toString model.searchResult.totalPages)
+          hitsStr = "(" ++ (toString model.searchResult.nHits) ++ " hits" ++ ")"
         in
-          div [] [ div [] [ text ( (toString model.numResultPage) ++ " page of " ++ (toString totalPage) ) ]
-                 , div [] [ text ((toString model.searchResult.nHits) ++ " hits." ) ]
-                 ]
+          div [] [ div [] [ text (resPageStr ++ " " ++ hitsStr) ] ]
 
       pagenation =
         div [] [ button [ class "btn btn-default", onClick GetNextResultPage ] [ text "Next" ] ]
@@ -167,11 +163,11 @@ subscriptions model =
 
 -- HTTP
 
-search : String -> Int -> Int -> Cmd Msg
-search query numResultPage pagelen =
+search : String -> Int -> Cmd Msg
+search query numResultPage =
   let
       url =
-        "http://localhost:8000/search?q=" ++ query ++ "&resultPage=" ++ (toString numResultPage) ++ "&pagelen=" ++ (toString pagelen)
+        "http://localhost:8000/search?q=" ++ query ++ "&resultPage=" ++ (toString numResultPage)
   in
       Http.send NewSearchResult (Http.get url searchResponseDecoder)
 

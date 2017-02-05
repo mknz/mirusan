@@ -181,6 +181,8 @@ class Search:
                                      self.ix.schema).parse(query_str)
             results = searcher.search_page(query, n_page, pagelen=pagelen)
             n_hits = len(results)  # number of total hit documents
+            total_pages = n_hits // pagelen + 1  # number of search result pages
+
             res_list = []
             for r in results:
                 d = {}
@@ -194,7 +196,8 @@ class Search:
                 d['highlighted_body'] = self.remove_garble(r.highlights('content'))
 
                 res_list.append(d)
-            return {'results': res_list, 'n_hits': n_hits}
+
+            return {'rows': res_list, 'n_hits': n_hits, 'total_pages': total_pages}
 
     def remove_garble(self, str):
         """Remove (visually annoying) unicode replacement characters."""
