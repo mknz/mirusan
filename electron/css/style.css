@@ -2,9 +2,16 @@ html {
   overflow: hidden;
 }
 
+div#window {
+  min-width: 700px;
+  margin: 0px;
+  padding: 0px;
+}
+
 div#sidebar-container {
   float: left;
   width: 30%;
+  min-width: 200px;
   overflow-y: scroll;
   overflow-x: hidden;
 
