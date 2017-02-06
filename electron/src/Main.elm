@@ -27,7 +27,7 @@ init =
    , numResultPage = 1
    , numTotalPage = 0
    , numArticles = 0
-   , searchResult = { rows = [], nHits = 0, totalPages = 0 }
+   , searchResult = { rows = [], n_hits = 0, total_pages = 0 }
    , indexResult = { rows = [], n_docs = 0, total_pages = 0 }
    , serverMessage = ""
    , viewMode = Models.SearchMode

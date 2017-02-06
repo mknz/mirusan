@@ -14,7 +14,7 @@ indexView model =
   let
     nPage = 1
     createComponent row =
-      div [ class "search-result", onClick (OpenDocument (row.document_file_name, nPage)) ] [ text row.title ]
+      div [ class "search-result", onClick (OpenDocument (row.file_path, nPage)) ] [ text row.title ]
 
     resultDisplay =
       List.map createComponent model.indexResult.rows

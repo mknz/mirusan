@@ -28,16 +28,16 @@ update msg model =
         ( { model | currentQuery = query, viewMode = Models.SearchMode }, search query model.numResultPage )
 
       NewSearchResult (Ok res) ->
-        ( { model | searchResult = res, numTotalPage = res.totalPages, numArticles = res.nHits, serverMessage = "" }, Cmd.none )
+        ( { model | searchResult = res, numTotalPage = res.total_pages, numArticles = res.n_hits, serverMessage = "" }, Cmd.none )
 
       NewSearchResult (Err _) ->
-        ( { model | numResultPage = 1, numTotalPage = 0, numArticles = 0, searchResult = { rows = [], nHits = 0, totalPages = 0 } }, Cmd.none )
+        ( { model | numResultPage = 1, numTotalPage = 0, numArticles = 0, searchResult = { rows = [], n_hits = 0, total_pages = 0 } }, Cmd.none )
 
       ShowIndex ->
         ( { model | currentQuery = "", viewMode = Models.IndexMode }, getIndex "created_at" model.numResultPage )
 
       GotoSearchMode ->
-        ( { model | numResultPage = 1, numTotalPage = 0, numArticles = 0, currentQuery = "", viewMode = Models.SearchMode, searchResult = { rows = [], nHits = 0, totalPages = 0 }}, Cmd.none )
+        ( { model | numResultPage = 1, numTotalPage = 0, numArticles = 0, currentQuery = "", viewMode = Models.SearchMode, searchResult = { rows = [], n_hits = 0, total_pages = 0 }}, Cmd.none )
 
       NewIndexResult (Ok res) ->
         ( { model | indexResult = res, numTotalPage = res.total_pages, numArticles = res.n_docs, serverMessage = "" }, Cmd.none )

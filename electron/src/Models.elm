@@ -15,14 +15,15 @@ type ViewMode = SearchMode | IndexMode
 
 type alias SearchResult =
   { rows: List SearchResultRow,
-    nHits: Int,
-    totalPages: Int
+    n_hits: Int,
+    total_pages: Int
   }
 
 type alias SearchResultRow =
   { title: String,
-    fileName: String,
-    numPage: Int,
+    file_path: String,
+    parent_file_path: String,
+    page: Int,
     body: String
   }
 
@@ -34,6 +35,6 @@ type alias IndexResult =
 
 type alias IndexResultRow =
   { title: String,
-    document_file_name: String,
+    file_path: String,
     created_at: String
   }

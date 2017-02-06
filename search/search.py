@@ -101,7 +101,7 @@ class IndexManager:
         Config.logger.info('Created db: ' + Config.database_dir)
         ix.close()
 
-    def add_text_file(self, text_file_path, document_file_path, title="", num_page=1, published_at=None):
+    def add_text_file(self, text_file_path, parent_file_path, title="", num_page=1, published_at=None):
         if not os.path.exists(Config.database_dir):
             raise ValueError('DB dir does not exist: ' + Config.database_dir)
 
@@ -114,17 +114,16 @@ class IndexManager:
 
         # set initial title: filename without ext
         if title == "":
-            title = os.path.splitext(os.path.basename(document_file_path))[0]
+            title = os.path.splitext(os.path.basename(parent_file_path))[0]
 
         ix = open_dir(Config.database_dir)
         writer = ix.writer()
-        writer.add_document(text_file_path     = text_file_path,
-                            document_file_path = document_file_path,
-                            text_file_name     = os.path.basename(text_file_path),
-                            document_file_name = os.path.basename(document_file_path),
+        writer.add_document(file_path          = text_file_path,
+                            parent_file_path   = parent_file_path,
                             title              = title,
                             content            = content_text,
                             page               = num_page,
+                            document_format    = 'txt',
                             published_at       = published_at,
                             created_at         = datetime.datetime.now())
         writer.commit()
@@ -151,8 +150,8 @@ class IndexManager:
         if not os.path.exists(doc_file_path):
             raise ValueError('Document file does not exist: ' + doc_file_path)
 
-        self.add_text_file(text_file_path=text_file_path,
-                           document_file_path=doc_file_path, num_page=num_page)
+        self.add_text_file(text_file_path=text_file_path, parent_file_path=doc_file_path,
+                           num_page=num_page)
 
     def add_dir(self, text_dir_path):
         if not os.path.exists(Config.database_dir):

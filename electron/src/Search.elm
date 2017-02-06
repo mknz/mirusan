@@ -1,7 +1,7 @@
 module Search exposing (..)
 
 import Http
-import Json.Decode exposing (int, string, float, bool, nullable, map, map2, map3, map4, field, at, list, Decoder)
+import Json.Decode exposing (int, string, float, bool, nullable, map, map2, map3, map4, map5, field, at, list, Decoder)
 
 import Models exposing (SearchResult, SearchResultRow, IndexResult, IndexResultRow)
 import Messages exposing (Msg(..))
@@ -13,7 +13,7 @@ searchResponseDecoder : Decoder SearchResult
 searchResponseDecoder =
   let
     rowDecoder =
-      map4 SearchResultRow (field "title" string) (field "document_file_name" string) (field "page" int) (field "highlighted_body" string)
+      map5 SearchResultRow (field "title" string) (field "file_path" string) (field "parent_file_path" string) (field "page" int) (field "highlighted_body" string)
   in
     map3 SearchResult (at ["rows"] <| list rowDecoder) (at ["n_hits"] <| int) (at ["total_pages"] <| int)
 
@@ -21,7 +21,7 @@ indexResultDecoder : Decoder IndexResult
 indexResultDecoder =
   let
     rowDecoder =
-      map3 IndexResultRow (field "title" string) (field "document_file_name" string) (field "created_at" string)
+      map3 IndexResultRow (field "title" string) (field "file_path" string) (field "created_at" string)
   in
     map3 IndexResult (at ["rows"] <| list rowDecoder) (at ["n_docs"] <| int) (at ["total_pages"] <| int)
 

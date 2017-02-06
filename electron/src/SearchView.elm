@@ -15,9 +15,9 @@ searchView model =
   let
     createComponent row =
       let
-        sBody = row.title ++ " (p" ++ toString row.numPage ++  "): " ++ row.body
+        sBody = row.title ++ " (p" ++ toString row.page ++  "): " ++ row.body
       in
-        div [] [ div [ class "search-result", onClick (OpenDocument (row.fileName, row.numPage)) ] [ Markdown.toHtml [] sBody ]
+        div [] [ div [ class "search-result", onClick (OpenDocument (row.parent_file_path, row.page)) ] [ Markdown.toHtml [] sBody ]
         ]
 
     resultDisplay =
