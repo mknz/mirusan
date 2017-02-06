@@ -6,6 +6,7 @@ import Messages exposing (Msg)
 import Models exposing (Model, SearchResult, IndexResult)
 import Update exposing (update)
 import SearchView exposing (searchView)
+import IndexView exposing (indexView)
 import Ports exposing (subscriptions)
 
 
@@ -13,7 +14,7 @@ main : Program Never Model Msg
 main =
   program
     { init = init
-    , view = searchView
+    , view = indexView
     , update = update
     , subscriptions = subscriptions
     }

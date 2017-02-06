@@ -8,22 +8,25 @@ import Models exposing (Model)
 import Messages exposing (Msg(..))
 
 
-toolbarHeader : String -> Html Msg
-toolbarHeader messageStr =
-  header [ class "toolbar toolbar-header" ] [ toolbarActions messageStr ]
+toolbarHeader mode messageStr =
+  header [ class "toolbar toolbar-header" ] [ toolbarActions messageStr mode ]
+
+toolbarActions messageStr mode =
+  div [ class "toolbar-actions" ] [ div [ class "btn-group" ] [ searchWindow ], toolButtons mode, span [] [ text messageStr ] ]
+
+toolButtons mode =
+  div [ class "btn-group" ] [ showIndexButton mode, addFileButton ]
+
+showIndexButton mode =
+  case mode of
+    Models.IndexMode ->
+      button [ class "btn active btn-large btn-default", onClick ShowIndex, title "Show index" ] [ span [ class "icon icon-list" ] [] ]
+    Models.SearchMode ->
+      button [ class "btn btn-large btn-default", onClick ShowIndex, title "Show index" ] [ span [ class "icon icon-list" ] [] ]
 
 addFileButton =
   button [ class "btn btn-large btn-default", onClick AddFilesToDB, title "Add files to database" ] [ span [ class "icon icon-folder" ] [] ]
 
-getIndexButton =
-  button [ class "btn btn-large btn-default", onClick GetIndex, title "Get index" ] [ span [ class "icon icon-folder" ] [] ]
-
-toolButtons =
-  div [ class "btn-group" ] [ addFileButton, getIndexButton ]
-
-toolbarActions : String -> Html Msg
-toolbarActions messageStr =
-  div [ class "toolbar-actions" ] [ div [ class "btn-group" ] [ searchWindow ], toolButtons, span [] [ text messageStr ] ]
 
 pagenation : Int -> Int -> Int -> Html Msg
 pagenation numPage numTotalPage numArticles =

@@ -13,31 +13,31 @@ import ViewCommonComponents exposing (toolbarHeader, viewerContainer, pagenation
 searchView : Model -> Html Msg
 searchView model =
   let
-      createComponent row =
-        let
-          sBody = row.title ++ " (p" ++ toString row.numPage ++  "): " ++ row.body
-        in
-          div [] [ div [ class "search-result", onClick (OpenDocument (row.fileName, row.numPage)) ] [ Markdown.toHtml [] sBody ]
-          ]
+    createComponent row =
+      let
+        sBody = row.title ++ " (p" ++ toString row.numPage ++  "): " ++ row.body
+      in
+        div [] [ div [ class "search-result", onClick (OpenDocument (row.fileName, row.numPage)) ] [ Markdown.toHtml [] sBody ]
+        ]
 
-      searchResultDisplay =
-        List.map createComponent model.searchResult.rows
+    resultDisplay =
+      List.map createComponent model.searchResult.rows
 
-      searchResultSummary =
-        let
-          resPageStr = (toString model.numResultPage) ++ " page of " ++ (toString model.searchResult.totalPages)
-          hitsStr = "(" ++ (toString model.searchResult.nHits) ++ " hits" ++ ")"
+    resultSummary =
+      let
+        resPageStr = (toString model.numResultPage) ++ " page of " ++ (toString model.numTotalPage)
+        hitsStr = "(" ++ (toString model.numArticles) ++ " hits" ++ ")"
 
-          summary =
-            if model.searchResult.totalPages == 0 then
-              ""
-            else
-              resPageStr ++ " " ++ hitsStr
-        in
-          div [] [ div [ style [ ("height", "15px") ] ] [ text summary ] ]
+        summary =
+          if model.numTotalPage == 0 then
+            ""
+          else
+            resPageStr ++ " " ++ hitsStr
+      in
+        div [] [ div [ style [ ("height", "15px") ] ] [ text summary ] ]
 
-      sidebarContainer =
-        div [ id "sidebar-container" ] [ div [ id "search" ]  ( List.append [ (pagenation model.numResultPage model.numTotalPage model.numArticles), searchResultSummary ] searchResultDisplay )  ]
+    sidebarContainer =
+      div [ id "sidebar-container" ] [ div [ id "search" ]  ( List.append [ (pagenation model.numResultPage model.numTotalPage model.numArticles), resultSummary ] resultDisplay )  ]
 
   in
-      div []  [toolbarHeader model.serverMessage, sidebarContainer, viewerContainer]
+    div []  [toolbarHeader model.viewMode model.serverMessage, sidebarContainer, viewerContainer]

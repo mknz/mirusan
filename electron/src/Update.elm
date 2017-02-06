@@ -25,7 +25,7 @@ update msg model =
   in
     case msg of
       SendSearch query ->
-        ( { model | currentQuery = query }, search query model.numResultPage )
+        ( { model | currentQuery = query, viewMode = Models.SearchMode }, search query model.numResultPage )
 
       NewSearchResult (Ok res) ->
         ( { model | searchResult = res, numTotalPage = res.totalPages, numArticles = res.nHits, serverMessage = "" }, Cmd.none )
@@ -33,8 +33,8 @@ update msg model =
       NewSearchResult (Err _) ->
         ( { model | numResultPage = 1, numTotalPage = 0, numArticles = 0, searchResult = { rows = [], nHits = 0, totalPages = 0 } }, Cmd.none )
 
-      GetIndex ->
-        ( { model | currentQuery = "" }, getIndex "created_at" model.numResultPage )
+      ShowIndex ->
+        ( { model | currentQuery = "", viewMode = Models.IndexMode }, getIndex "created_at" model.numResultPage )
 
       NewIndexResult (Ok res) ->
         ( { model | indexResult = res, numResultPage = 1, numTotalPage = res.total_pages, numArticles = res.n_docs, serverMessage = "" }, Cmd.none )

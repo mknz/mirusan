@@ -12,5 +12,5 @@ type Msg
   | GotoResultPage String
   | OpenDocument (String, Int)
   | AddFilesToDB
-  | GetIndex
+  | ShowIndex
   | NewIndexResult (Result Http.Error IndexResult)
