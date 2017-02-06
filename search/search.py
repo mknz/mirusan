@@ -80,23 +80,22 @@ class IndexManager:
 
     def create_index(self, ngram_min=1, ngram_max=2):
         ngram_tokenizer = NgramTokenizer(minsize=ngram_min, maxsize=ngram_max)
-        schema = Schema(text_file_path     = ID(stored=True),
-                        document_file_path = ID(stored=True),
-                        text_file_name     = ID(stored=True),
-                        document_file_name = ID(stored=True),
-                        title              = TEXT(stored=True, sortable=True, analyzer=ngram_tokenizer),
-                        author             = TEXT(stored=True, sortable=True, analyzer=ngram_tokenizer),
-                        publisher          = TEXT(stored=True, sortable=True, analyzer=ngram_tokenizer),
-                        content            = TEXT(stored=True, sortable=True, analyzer=ngram_tokenizer),
-                        page               = NUMERIC(stored=True),
-                        total_pages        = NUMERIC(stored=True),
-                        tags               = KEYWORD(stored=True, lowercase=True, scorable=True),
-                        memo               = TEXT(stored=True, sortable=True, analyzer=ngram_tokenizer),
-                        language           = ID(stored=True),
-                        document_format    = ID(stored=True),
-                        identifier         = ID(stored=True),
-                        published_at       = DATETIME(stored=True, sortable=True),
-                        created_at         = DATETIME(stored=True, sortable=True))
+        schema = Schema(file_path        = ID(stored=True, unique=True),
+                        parent_file_path = ID(stored=True),
+                        title            = TEXT(stored=True, sortable=True, analyzer=ngram_tokenizer),
+                        authors          = TEXT(stored=True, sortable=True, analyzer=ngram_tokenizer),
+                        publisher        = TEXT(stored=True, sortable=True, analyzer=ngram_tokenizer),
+                        content          = TEXT(stored=True, sortable=True, analyzer=ngram_tokenizer),
+                        page             = NUMERIC(stored=True),
+                        total_pages      = NUMERIC(stored=True),
+                        tags             = KEYWORD(stored=True, lowercase=True, scorable=True),
+                        memo             = TEXT(stored=True, sortable=True, analyzer=ngram_tokenizer),
+                        language         = ID(stored=True),
+                        document_format  = ID(stored=True),
+                        identifier       = ID(stored=True),
+                        series_id        = ID(stored=True),
+                        published_at     = DATETIME(stored=True, sortable=True),
+                        created_at       = DATETIME(stored=True, sortable=True))
 
         ix = create_in(Config.database_dir, schema)
         Config.logger.info('Created db: ' + Config.database_dir)
