@@ -3,10 +3,15 @@ module Models exposing (..)
 type alias Model =
   { currentQuery: String,
     numResultPage: Int,
+    numTotalPage: Int,
+    numArticles: Int,
     searchResult: SearchResult,
+    indexResult: IndexResult,
     serverMessage: String,
-    indexResult: IndexResult
+    viewMode: ViewMode
   }
+
+type ViewMode = SearchMode | IndexMode
 
 type alias SearchResult =
   { rows: List SearchResultRow,
