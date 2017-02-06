@@ -150,15 +150,15 @@ var pdf2txt = (function () {
     // extract texts from multiple pdf files
     pdfFilesTotxt: function (pdfPaths, saveDir, callback) {
       (async () => {
-        var savePaths = [];
+        var paths = [];
         for (let pdfPath of pdfPaths) {
           var res = await pdf2txt.extractSaveAll(pdfPath, saveDir);
-          savePaths = savePaths.concat(res);
+          paths = paths.concat(res).concat(pdfPath);
         }
-        return savePaths;
-      })().then(savePaths => {
+        return paths;
+      })().then(paths => {
         console.log('Finished all.');
-        callback(savePaths);
+        callback(paths);  // Add to db, both text and pdfs
       }).catch(() => {
         console.log('Failed');
       });

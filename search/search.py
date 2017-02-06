@@ -101,6 +101,24 @@ class IndexManager:
         Config.logger.info('Created db: ' + Config.database_dir)
         ix.close()
 
+    def add_pdf_file(self, file_path):
+        if not os.path.exists(Config.database_dir):
+            raise ValueError('DB dir does not exist: ' + Config.database_dir)
+
+        # set initial title: filename without ext
+        title = os.path.splitext(os.path.basename(file_path))[0]
+
+        ix = open_dir(Config.database_dir)
+        writer = ix.writer()
+        writer.add_document(file_path          = file_path,
+                            title              = title,
+                            document_format    = 'pdf',
+                            created_at         = datetime.datetime.now())
+        writer.commit()
+
+        Config.logger.info('Added :' + file_path)
+        ix.close()
+
     def add_text_file(self, text_file_path, parent_file_path, title="", num_page=1, published_at=None):
         if not os.path.exists(Config.database_dir):
             raise ValueError('DB dir does not exist: ' + Config.database_dir)
@@ -236,8 +254,11 @@ class Search:
         with self.ix.searcher() as searcher:
             query = MultifieldParser(['title', 'content'],
                                      self.ix.schema).parse(query_str)
+            query = Every()
             results = searcher.search(query)
             for r in results:
+                print(r['file_path'])
+                print(r['parent_file_path'])
                 print(r['title'])
                 print(r.highlights('content'))
                 print('')
@@ -286,7 +307,13 @@ def main():
             im = IndexManager()
             im.check_and_init_db()
             for path in args.add_files:
-                im.add_text_page_file(path)
+                _, ext = os.path.splitext(path)
+                if ext in ['.pdf', '.PDF']:
+                    im.add_pdf_file(path)
+                elif ext in ['.txt', '.TXT']:
+                    im.add_text_page_file(path)
+                else:
+                    raise ValueError(path)
         except Exception as err:
             Config.logger.exception('Error at add_files: %s', err)
         return
