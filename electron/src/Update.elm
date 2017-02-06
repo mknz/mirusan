@@ -77,8 +77,8 @@ update msg model =
           (Err str) ->
             ( model , Cmd.none )
 
-      OpenDocument (fileName, numPage) ->
-        ( model, openNewFile (fileName, numPage) )
+      OpenDocument (filePath, numPage) ->
+        ( model, openNewFile (filePath, numPage) )
 
       AddFilesToDB ->
       -- send request to electron main process
