@@ -44,8 +44,8 @@ var pdf2txt = (function () {
 
       // Keep some expressions
       var strKeep = keepExpr(str, /。\n/g, '#punctNewLine');
-      strKeep = keepExpr(strKeep, /\n\n/g, '#dubbleNewLine');
-      strKeep = keepExpr(strKeep, /\n　/g, '#NewLineSpace');
+      strKeep = keepExpr(strKeep, /\n\n/g, '#doubleNewLine');
+      strKeep = keepExpr(strKeep, /\n　/g, '#newLineSpace');
 
       // Remove remaining all newlines
       var strConv = strKeep.replace(/\n/g, '');
@@ -55,8 +55,8 @@ var pdf2txt = (function () {
 
       // Restore expr
       strConv = restoreExpr(strConv, '#punctNewLine', '。\n');
-      strConv = restoreExpr(strConv, '#dubbleNewLine', '\n\n');
-      strConv = restoreExpr(strConv, '#NewLineSpace', '\n　');
+      strConv = restoreExpr(strConv, '#doubleNewLine', '\n\n');
+      strConv = restoreExpr(strConv, '#newLineSpace', '\n　');
       return strConv
   }
 
