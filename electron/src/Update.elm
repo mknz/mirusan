@@ -13,7 +13,9 @@ update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   let
     setPage nPage =
-      if model.numResultPage <= model.numTotalPage then
+      if model.numTotalPage == 1 then
+        ( model, Cmd.none )
+      else if model.numResultPage <= model.numTotalPage then
         case model.viewMode of
           SearchMode ->
             ( { model | numResultPage = nPage }, search model.currentQuery nPage )

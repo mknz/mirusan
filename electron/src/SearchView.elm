@@ -29,7 +29,7 @@ searchView model =
         hitsStr = "(" ++ (toString model.numArticles) ++ " hits" ++ ")"
 
         summary =
-          if model.numTotalPage == 0 then
+          if model.numArticles == 0 then
             ""
           else
             resPageStr ++ " " ++ hitsStr

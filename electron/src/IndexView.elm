@@ -25,7 +25,7 @@ indexView model =
         hitsStr = "(" ++ (toString model.numArticles) ++ " documents" ++ ")"
 
         summary =
-          if model.numTotalPage == 0 then
+          if model.numArticles == 0 then
             ""
           else
             resPageStr ++ " " ++ hitsStr
