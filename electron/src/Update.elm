@@ -18,7 +18,7 @@ update msg model =
           SearchMode ->
             ( { model | numResultPage = nPage }, search model.currentQuery nPage )
           IndexMode ->
-            ( { model | numResultPage = nPage }, getIndex "created_at" nPage )
+            ( { model | numResultPage = nPage }, getIndex "title" nPage )
       else  -- last page
         ( model , Cmd.none )
 
@@ -34,7 +34,7 @@ update msg model =
         ( { model | numResultPage = 1, numTotalPage = 0, numArticles = 0, searchResult = { rows = [], n_hits = 0, total_pages = 0 } }, Cmd.none )
 
       ShowIndex ->
-        ( { model | currentQuery = "", viewMode = Models.IndexMode }, getIndex "created_at" model.numResultPage )
+        ( { model | currentQuery = "", viewMode = Models.IndexMode }, getIndex "title" model.numResultPage )
 
       GotoSearchMode ->
         ( { model | numResultPage = 1, numTotalPage = 0, numArticles = 0, currentQuery = "", viewMode = Models.SearchMode, searchResult = { rows = [], n_hits = 0, total_pages = 0 }}, Cmd.none )
@@ -60,7 +60,7 @@ update msg model =
                   SearchMode ->
                     search model.currentQuery nPage
                   IndexMode ->
-                    getIndex "created_at" nPage
+                    getIndex "title" nPage
             in
               if n < 1 then
               -- Go to first page

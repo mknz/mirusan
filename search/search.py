@@ -2,7 +2,7 @@ from whoosh.index import create_in, open_dir
 from whoosh.fields import TEXT, DATETIME, NUMERIC, KEYWORD, ID, Schema
 from whoosh.analysis import NgramTokenizer
 from whoosh.qparser import QueryParser, MultifieldParser
-from whoosh.query import Every
+from whoosh.query import Every, Term, Wildcard
 
 import logging
 import argparse
@@ -202,7 +202,9 @@ class Search:
         with self.ix.searcher() as searcher:
             query = MultifieldParser(['title', 'content'],
                                      self.ix.schema).parse(query_str)
-            results = searcher.search_page(query, n_page, pagelen=pagelen)
+            results = searcher.search_page(query, n_page,
+                                           pagelen=pagelen,
+                                           filter=Term('document_format', 'txt'))
             n_hits = len(results)  # number of total hit documents
             total_pages = n_hits // pagelen + 1  # number of search result pages
             if n_page > total_pages:
@@ -227,7 +229,8 @@ class Search:
         with self.ix.searcher() as searcher:
             query = Every()
             results = searcher.search_page(query, n_page, pagelen=pagelen,
-                                           sortedby=field, reverse=reverse)
+                                           sortedby=field, reverse=reverse,
+                                           filter=Term('document_format', 'pdf'))
             n_docs = len(results)  # number of total documents
             total_pages = n_docs // pagelen + 1  # number of result pages
             if n_page > total_pages:
@@ -254,11 +257,9 @@ class Search:
         with self.ix.searcher() as searcher:
             query = MultifieldParser(['title', 'content'],
                                      self.ix.schema).parse(query_str)
-            query = Every()
             results = searcher.search(query)
             for r in results:
                 print(r['file_path'])
-                print(r['parent_file_path'])
                 print(r['title'])
                 print(r.highlights('content'))
                 print('')
