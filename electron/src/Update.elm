@@ -8,11 +8,12 @@ import Models exposing (Model, ViewMode(..), SearchResult, IndexResult)
 import Search exposing (search, getIndex)
 import Ports exposing (openNewFile)
 
+
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   let
     setPage nPage =
-      if model.numResultPage < model.numTotalPage then
+      if model.numResultPage <= model.numTotalPage then
         case model.viewMode of
           SearchMode ->
             ( { model | numResultPage = nPage }, search model.currentQuery nPage )
@@ -27,7 +28,7 @@ update msg model =
         ( { model | currentQuery = query }, search query model.numResultPage )
 
       NewSearchResult (Ok res) ->
-        ( { model | searchResult = res, numResultPage = 1, numTotalPage = res.totalPages, numArticles = res.nHits, serverMessage = "" }, Cmd.none )
+        ( { model | searchResult = res, numTotalPage = res.totalPages, numArticles = res.nHits, serverMessage = "" }, Cmd.none )
 
       NewSearchResult (Err _) ->
         ( { model | numResultPage = 1, numTotalPage = 0, numArticles = 0, searchResult = { rows = [], nHits = 0, totalPages = 0 } }, Cmd.none )
@@ -61,7 +62,7 @@ update msg model =
               if n < 1 then
               -- Go to first page
                 ( { model | numResultPage = 1 }, action 1 )
-              else if n >= 1 && n <= model.searchResult.totalPages then
+              else if n >= 1 && n <= model.numTotalPage then
               -- Go to specified page
                 ( { model | numResultPage = n }, action n )
               else
