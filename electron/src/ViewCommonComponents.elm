@@ -20,7 +20,7 @@ toolButtons mode =
 showIndexButton mode =
   case mode of
     Models.IndexMode ->
-      button [ class "btn active btn-large btn-default", onClick ShowIndex, title "Show index" ] [ span [ class "icon icon-list" ] [] ]
+      button [ class "btn active btn-large btn-default", onClick GotoSearchMode, title "Go to search" ] [ span [ class "icon icon-list" ] [] ]
     Models.SearchMode ->
       button [ class "btn btn-large btn-default", onClick ShowIndex, title "Show index" ] [ span [ class "icon icon-list" ] [] ]
 

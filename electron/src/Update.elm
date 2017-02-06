@@ -36,8 +36,11 @@ update msg model =
       ShowIndex ->
         ( { model | currentQuery = "", viewMode = Models.IndexMode }, getIndex "created_at" model.numResultPage )
 
+      GotoSearchMode ->
+        ( { model | numResultPage = 1, numTotalPage = 0, numArticles = 0, currentQuery = "", viewMode = Models.SearchMode, searchResult = { rows = [], nHits = 0, totalPages = 0 }}, Cmd.none )
+
       NewIndexResult (Ok res) ->
-        ( { model | indexResult = res, numResultPage = 1, numTotalPage = res.total_pages, numArticles = res.n_docs, serverMessage = "" }, Cmd.none )
+        ( { model | indexResult = res, numTotalPage = res.total_pages, numArticles = res.n_docs, serverMessage = "" }, Cmd.none )
 
       NewIndexResult (Err _) ->
         ( { model | numResultPage = 1, numTotalPage = 0, numArticles = 0, indexResult = { rows = [], n_docs = 0, total_pages = 0 } }, Cmd.none )

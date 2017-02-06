@@ -5,8 +5,7 @@ import Html exposing (program)
 import Messages exposing (Msg)
 import Models exposing (Model, SearchResult, IndexResult)
 import Update exposing (update)
-import SearchView exposing (searchView)
-import IndexView exposing (indexView)
+import View exposing (view)
 import Ports exposing (subscriptions)
 
 
@@ -14,7 +13,7 @@ main : Program Never Model Msg
 main =
   program
     { init = init
-    , view = indexView
+    , view = view
     , update = update
     , subscriptions = subscriptions
     }

@@ -13,4 +13,5 @@ type Msg
   | OpenDocument (String, Int)
   | AddFilesToDB
   | ShowIndex
+  | GotoSearchMode
   | NewIndexResult (Result Http.Error IndexResult)
