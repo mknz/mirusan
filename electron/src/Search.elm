@@ -39,6 +39,7 @@ getIndex : String -> Int -> Cmd Msg
 getIndex fieldName numResultPage =
   let
       url =
-        "http://localhost:8000/sorted-index?field=" ++ fieldName ++ "&resultPage=" ++ (toString numResultPage)
+        "http://localhost:8000/sorted-index?field=" ++ fieldName
+          ++ "&resultPage=" ++ (toString numResultPage)
   in
       Http.send NewIndexResult (Http.get url indexResultDecoder)
