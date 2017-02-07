@@ -21,7 +21,7 @@ indexView model =
 
     resultSummary =
       let
-        resPageStr = (toString model.numResultPage) ++ " page of " ++ (toString model.numTotalPage)
+        resPageStr = (toString model.numResultPage) ++ " of " ++ (toString model.numTotalPage)
         hitsStr = "(" ++ (toString model.numArticles) ++ " documents" ++ ")"
 
         summary =
