@@ -29,8 +29,15 @@ indexView model =
             ""
           else
             resPageStr ++ " " ++ hitsStr
+
+        addedMessage =
+        if model.numAddedArticles > 0 then
+          div [ class "notification" ] [ text <| (toString model.numAddedArticles) ++ " new documents." ]
+        else
+          div [] []
+
       in
-        div [] [ div [ style [ ("height", "15px") ] ] [ text summary ] ]
+        div [] [ div [ style [ ("height", "15px") ] ] [ text summary ], addedMessage ]
 
     sidebarContainer =
       div [ id "sidebar-container" ] [ div [ id "search" ]  ( List.append [ (pagenation model.numResultPage model.numTotalPage model.numArticles), resultSummary ] resultDisplay )  ]

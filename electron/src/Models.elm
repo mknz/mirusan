@@ -5,6 +5,8 @@ type alias Model =
     numResultPage: Int,
     numTotalPage: Int,
     numArticles: Int,
+    numPreviousArticles: Int, -- to detect file addition
+    numAddedArticles: Int,
     searchResult: SearchResult,
     indexResult: IndexResult,
     serverMessage: String,
