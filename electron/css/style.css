@@ -51,6 +51,10 @@ div.invisible {
   display: none;
 }
 
+div.notification {
+  color: red;
+}
+
 button.gray {
   color:#AAAAAA;
 }
