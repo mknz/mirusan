@@ -102,30 +102,32 @@ class IndexManager:
         Config.logger.info('Created db: ' + Config.database_dir)
         ix.close()
 
-    def add_pdf_file(self, file_path, published_date=None):
+    def secure_datetime(self, date):
+        """date: type unknown."""
+        if type(date) is datetime.datetime:
+            pdatetime = date
+        elif type(date) is datetime.date:
+            year = date.year
+            month = date.month
+            day = date.day
+            pdatetime = datetime.datetime(year, month, day)
+        elif type(date) is str:
+            pdatetime = parse(date)
+        else:
+            raise TypeError
+
+        return pdatetime
+
+    def add_pdf_file(self, writer, file_path, published_date=None):
         if not os.path.exists(Config.database_dir):
             raise ValueError('DB dir does not exist: ' + Config.database_dir)
 
         # set initial title: filename without ext
         title = os.path.splitext(os.path.basename(file_path))[0]
 
-        ix = open_dir(Config.database_dir)
-        writer = ix.writer()
-
         # prepare published date
         if published_date is not None:
-            if type(published_date) is datetime.datetime:
-                pdatetime = published_date
-            elif type(published_date) is datetime.date:
-                year = published_date.year
-                month = published_date.month
-                day = published_date.day
-                pdatetime = datetime.datetime(year, month, day)
-            elif type(published_date) is str:
-                pdatetime = parse(published_date)
-            else:
-                raise TypeError
-
+            pdatetime = self.secure_datetime(published_date)
             writer.update_document(file_path          = file_path,
                                    title              = title,
                                    document_format    = 'pdf',
@@ -137,12 +139,9 @@ class IndexManager:
                                    document_format    = 'pdf',
                                    created_at         = datetime.datetime.now())
 
-        writer.commit()
-
         Config.logger.info('Added :' + file_path)
-        ix.close()
 
-    def add_text_file(self, text_file_path, parent_file_path, title="", num_page=1, published_at=None):
+    def add_text_file(self, writer, text_file_path, parent_file_path, title="", num_page=1, published_date=None):
         if not os.path.exists(Config.database_dir):
             raise ValueError('DB dir does not exist: ' + Config.database_dir)
 
@@ -157,22 +156,30 @@ class IndexManager:
         if title == "":
             title = os.path.splitext(os.path.basename(parent_file_path))[0]
 
-        ix = open_dir(Config.database_dir)
-        writer = ix.writer()
-        writer.update_document(file_path          = text_file_path,
-                               parent_file_path   = parent_file_path,
-                               title              = title,
-                               content            = content_text,
-                               page               = num_page,
-                               document_format    = 'txt',
-                               published_at       = published_at,
-                               created_at         = datetime.datetime.now())
-        writer.commit()
+        # prepare published date
+        if published_date is not None:
+            pdatetime = self.secure_datetime(published_date)
+            writer.update_document(file_path          = text_file_path,
+                                   parent_file_path   = parent_file_path,
+                                   title              = title,
+                                   content            = content_text,
+                                   page               = num_page,
+                                   document_format    = 'txt',
+                                   published_at       = pdatetime,
+                                   created_at         = datetime.datetime.now())
+        else:
+            writer.update_document(file_path          = text_file_path,
+                                   parent_file_path   = parent_file_path,
+                                   title              = title,
+                                   content            = content_text,
+                                   page               = num_page,
+                                   document_format    = 'txt',
+                                   created_at         = datetime.datetime.now())
+
 
         Config.logger.info('Added :' + text_file_path)
-        ix.close()
 
-    def add_text_page_file(self, text_file_path):
+    def add_text_page_file(self, writer, text_file_path):
         """Add database page-wise text file.
         filename format: {DOCUMENT_NAME}_p{NUM_PAGE}.txt
         """
@@ -191,10 +198,12 @@ class IndexManager:
         if not os.path.exists(doc_file_path):
             raise ValueError('Document file does not exist: ' + doc_file_path)
 
-        self.add_text_file(text_file_path=text_file_path, parent_file_path=doc_file_path,
+        self.add_text_file(writer=writer,
+                           text_file_path=text_file_path,
+                           parent_file_path=doc_file_path,
                            num_page=num_page)
 
-    def add_dir(self, text_dir_path):
+    def add_dir(self, writer, text_dir_path):
         if not os.path.exists(Config.database_dir):
             raise ValueError('DB dir does not exist: ' + Config.database_dir)
 
@@ -209,7 +218,7 @@ class IndexManager:
             raise ValueError('No text files in: ' + text_dir_path)
 
         for i, path in enumerate(text_file_paths):
-            self.add_text_page_file(path)
+            self.add_text_page_file(writer, path)
             # show progress
             print(str(i + 1) + ' / ' + str(len(text_file_paths)))
 
@@ -332,21 +341,34 @@ def main():
         try:
             im = IndexManager()
             im.check_and_init_db()
+
+            ix = open_dir(Config.database_dir)
+            writer = ix.writer()
+
             for path in args.add_files:
                 _, ext = os.path.splitext(path)
                 if ext in ['.pdf', '.PDF']:
-                    im.add_pdf_file(path)
+                    im.add_pdf_file(writer, path)
                 elif ext in ['.txt', '.TXT']:
-                    im.add_text_page_file(path)
+                    im.add_text_page_file(writer, path)
                 else:
                     raise ValueError(path)
+
+            writer.commit()
+
         except Exception as err:
             Config.logger.exception('Error at add_files: %s', err)
+
+        ix.close()
         return
 
     if args.add_dir is not None:
         im = IndexManager()
-        im.add_dir(args.add_dir)
+        ix = open_dir(Config.database_dir)
+        writer = ix.writer()
+        im.add_dir(writer, args.add_dir)
+        writer.commit()
+        ix.close()
         return
 
     parser.print_help()
