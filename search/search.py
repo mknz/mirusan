@@ -3,6 +3,7 @@ from whoosh.fields import TEXT, DATETIME, NUMERIC, KEYWORD, ID, Schema
 from whoosh.analysis import NgramTokenizer
 from whoosh.qparser import QueryParser, MultifieldParser
 from whoosh.query import Every, Term, Wildcard
+from dateutil.parser import parse
 
 import logging
 import argparse
@@ -101,7 +102,7 @@ class IndexManager:
         Config.logger.info('Created db: ' + Config.database_dir)
         ix.close()
 
-    def add_pdf_file(self, file_path):
+    def add_pdf_file(self, file_path, published_date=None):
         if not os.path.exists(Config.database_dir):
             raise ValueError('DB dir does not exist: ' + Config.database_dir)
 
@@ -110,10 +111,32 @@ class IndexManager:
 
         ix = open_dir(Config.database_dir)
         writer = ix.writer()
-        writer.update_document(file_path          = file_path,
-                               title              = title,
-                               document_format    = 'pdf',
-                               created_at         = datetime.datetime.now())
+
+        # prepare published date
+        if published_date is not None:
+            if type(published_date) is datetime.datetime:
+                pdatetime = published_date
+            elif type(published_date) is datetime.date:
+                year = published_date.year
+                month = published_date.month
+                day = published_date.day
+                pdatetime = datetime.datetime(year, month, day)
+            elif type(published_date) is str:
+                pdatetime = parse(published_date)
+            else:
+                raise TypeError
+
+            writer.update_document(file_path          = file_path,
+                                   title              = title,
+                                   document_format    = 'pdf',
+                                   published_at       = pdatetime,
+                                   created_at         = datetime.datetime.now())
+        else:
+            writer.update_document(file_path          = file_path,
+                                   title              = title,
+                                   document_format    = 'pdf',
+                                   created_at         = datetime.datetime.now())
+
         writer.commit()
 
         Config.logger.info('Added :' + file_path)
@@ -197,13 +220,15 @@ class Search:
             raise ValueError('DB dir does not exist: ' + Config.database_dir)
         self.ix = open_dir(Config.database_dir)
 
-    def search(self, query_str, n_page=1, pagelen=10):
+    def search(self, query_str, sort_field, reverse=False, n_page=1, pagelen=10):
         Config.logger.debug('Get query: ' + query_str)
         with self.ix.searcher() as searcher:
             query = MultifieldParser(['title', 'content'],
                                      self.ix.schema).parse(query_str)
             results = searcher.search_page(query, n_page,
                                            pagelen=pagelen,
+                                           sortedby=sort_field,
+                                           reverse=reverse,
                                            filter=Term('document_format', 'txt'))
             n_hits = len(results)  # number of total hit documents
             total_pages = n_hits // pagelen + 1  # number of search result pages

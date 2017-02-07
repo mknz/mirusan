@@ -7,6 +7,8 @@ type alias Model =
     numArticles: Int,
     numPreviousArticles: Int, -- to detect file addition
     numAddedArticles: Int,
+    sortField: String,
+    reverse: Int, -- sort order, reverse if 1
     searchResult: SearchResult,
     indexResult: IndexResult,
     serverMessage: String,

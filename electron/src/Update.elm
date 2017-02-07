@@ -18,16 +18,16 @@ update msg model =
       else if model.numResultPage <= model.numTotalPage then
         case model.viewMode of
           SearchMode ->
-            ( { model | numResultPage = nPage }, search model.currentQuery nPage )
+            ( { model | numResultPage = nPage }, search model.currentQuery nPage model.sortField model.reverse )
           IndexMode ->
-            ( { model | numResultPage = nPage }, getIndex "title" nPage )
+            ( { model | numResultPage = nPage }, getIndex model.sortField nPage model.reverse)
       else  -- last page
         ( model , Cmd.none )
 
   in
     case msg of
       SendSearch query ->
-        ( { model | currentQuery = query, viewMode = Models.SearchMode }, search query model.numResultPage )
+        ( { model | currentQuery = query, viewMode = Models.SearchMode }, search query model.numResultPage model.sortField model.reverse )
 
       NewSearchResult (Ok res) ->
         ( { model | searchResult = res, numTotalPage = res.total_pages, numArticles = res.n_hits, serverMessage = "" }, Cmd.none )
@@ -36,7 +36,7 @@ update msg model =
         ( { model | numResultPage = 1, numTotalPage = 0, numArticles = 0, searchResult = { rows = [], n_hits = 0, total_pages = 0 } }, Cmd.none )
 
       ShowIndex ->
-        ( { model | currentQuery = "", viewMode = Models.IndexMode }, getIndex "title" model.numResultPage )
+        ( { model | currentQuery = "", viewMode = Models.IndexMode }, getIndex model.sortField model.numResultPage model.reverse)
 
       GotoSearchMode ->
         ( { model | numResultPage = 1, numTotalPage = 0, numArticles = 0, currentQuery = "", viewMode = Models.SearchMode, searchResult = { rows = [], n_hits = 0, total_pages = 0 }}, Cmd.none )
@@ -60,9 +60,9 @@ update msg model =
               action nPage =
                 case model.viewMode of
                   SearchMode ->
-                    search model.currentQuery nPage
+                    search model.currentQuery nPage model.sortField model.reverse
                   IndexMode ->
-                    getIndex "title" nPage
+                    getIndex model.sortField nPage model.reverse
             in
               if n < 1 then
               -- Go to first page

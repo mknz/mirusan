@@ -23,7 +23,17 @@ class SearchDB:
         if qstr is '':
             return
 
-        rp = req.get_param('resultPage')
+        sort_field = req.get_param('sort-field')
+        if sort_field is None:
+            sort_field = 'title'
+
+        rev = req.get_param('reverse')
+        if rev == '1':
+            reverse = True
+        else:
+            reverse = False
+
+        rp = req.get_param('result-page')
         if rp is None:
             n_result_page = 1
         else:
@@ -35,7 +45,11 @@ class SearchDB:
         else:
             pagelen = int(pl)
 
-        search_result = self.search.search(qstr, n_result_page, pagelen)
+        search_result = self.search.search(query_str=qstr,
+                                           sort_field=sort_field,
+                                           reverse=reverse,
+                                           n_page=n_result_page,
+                                           pagelen=pagelen)
         resp.body = json.dumps(search_result, ensure_ascii=False)
 
 
@@ -55,7 +69,7 @@ class SortedIndex:
         else:
             reverse = False
 
-        rp = req.get_param('resultPage')
+        rp = req.get_param('result-page')
         if rp is None:
             n_result_page = 1
         else:

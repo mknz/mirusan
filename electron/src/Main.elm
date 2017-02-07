@@ -29,6 +29,8 @@ init =
    , numArticles = 0
    , numPreviousArticles = 0
    , numAddedArticles = 0
+   , sortField = "published_at"
+   , reverse = 0
    , searchResult = { rows = [], n_hits = 0, total_pages = 0 }
    , indexResult = { rows = [], n_docs = 0, total_pages = 0 }
    , serverMessage = ""

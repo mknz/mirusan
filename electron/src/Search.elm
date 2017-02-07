@@ -27,19 +27,22 @@ indexResultDecoder =
 
 -- HTTP
 
-search : String -> Int -> Cmd Msg
-search query numResultPage =
+search : String -> Int -> String -> Int -> Cmd Msg
+search query numResultPage sortField reverse =
   let
       url =
-        "http://localhost:8000/search?q=" ++ query ++ "&resultPage=" ++ (toString numResultPage)
+        "http://localhost:8000/search?q=" ++ query ++ "&sort_field=" ++ sortField
+          ++ "&reverse=" ++ (toString reverse)
+          ++ "&result-page=" ++ (toString numResultPage)
   in
       Http.send NewSearchResult (Http.get url searchResponseDecoder)
 
-getIndex : String -> Int -> Cmd Msg
-getIndex fieldName numResultPage =
+getIndex : String -> Int -> Int -> Cmd Msg
+getIndex sortField numResultPage reverse =
   let
       url =
-        "http://localhost:8000/sorted-index?field=" ++ fieldName
-          ++ "&resultPage=" ++ (toString numResultPage)
+        "http://localhost:8000/sorted-index?field=" ++ sortField
+          ++ "&reverse=" ++ (toString reverse)
+          ++ "&result-page=" ++ (toString numResultPage)
   in
       Http.send NewIndexResult (Http.get url indexResultDecoder)
