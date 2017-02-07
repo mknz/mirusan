@@ -4,6 +4,7 @@ import Html exposing (Html, program, text, button, h1, h2, div, input, a, span, 
 import Html.Attributes exposing (class, id, type_, placeholder, value, href, style, src, title, size)
 import Html.Events exposing (onClick, onInput)
 import Markdown
+import Utils exposing (disableHyperlink)
 
 import Models exposing (Model)
 import Messages exposing (Msg(..))
@@ -15,7 +16,8 @@ searchView model =
   let
     createComponent row =
       let
-        sBody = row.title ++ " (p" ++ toString row.page ++  "): " ++ row.body
+        body = disableHyperlink row.body
+        sBody = row.title ++ " (p" ++ toString row.page ++  "): " ++ body
       in
         div [] [ div [ class "search-result", onClick (OpenDocument (row.parent_file_path, row.page)) ] [ Markdown.toHtml [] sBody ]
         ]
