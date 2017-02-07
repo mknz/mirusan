@@ -375,7 +375,8 @@ var pdfjsWebLibs;
       "disableFontFace": false,
       "disableTextLayer": false,
       "useOnlyCssZoom": false,
-      "externalLinkTarget": 0,
+      //"externalLinkTarget": 0,
+      "externalLinkTarget": 2,   // Open link in external window
       "enhanceTextSelection": false,
       "renderer": "canvas",
       "renderInteractiveForms": false,
