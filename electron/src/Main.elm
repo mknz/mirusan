@@ -33,6 +33,7 @@ init =
    , indexResult = { rows = [], n_docs = 0, total_pages = 0 }
    , serverMessage = ""
    , viewMode = Models.SearchMode
+   , indexClick = 0
    }
    , Cmd.none)
 

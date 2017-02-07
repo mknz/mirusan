@@ -10,7 +10,8 @@ type alias Model =
     searchResult: SearchResult,
     indexResult: IndexResult,
     serverMessage: String,
-    viewMode: ViewMode
+    viewMode: ViewMode,
+    indexClick: Int  -- workaround
   }
 
 type ViewMode = SearchMode | IndexMode

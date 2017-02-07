@@ -31,7 +31,10 @@ indexView model =
             resPageStr ++ " " ++ hitsStr
 
         addedMessage =
-        if model.numAddedArticles > 0 then
+        if model.indexClick <= 1 then
+          -- do not display at boot
+          div [] []
+        else if model.numAddedArticles > 0 then
           div [ class "notification" ] [ text <| (toString model.numAddedArticles) ++ " new documents." ]
         else
           div [] []
