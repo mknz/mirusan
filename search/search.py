@@ -110,10 +110,10 @@ class IndexManager:
 
         ix = open_dir(Config.database_dir)
         writer = ix.writer()
-        writer.add_document(file_path          = file_path,
-                            title              = title,
-                            document_format    = 'pdf',
-                            created_at         = datetime.datetime.now())
+        writer.update_document(file_path          = file_path,
+                               title              = title,
+                               document_format    = 'pdf',
+                               created_at         = datetime.datetime.now())
         writer.commit()
 
         Config.logger.info('Added :' + file_path)
@@ -136,14 +136,14 @@ class IndexManager:
 
         ix = open_dir(Config.database_dir)
         writer = ix.writer()
-        writer.add_document(file_path          = text_file_path,
-                            parent_file_path   = parent_file_path,
-                            title              = title,
-                            content            = content_text,
-                            page               = num_page,
-                            document_format    = 'txt',
-                            published_at       = published_at,
-                            created_at         = datetime.datetime.now())
+        writer.update_document(file_path          = text_file_path,
+                               parent_file_path   = parent_file_path,
+                               title              = title,
+                               content            = content_text,
+                               page               = num_page,
+                               document_format    = 'txt',
+                               published_at       = published_at,
+                               created_at         = datetime.datetime.now())
         writer.commit()
 
         Config.logger.info('Added :' + text_file_path)
