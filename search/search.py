@@ -12,6 +12,11 @@ import datetime
 import re
 import sys
 import json
+import unicodedata
+
+
+def normalize(string):
+    return unicodedata.normalize('NFKC', string)
 
 
 class Config:

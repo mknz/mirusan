@@ -41,5 +41,6 @@ type alias IndexResult =
 type alias IndexResultRow =
   { title: String,
     file_path: String,
+    summary: String,
     created_at: String
   }

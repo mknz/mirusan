@@ -6,6 +6,11 @@ import falcon
 from wsgiref import simple_server
 import json
 import subprocess
+import unicodedata
+
+
+def normalize(string):
+    return unicodedata.normalize('NFKC', string)
 
 
 class DataBaseResource:
@@ -22,6 +27,8 @@ class SearchDB:
             return
         if qstr is '':
             return
+
+        qstr = normalize(qstr)
 
         sort_field = req.get_param('sort-field')
         if sort_field is None:
@@ -50,6 +57,7 @@ class SearchDB:
                                            reverse=reverse,
                                            n_page=n_result_page,
                                            pagelen=pagelen)
+
         resp.body = json.dumps(search_result, ensure_ascii=False)
 
 
@@ -86,27 +94,9 @@ class SortedIndex:
         resp.body = json.dumps(res, ensure_ascii=False)
 
 
-class AddFileToDB:
-    im = IndexManager()
-
-    def on_get(self, req, resp):
-        json_str = req.get_param('json')
-        json_file_paths = json.loads(json_str)
-        file_paths = json_file_paths['paths']
-
-        # start async process
-        if Config.platform == 'linux':
-            pid = subprocess.Popen(['python3', './search.py', '--add-files'] + file_paths).pid
-
-        resp_json = {}
-        resp_json['message'] = 'Start adding files.'
-        resp.body = json.dumps(resp_json, ensure_ascii=False)
-
-
 class Server:
     api = falcon.API()
     api.add_route('/search', SearchDB())
-    api.add_route('/add-file', AddFileToDB())
     api.add_route('/sorted-index', SortedIndex())
 
     def start(self):

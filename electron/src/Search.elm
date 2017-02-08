@@ -21,7 +21,7 @@ indexResultDecoder : Decoder IndexResult
 indexResultDecoder =
   let
     rowDecoder =
-      map3 IndexResultRow (field "title" string) (field "file_path" string) (field "created_at" string)
+      map4 IndexResultRow (field "title" string) (field "file_path" string) (field "summary" string) (field "created_at" string)
   in
     map3 IndexResult (at ["rows"] <| list rowDecoder) (at ["n_docs"] <| int) (at ["total_pages"] <| int)
 
