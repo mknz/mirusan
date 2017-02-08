@@ -12,15 +12,17 @@ import datetime
 import re
 import sys
 import json
-import unicodedata
-
-
-def normalize(string):
-    return unicodedata.normalize('NFKC', string)
 
 
 class Config:
-    config_filename = './config.json'
+    # Workaround: fix later
+    argvs = sys.argv
+    argc = len(argvs)
+    if argc == 3 and argvs[1] == '--config':
+        config_filename = argvs[2]
+    else:
+        config_filename = 'config.json'
+
     if not os.path.exists(config_filename):
         raise ValueError('config.json does not exist.')
 
@@ -309,6 +311,7 @@ class Search:
 
 def main():
     parser = argparse.ArgumentParser()
+    parser.add_argument('--config', default='./config.json')
     parser.add_argument('--query', default='')
     parser.add_argument('--init', help='Initialize database',
                         action='store_true')
