@@ -90,6 +90,7 @@ class IndexManager:
                         page             = NUMERIC(stored=True),
                         total_pages      = NUMERIC(stored=True),
                         tags             = KEYWORD(stored=True, lowercase=True, scorable=True),
+                        summary          = TEXT(stored=True, sortable=True, analyzer=ngram_tokenizer),
                         memo             = TEXT(stored=True, sortable=True, analyzer=ngram_tokenizer),
                         language         = ID(stored=True),
                         document_format  = ID(stored=True),
@@ -118,7 +119,7 @@ class IndexManager:
 
         return pdatetime
 
-    def add_pdf_file(self, writer, file_path, published_date=None):
+    def add_pdf_file(self, writer, file_path, summary="", published_date=None):
         if not os.path.exists(Config.database_dir):
             raise ValueError('DB dir does not exist: ' + Config.database_dir)
 
@@ -130,12 +131,14 @@ class IndexManager:
             pdatetime = self.secure_datetime(published_date)
             writer.update_document(file_path          = file_path,
                                    title              = title,
+                                   summary            = summary,
                                    document_format    = 'pdf',
                                    published_at       = pdatetime,
                                    created_at         = datetime.datetime.now())
         else:
             writer.update_document(file_path          = file_path,
                                    title              = title,
+                                   summary            = summary,
                                    document_format    = 'pdf',
                                    created_at         = datetime.datetime.now())
 
