@@ -2,8 +2,12 @@
 
 version: 0.1.{build}
 
+init:
+- ps: Set-WinSystemLocale ja-JP
+- ps: Restart-Computer
+
 cache:
-  - node_modules
+  - electron/node_modules
   - '%USERPROFILE%\.electron'
 
 environment:

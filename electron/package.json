@@ -46,7 +46,7 @@
       "category": "Utility"
     },
     "win": {
-      "iconUrl": "https://github.com/mknz/mirusan/raw/develop/build/win/mirusan.ico"
+      "iconUrl": "https://github.com/mknz/mirusan/raw/master/electron/icon.ico"
     }
   }
 }
