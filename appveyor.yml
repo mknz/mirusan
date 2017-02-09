@@ -1,10 +1,14 @@
 # appveyor file
 
-environment:
-    matrix:
-      - node_version: "7"
-
 version: 0.1.{build}
+
+cache:
+  - node_modules
+  - '%USERPROFILE%\.electron'
+
+environment:
+  matrix:
+    - node_version: "7"
 
 install:
   - ps: Install-Product node $env:node_version
