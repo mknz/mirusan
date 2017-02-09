@@ -1,5 +1,5 @@
 {
-  "name": "mirusan",
+  "name": "Mirusan",
   "version": "0.1.0",
   "description": "PDF collection reader with built-in full-text search",
   "author": "mknz",
@@ -45,6 +45,11 @@
     "mac": {
       "category": "Utility"
     },
+    "files": [
+      "config.json",
+      "../data/*",
+      "mirusan-server.exe"
+    ],
     "win": {
       "iconUrl": "https://github.com/mknz/mirusan/raw/master/electron/icon.ico"
     },
