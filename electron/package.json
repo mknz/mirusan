@@ -47,6 +47,10 @@
     },
     "win": {
       "iconUrl": "https://github.com/mknz/mirusan/raw/master/electron/icon.ico"
+    },
+    "nsis": {
+      "allowToChangeInstallationDirectory": "true",
+      "language": "1041"
     }
   }
 }
