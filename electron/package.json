@@ -12,7 +12,7 @@
 	  "pack": "build --dir",
     "dist": "build",
     "build": "yarn run compile && yarn run dist",
-    "postinstall": "mkdir ./lib & elm-make --yes"
+    "postinstall": "mkdir lib & elm-make --yes"
 
   },
   "devDependencies": {
