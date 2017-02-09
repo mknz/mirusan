@@ -15,14 +15,19 @@ install:
   # Install build tools
   - cd ./electron
   - yarn install
-  - yarn run build
 
 test_script:
-  - yarn test
 
 branches:
   only:
     - master
 
-build: off
+build_script:
+  - yarn run build
+
+artifacts:
+  - path: electron\dist
+    name: dist
+
+build: on
 deploy: off
