@@ -1,10 +1,47 @@
 'use strict';
 
-const debug=false;
+const debug = true;
 
 // Electron libraries
 const electron = require('electron');
 const {ipcMain, dialog} = require('electron');
+
+// Auto update
+const autoUpdater = require('electron-updater').autoUpdater;
+
+autoUpdater.logger = require('electron-log');
+if (debug) {
+  autoUpdater.logger.transports.file.level = 'info';
+ } else {
+  autoUpdater.logger.transports.file.level = 'error';
+}
+
+autoUpdater.checkForUpdates();
+
+autoUpdater.on('update-downloaded', () => {
+  index = dialog.showMessageBox({
+    message: 'Software update has been downloaded.',
+      detail: 'Install update and reboot?',
+      buttons: ['Reboot', 'Later']
+    });
+    if (index === 0) {
+      autoUpdater.quitAndInstall();
+    }
+});
+
+autoUpdater.on('update-not-available', () => {
+  dialog.showMessageBox({
+    message: 'There was no update.',
+      buttons: ['OK']
+  });
+});
+
+autoUpdater.on('error', () => {
+  dialog.showMessageBox({
+    message: 'Error during Update.',
+      buttons: ['OK']
+  });
+});
 
 // Module to control application life.
 const app = electron.app;
