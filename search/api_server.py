@@ -5,7 +5,6 @@ import falcon
 
 from wsgiref import simple_server
 import json
-import subprocess
 import unicodedata
 
 
@@ -28,7 +27,7 @@ class SearchDB:
         if qstr is '':
             return
 
-        qstr = normalize(qstr)
+        qstr = normalize(qstr)  # normalize query string
 
         sort_field = req.get_param('sort-field')
         if sort_field is None:
