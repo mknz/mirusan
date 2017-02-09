@@ -2,10 +2,6 @@
 
 version: 0.1.{build}
 
-init:
-- ps: Set-WinSystemLocale ja-JP
-- ps: Restart-Computer
-
 cache:
   - electron/node_modules
   - '%USERPROFILE%\.electron'
@@ -17,7 +13,6 @@ environment:
 install:
   - ps: Install-Product node $env:node_version
   - node --version
-  - yarn install
   - yarn --version
 
   # Install build tools
