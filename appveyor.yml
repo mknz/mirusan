@@ -1,0 +1,28 @@
+# appveyor file
+
+environment:
+    matrix:
+      - node_version: "7"
+
+version: 0.1.{build}
+
+install:
+  - ps: Install-Product node $env:node_version
+  - node --version
+  - yarn install
+  - yarn --version
+
+  # Install build tools
+  - cd ./electron
+  - npm install
+  - npm run build
+
+test_script:
+  - npm test
+
+branches:
+  only:
+    - master
+
+build: off
+deploy: off
