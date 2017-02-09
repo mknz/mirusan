@@ -8,10 +8,10 @@
     "start": "electron main.js",
     "compile:elm": "elm-make ./src/Main.elm --output elm.js",
     "compile:babel": "babel pdf2txt.js > ./lib/pdf2txt.js",
-    "compile": "npm run compile:elm & npm run compile:babel",
+    "compile": "yarn run compile:elm & yarn run compile:babel",
 	  "pack": "build --dir",
     "dist": "build",
-    "build": "npm run compile && npm run dist"
+    "build": "yarn run compile && yarn run dist"
 
   },
   "devDependencies": {

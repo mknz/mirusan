@@ -14,11 +14,11 @@ install:
 
   # Install build tools
   - cd ./electron
-  - npm install
-  - npm run build
+  - yarn install
+  - yarn run build
 
 test_script:
-  - npm test
+  - yarn test
 
 branches:
   only:
