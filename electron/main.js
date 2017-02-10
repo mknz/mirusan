@@ -38,13 +38,14 @@ autoUpdater.on('update-not-available', () => {
 
 autoUpdater.on('error', () => {
   dialog.showMessageBox({
-    message: 'Error during Update.',
+    message: 'Error during auto update.',
       buttons: ['OK']
   });
 });
 
 // Module to control application life.
 const app = electron.app;
+
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow;
 
@@ -101,19 +102,18 @@ function createBackgroundWindow(parentWindow) {
   return win;
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
 app.on('ready', () => {
   const mainWindow = createWindow();
   const bgWindow = createBackgroundWindow(mainWindow);
   ipcMain.on('pdf-extract-request-main', (event, arg) => {
     dialog.showOpenDialog({filters: [{name: 'PDF files', extensions: ['pdf', 'PDF']}],
-                           properties: ['openFile', 'multiSelections']},
-                           (filePaths) => {
-                             bgWindow.webContents.send('pdf-extract-request-background',
-                             { pdfPaths: filePaths });
-                           })
+      properties: ['openFile', 'multiSelections']},
+      (filePaths) => {
+        bgWindow.webContents.send('pdf-extract-request-background',
+        { pdfPaths: filePaths });
+      })
   });
+  console.log(app.getLocale());
 })
 
 // Quit when all windows are closed.
