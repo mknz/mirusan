@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "PDF collection reader with built-in full-text search",
   "author": "mknz",
-  "license": "GPLv3",
+  "license": "GPL-3.0",
   "main": "main.js",
   "scripts": {
     "start": "electron main.js",
@@ -30,6 +30,7 @@
     "babel-polyfill": "*",
     "babel-preset-latest": "^6.22.0",
     "child-process": "*",
+    "electron-builder-squirrel-windows": "^13.4.0",
     "electron-log": "^1.3.0",
     "electron-updater": "*",
     "os-locale": "^2.0.0"
@@ -56,7 +57,11 @@
       "mirusan_search.exe"
     ],
     "win": {
+      "target": "squirrel"
+    },
+    "squirrelWindows": {
       "iconUrl": "https://github.com/mknz/mirusan/raw/master/electron/icon.ico"
+
     },
     "nsis": {
       "language": "1041"
