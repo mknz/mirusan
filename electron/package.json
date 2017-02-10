@@ -3,36 +3,35 @@
   "version": "0.1.0",
   "description": "PDF collection reader with built-in full-text search",
   "author": "mknz",
-	"license": "GPLv3",
+  "license": "GPLv3",
   "main": "main.js",
   "scripts": {
     "start": "electron main.js",
     "compile:elm": "elm-make ./src/Main.elm --output elm.js",
     "compile:babel": "babel pdf2txt.js > ./lib/pdf2txt.js",
     "compile": "yarn run compile:elm & yarn run compile:babel",
-	  "pack": "build --dir",
+    "pack": "build --dir",
     "dist": "build",
     "build": "yarn run compile && yarn run dist",
     "postinstall": "mkdir lib & elm-make --yes"
-
   },
   "devDependencies": {
-    "elm": "^0.18.0",
     "babel-cli": "^6.22.2",
     "babel-preset-latest": "^6.22.0",
     "devtron": "^1.4.0",
-    "eslint": "^3.11.1",
-    "eslint-config-google": "^0.7.1",
-    "electron-debug": "^1.1.0",
     "electron": "^1.4.15",
-    "electron-builder": "^13.3.0"
+    "electron-builder": "^13.3.0",
+    "electron-debug": "^1.1.0",
+    "elm": "^0.18.0",
+    "eslint": "^3.11.1",
+    "eslint-config-google": "^0.7.1"
   },
   "dependencies": {
-    "electron-updater": "*",
-    "electron-log": "^1.3.0",
     "babel-polyfill": "*",
     "babel-preset-latest": "^6.22.0",
-    "child-process": "*"
+    "child-process": "*",
+    "electron-log": "^1.3.0",
+    "electron-updater": "*"
   },
   "babel": {
     "sourceMaps": "inline",
@@ -45,13 +44,14 @@
     "mac": {
       "category": "Utility"
     },
-    "files": [
-      "config.json",
-      "../data/*",
-      "mirusan-server.exe"
+    "extraFiles": [
+      "config.json"
     ],
     "win": {
-      "iconUrl": "https://github.com/mknz/mirusan/raw/master/electron/icon.ico"
+      "iconUrl": "https://github.com/mknz/mirusan/raw/master/electron/icon.ico",
+      "extraFiles": [
+        "mirusan_search.exe"
+      ]
     },
     "nsis": {
       "allowToChangeInstallationDirectory": "true",
