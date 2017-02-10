@@ -9,11 +9,13 @@
     "start": "electron main.js",
     "compile:elm": "elm-make ./src/Main.elm --output elm.js",
     "compile:babel": "babel pdf2txt.js > ./lib/pdf2txt.js",
-    "compile": "yarn run compile:elm & yarn run compile:babel",
+    "compile": "npm-run-all -p  compile:*",
     "pack": "build --dir",
     "dist": "build",
-    "build": "yarn run compile && yarn run dist",
-    "postinstall": "mkdir lib & elm-make --yes"
+    "build": "npm-run-all compile dist",
+    "mkdir": "mkdir ./lib",
+    "elm:init": "elm-make --yes",
+    "postinstall": "npm-run-all -p mkdir elm:init"
   },
   "devDependencies": {
     "babel-cli": "^6.22.2",
@@ -24,7 +26,8 @@
     "electron-debug": "^1.1.0",
     "elm": "^0.18.0",
     "eslint": "^3.11.1",
-    "eslint-config-google": "^0.7.1"
+    "eslint-config-google": "^0.7.1",
+    "npm-run-all": "^4.0.1"
   },
   "dependencies": {
     "babel-polyfill": "*",
@@ -55,16 +58,6 @@
       "config.json",
       "data/**",
       "mirusan_search.exe"
-    ],
-    "win": {
-      "target": "squirrel"
-    },
-    "squirrelWindows": {
-      "iconUrl": "https://github.com/mknz/mirusan/raw/master/electron/icon.ico"
-
-    },
-    "nsis": {
-      "language": "1041"
-    }
+    ]
   }
 }
