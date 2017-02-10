@@ -114,7 +114,8 @@ var pdf2txt = (function () {
             (saveTexts) => {
               var savePaths = [];
               for (var i=0; i < saveTexts.length; i++) {
-                var pdfName = path.basename(pdfPath).split('.').shift();
+                var ext = path.extname(pdfPath);
+                var pdfName = path.basename(pdfPath, ext);
                 var saveFileName = pdfName + '_p' + (i + 1).toString() + '.txt';
                 var savePath =  path.join(saveDir, saveFileName);
                 console.log(savePath);
@@ -140,7 +141,8 @@ var pdf2txt = (function () {
       var pdfPaths = [];
       for (let filePath of filePaths) {
         var fileName = path.basename(filePath);
-        if (['pdf', 'PDF'].indexOf(fileName.split('.').pop()) >= 0) {
+        var ext = path.extname(filePath);
+        if (['.pdf', '.PDF'].indexOf(ext) >= 0) {
           pdfPaths.push(path.join(docDir, fileName));
         }
       }
