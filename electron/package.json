@@ -52,13 +52,14 @@
     ],
     "extraFiles": [
       "config.json",
+      "data/**",
       "mirusan_search.exe"
     ],
     "win": {
       "iconUrl": "https://github.com/mknz/mirusan/raw/master/electron/icon.ico"
     },
     "nsis": {
-      "language": 1041
+      "language": "1041"
     }
   }
 }
