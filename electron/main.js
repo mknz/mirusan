@@ -29,18 +29,7 @@ autoUpdater.on('update-downloaded', () => {
     }
 });
 
-autoUpdater.on('update-not-available', () => {
-  dialog.showMessageBox({
-    message: 'There was no update.',
-      buttons: ['OK']
-  });
-});
-
 autoUpdater.on('error', () => {
-  dialog.showMessageBox({
-    message: 'Error during auto update.',
-      buttons: ['OK']
-  });
 });
 
 // Module to control application life.
