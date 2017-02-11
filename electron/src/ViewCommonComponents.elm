@@ -7,20 +7,24 @@ import Html.Events exposing (onClick, onInput)
 import Models exposing (Model)
 import Messages exposing (Msg(..))
 
+toolbarHeader : Model -> Html Msg
+toolbarHeader model =
+  header [ class "toolbar toolbar-header" ] [ toolbarActions model ]
 
-toolbarHeader mode messageStr =
-  header [ class "toolbar toolbar-header" ] [ toolbarActions messageStr mode ]
+toolbarActions : Model -> Html Msg
+toolbarActions model =
+  div [ class "toolbar-actions" ] [ div [ class "btn-group" ] [ searchWindow ], toolButtons model, span [] [ text model.serverMessage ] ]
 
-toolbarActions messageStr mode =
-  div [ class "toolbar-actions" ] [ div [ class "btn-group" ] [ searchWindow ], toolButtons mode, span [] [ text messageStr ] ]
+toolButtons : Model -> Html Msg
+toolButtons model =
+  div [ class "btn-group" ] [ showIndexButton model, addFileButton ]
 
-toolButtons mode =
-  div [ class "btn-group" ] [ showIndexButton mode, addFileButton ]
-
-showIndexButton mode =
-  case mode of
+showIndexButton : Model -> Html Msg
+showIndexButton model =
+  case model.viewMode of
     Models.IndexMode ->
       button [ class "btn active btn-large btn-default", onClick GotoSearchMode, title "Go to search" ] [ span [ class "icon icon-list" ] [] ]
+      --button [ class "btn active btn-large btn-default", onClick GotoSearchMode, title translate currentLang  ] [ span [ class "icon icon-list" ] [] ]
     Models.SearchMode ->
       button [ class "btn btn-large btn-default", onClick ShowIndex, title "Show index" ] [ span [ class "icon icon-list" ] [] ]
 
@@ -28,8 +32,8 @@ addFileButton =
   button [ class "btn btn-large btn-default", onClick AddFilesToDB, title "Add files to database" ] [ span [ class "icon icon-folder" ] [] ]
 
 
-pagenation : Int -> Int -> Int -> Html Msg
-pagenation numPage numTotalPage numArticles =
+pagenation : Model -> Html Msg
+pagenation model =
   let
     prevPageButton = button [ class "btn btn-default", onClick GetPrevResultPage ] [ span [ class "icon icon-left" ] [] ]
     nextPageButton = button [ class "btn btn-default", onClick GetNextResultPage ] [ span [ class "icon icon-right" ] [] ]
@@ -40,11 +44,11 @@ pagenation numPage numTotalPage numArticles =
                       , placeholder "page", size 6, onInput GotoResultPage ] []
 
     parts =
-      if numPage == 1 then
+      if model.numResultPage == 1 then
         [ prevPageButtonDisabled, nextPageButton, inputPage ]
-      else if numPage == numTotalPage then
+      else if model.numResultPage == model.numTotalPage then
         [ prevPageButton, nextPageButtonDisabled, inputPage ]
-      else if numArticles == 0 then
+      else if model.numArticles == 0 then
         [ prevPageButtonDisabled, nextPageButtonDisabled, inputPage ]
       else
         [ prevPageButton, nextPageButton, inputPage ]

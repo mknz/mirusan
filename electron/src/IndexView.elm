@@ -48,7 +48,7 @@ indexView model =
         div [] [ div [ style [ ("height", "15px") ] ] [ text summary ], addedMessage ]
 
     sidebarContainer =
-      div [ id "sidebar-container" ] [ div [ id "search" ]  ( List.append [ (pagenation model.numResultPage model.numTotalPage model.numArticles), resultSummary ] resultDisplay )  ]
+      div [ id "sidebar-container" ] [ div [ id "search" ]  ( List.append [ pagenation model, resultSummary ] resultDisplay )  ]
 
   in
-    div []  [toolbarHeader model.viewMode model.serverMessage, sidebarContainer, viewerContainer]
+    div []  [toolbarHeader model, sidebarContainer, viewerContainer]
