@@ -6,6 +6,7 @@ import Html.Events exposing (onClick, onInput)
 
 import Models exposing (Model)
 import Messages exposing (Msg(..))
+import Translation exposing (Language(..), TranslationId(..), translate)
 
 toolbarHeader : Model -> Html Msg
 toolbarHeader model =
@@ -13,23 +14,23 @@ toolbarHeader model =
 
 toolbarActions : Model -> Html Msg
 toolbarActions model =
-  div [ class "toolbar-actions" ] [ div [ class "btn-group" ] [ searchWindow ], toolButtons model, span [] [ text model.serverMessage ] ]
+  div [ class "toolbar-actions" ] [ div [ class "btn-group" ] [ searchWindow model ], toolButtons model, span [] [ text model.serverMessage ] ]
 
 toolButtons : Model -> Html Msg
 toolButtons model =
-  div [ class "btn-group" ] [ showIndexButton model, addFileButton ]
+  div [ class "btn-group" ] [ showIndexButton model, addFileButton model ]
 
 showIndexButton : Model -> Html Msg
 showIndexButton model =
   case model.viewMode of
     Models.IndexMode ->
-      button [ class "btn active btn-large btn-default", onClick GotoSearchMode, title "Go to search" ] [ span [ class "icon icon-list" ] [] ]
-      --button [ class "btn active btn-large btn-default", onClick GotoSearchMode, title translate currentLang  ] [ span [ class "icon icon-list" ] [] ]
+      button [ class "btn active btn-large btn-default", onClick GotoSearchMode, title <| translate model.currentLanguage I18n_Go_to_search ] [ span [ class "icon icon-list" ] [] ]
     Models.SearchMode ->
-      button [ class "btn btn-large btn-default", onClick ShowIndex, title "Show index" ] [ span [ class "icon icon-list" ] [] ]
+      button [ class "btn btn-large btn-default", onClick ShowIndex, title <| translate model.currentLanguage I18n_Show_index ] [ span [ class "icon icon-list" ] [] ]
 
-addFileButton =
-  button [ class "btn btn-large btn-default", onClick AddFilesToDB, title "Add files to database" ] [ span [ class "icon icon-folder" ] [] ]
+addFileButton : Model -> Html Msg
+addFileButton model =
+  button [ class "btn btn-large btn-default", onClick AddFilesToDB, title <| translate model.currentLanguage I18n_Add_files_to_database ] [ span [ class "icon icon-folder" ] [] ]
 
 
 pagenation : Model -> Html Msg
@@ -41,7 +42,7 @@ pagenation model =
     nextPageButtonDisabled = button [ class "btn btn-default gray" ] [ span [ class "icon icon-right" ] [] ]
     inputPage = input [ style [ ("margin-left", "10px"), ("line-height", "18px") ]
                       , type_ "text"
-                      , placeholder "page", size 6, onInput GotoResultPage ] []
+                      , placeholder <| translate model.currentLanguage I18n_page, size 6, onInput GotoResultPage ] []
 
     parts =
       if model.numResultPage == 1 then
@@ -61,8 +62,9 @@ viewerIframe =
 viewerContainer =
   div [ id "pdf-viewer-container" ] [ viewerIframe ]
 
-searchWindow =
-  span [] [ input [ type_ "text", placeholder "Search", onInput SendSearch ] []
+searchWindow : Model -> Html Msg
+searchWindow model =
+  span [] [ input [ type_ "text", placeholder <| translate model.currentLanguage I18n_Search, onInput SendSearch ] []
   , span [ style [ ("font-size", "15pt") ] ] [ text " " ]
   , span [ class "icon icon-search", style [ ("vertical-align", "middle"), ("font-size", "15pt") ] ] []
   ]

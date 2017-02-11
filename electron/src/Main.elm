@@ -8,7 +8,7 @@ import Update exposing (update)
 import View exposing (view)
 import Ports exposing (subscriptions)
 import Search exposing (search, getIndex)
-
+import Translation exposing (Language(..))
 
 main : Program Never Model Msg
 main =
@@ -42,6 +42,7 @@ init =
    , serverMessage = ""
    , viewMode = Models.IndexMode
    , indexClick = 0
+   , currentLanguage = Japanese
    }
    , getIndex initSortField initPage sortOrder)
 

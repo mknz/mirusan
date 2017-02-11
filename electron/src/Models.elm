@@ -1,5 +1,7 @@
 module Models exposing (..)
 
+import Translation exposing (Language)
+
 type alias Model =
   { currentQuery: String,
     numResultPage: Int,
@@ -13,7 +15,8 @@ type alias Model =
     indexResult: IndexResult,
     serverMessage: String,
     viewMode: ViewMode,
-    indexClick: Int  -- workaround
+    indexClick: Int,  -- workaround,
+    currentLanguage: Language
   }
 
 type ViewMode = SearchMode | IndexMode
