@@ -2,6 +2,18 @@
 
 const debug = true;
 
+// i18n
+const i18n = require('i18n');
+i18n.configure({
+  locales: ['en', 'ja'],
+  defaultLocale: 'en',
+  directory: __dirname + "/locales_mirusan",
+  objectNotation: true
+});
+
+var teststr = i18n.__('hoge');
+console.log(teststr);
+
 // Electron libraries
 const electron = require('electron');
 const {ipcMain, dialog} = require('electron');
@@ -20,9 +32,9 @@ autoUpdater.checkForUpdates();
 
 autoUpdater.on('update-downloaded', () => {
   index = dialog.showMessageBox({
-    message: 'Software update has been downloaded.',
-      detail: 'Install update and reboot?',
-      buttons: ['Reboot', 'Later']
+    message: i18n.__('Software update has been downloaded.'),
+      detail: i18n.__('Install update and reboot?'),
+      buttons: [i18n.__('Reboot'), i18n.__('Later')]
     });
     if (index === 0) {
       autoUpdater.quitAndInstall();
@@ -65,7 +77,7 @@ function createWindow() {
 
   // Emitted when the window is closed.
   win.on('closed', function() {
-   console.log('Closing window.');
+   console.log(i18n.__('Closing main window.'));
    win = null;
   });
   return win;
@@ -85,7 +97,7 @@ function createBackgroundWindow(parentWindow) {
 
   // Emitted when the window is closed.
   win.on('closed', function() {
-   console.log('Closing window.');
+   console.log(i18n.__('Closing background window.'));
    win = null;
   });
   return win;
@@ -102,7 +114,6 @@ app.on('ready', () => {
         { pdfPaths: filePaths });
       })
   });
-  console.log(app.getLocale());
 })
 
 // Quit when all windows are closed.
@@ -113,7 +124,7 @@ app.on('window-all-closed', function() {
     app.quit();
   }
   if (process.platform == 'win32') {
-    console.log('Killing subprocess.');
+    console.log(i18n.__('Killing subprocess.'));
     const killer = require('child_process').execSync;
     killer('taskkill /im mirusan_search.exe /f /t', (err, stdout, stderr) => {
       console.log(err);
@@ -121,7 +132,7 @@ app.on('window-all-closed', function() {
       console.log(stdout);
     });
   } else if (process.platform == 'linux') {
-    console.log('Killing subprocess.');
+    console.log(i18n.__('Killing subprocess.'));
     subpy.kill('SIGINT');
   }
 });
