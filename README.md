@@ -1,4 +1,5 @@
 # Mirusan
+![mirusan_logo.png](images/mirusan_logo.png)
 
 A PDF collection reader with built-in full text search engine
 
@@ -8,9 +9,9 @@ A PDF collection reader with built-in full text search engine
 
 - Simple UI
 
-- Automatic text extraction
-
 - Local database (You have controll 100% of your data)
+
+- Easy installation (No need of external databases or tools)
 
 - Multiplatform (Linux, Mac, Windows)
 
