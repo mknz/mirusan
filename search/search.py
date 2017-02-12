@@ -12,6 +12,11 @@ import datetime
 import re
 import sys
 import json
+import unicodedata
+
+
+def normalize(string):
+    return unicodedata.normalize('NFKC', string)
 
 
 class Config:
@@ -162,6 +167,8 @@ class IndexManager:
         with open(text_file_path, 'r', encoding='utf-8') as f:
             content_text = f.read()
 
+        content_text_normalized = normalize(content_text)
+
         # set initial title: filename without ext
         if title == "":
             title = os.path.splitext(os.path.basename(parent_file_path))[0]
@@ -172,7 +179,7 @@ class IndexManager:
             writer.update_document(file_path          = text_file_path,
                                    parent_file_path   = parent_file_path,
                                    title              = title,
-                                   content            = content_text,
+                                   content            = content_text_normalized,
                                    page               = num_page,
                                    document_format    = 'txt',
                                    published_at       = pdatetime,

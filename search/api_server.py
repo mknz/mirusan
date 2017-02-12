@@ -1,15 +1,10 @@
 # -*- coding: utf-8 -*-
-from search import Config, Search, IndexManager
+from search import Config, Search, IndexManager, normalize
 
 import falcon
 
 from wsgiref import simple_server
 import json
-import unicodedata
-
-
-def normalize(string):
-    return unicodedata.normalize('NFKC', string)
 
 
 class DataBaseResource:
