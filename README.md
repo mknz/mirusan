@@ -10,28 +10,24 @@ A PDF collection reader with built-in full text search engine
 
 - Automatic text extraction
 
-- Local database (you have controll 100% of your data)
+- Local database (You have controll 100% of your data)
 
 - Multiplatform (Linux, Mac, Windows)
 
 ## Quickstart
 
 ```sh
-(install python3)
-
-(install node.js)
+#install python3
+#install node.js
 
 git clone https://github.com/mknz/mirusan.git
 
 cd ./mirusan
-
 cd ./search
 pip install -r requirements.txt
 
 cd ../electron
-
 npm install
-
 npm run compile
 
 npm start
@@ -43,6 +39,8 @@ npm start
 [pdf.js](https://github.com/mozilla/pdf.js)
 
 [Electron](http://electron.atom.io/)
+
+[Photon](http://photonkit.com/)
 
 [Elm](http://elm-lang.org/)
 
