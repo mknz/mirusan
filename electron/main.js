@@ -11,9 +11,6 @@ i18n.configure({
   objectNotation: true
 });
 
-var teststr = i18n.__('hoge');
-console.log(teststr);
-
 // Electron libraries
 const electron = require('electron');
 const {ipcMain, dialog} = require('electron');
@@ -125,7 +122,7 @@ app.on('window-all-closed', function() {
   }
   if (process.platform == 'win32') {
     console.log(i18n.__('Killing subprocess.'));
-    const killer = require('child_process').execSync;
+    const killer = require('child_process').exec;
     killer('taskkill /im mirusan_search.exe /f /t', (err, stdout, stderr) => {
       console.log(err);
       console.log(stderr);
