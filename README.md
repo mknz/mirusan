@@ -1,52 +1,50 @@
-# mirusan
+# Mirusan
 
-## これは何
+A PDF collection reader with built-in full text search engine
 
-日本語全文検索機能付きpdfビューア
+## Features
 
+- Quick incremental search
 
-## 機能
+- Simple UI
 
-- pdfファイルが含まれるフォルダを指定すると検索インデックスを作成
+- Automatic text extraction
 
-- 検索窓から単語を入力すると、マッチする文書のリストと概要が表示される
+- Local DB (no need to connect external server)
 
-- 文書をクリックするとpdfファイルが開き、当該ページを表示する
+- Multiplatform (Linux, Mac, Windows)
 
-- ヒストリ、ブックマークなど
+## Quickstart
 
-## 実装
+```sh
+install python3
 
-- Python + Whoosh で検索部分を作る + Whooshはpure pythonで書かれた全文テキスト検索モジュールである
+install npm
 
-- 簡易なn-gram検索にする
+git clone https://gitub.io/mknz/mirusan-git
 
-- 検索UIとビューアはJavascript + Electronで作る
+cd mirusan
 
-- 当初全文検索エンジンのgroongaもしくはElasticSearchをJSから呼んで使うことを検討したが以下の理由からやめた
+cd search
+pip install -r requirements.txt
 
-    - JSバインディングのnroongaが古くなっていて使えないっぽい
-        + rubyから扱う例が多いようだ
+cd ../electron
 
-    - Windowsでパッケージにまとめてインストールするのが手間
-        + サイズがでかい
+npm install
 
-- 機能的にはおそらく、groongaのC++ライブラリを使って全部C++で書くのがベスト。しかし学習コストが過大・・・
+npm compile
 
-## 設計
+npm start
+```
 
-- 検索クラスのメソッド
-    + indexを作成、初期化する
-    + タイトル、テキスト文字列を受け取り、indexに追加する
-    + pdfファイルのパスを受け取り、テキストを抽出する
-    + クエリ文字列を受け取り、マッチした文書のファイル名とハイライトつき文字列のJSONを返す
+## Acknowledgements
+Whoosh (pure python search engine)
 
-- UI部分
-    + フォームから受け取った文字列を検索部分に投げる。結果をJSONで受け取り、一覧をhtmlで表示
-    + 項目をクリックすると、pdfを開いてヒットしたページをハイライトつき表示する
+pdf.js
 
-## TODO
+Electron
 
-- ngramの最適サイズについて調べる
+Elm
 
-- テストを書け
+Elm-electron
+https://github.com/elm-electron/electron/tree/master/examples/ipcRenderer
