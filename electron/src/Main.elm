@@ -42,7 +42,7 @@ init =
    , serverMessage = ""
    , viewMode = Models.IndexMode
    , indexClick = 0
-   , currentLanguage = Japanese
+   , currentLanguage = English
    }
    , getIndex initSortField initPage sortOrder)
 

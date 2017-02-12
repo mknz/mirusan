@@ -11,6 +11,17 @@ i18n.configure({
   objectNotation: true
 });
 
+var log = require('electron-log');
+log.transports.file.file = __dirname + '/mirusan_electron.log';
+log.transports.file.streamConfig = { flags: 'w' };
+log.transports.file.maxSize = 5 * 1024 * 1024;
+log.transports.file.format = '{y}-{m}-{d} {h}:{i}:{s}:{ms} [{level}] {text}';
+if (debug) {
+  log.transports.file.level = 'debug';
+} else {
+  log.transports.file.level = 'warn';
+}
+
 // Electron libraries
 const electron = require('electron');
 const {ipcMain, dialog} = require('electron');
@@ -18,11 +29,12 @@ const {ipcMain, dialog} = require('electron');
 // Auto update
 const autoUpdater = require('electron-updater').autoUpdater;
 
+autoUpdater.setFeedURL('http://localhost:8001/mirusan.zip');
+
 autoUpdater.logger = require('electron-log');
 if (debug) {
-  autoUpdater.logger.transports.file.level = 'info';
- } else {
-  autoUpdater.logger.transports.file.level = 'error';
+  autoUpdater.logger.transports.file.level = 'debug';
+ } else { autoUpdater.logger.transports.file.level = 'warn';
 }
 
 autoUpdater.checkForUpdates();
@@ -38,7 +50,8 @@ autoUpdater.on('update-downloaded', () => {
     }
 });
 
-autoUpdater.on('error', () => {
+autoUpdater.on('error', (err) => {
+  log.error(err);
 });
 
 // Module to control application life.
@@ -124,9 +137,9 @@ app.on('window-all-closed', function() {
     console.log(i18n.__('Killing subprocess.'));
     const killer = require('child_process').exec;
     killer('taskkill /im mirusan_search.exe /f /t', (err, stdout, stderr) => {
-      console.log(err);
-      console.log(stderr);
-      console.log(stdout);
+      log.err(err);
+      log.err(stderr);
+      log.info(stdout);
     });
   } else if (process.platform == 'linux') {
     console.log(i18n.__('Killing subprocess.'));

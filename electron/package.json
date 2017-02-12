@@ -58,6 +58,11 @@
       "config.json",
       "data/**",
       "mirusan_search.exe"
-    ]
+    ],
+    "win": {
+      "publish": [
+        "url": "http://localhost:8001"
+      ]
+    }
   }
 }
