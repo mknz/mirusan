@@ -34,6 +34,10 @@ npm run compile
 npm start
 ```
 
+## License
+
+[GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html)
+
 ## Acknowledgements
 [Whoosh (Pure Python search engine library)](http://whoosh.readthedocs.io/en/latest/)
 
