@@ -12,7 +12,7 @@ i18n.configure({
 });
 
 var log = require('electron-log');
-log.transports.file.file = __dirname + '/mirusan_electron.log';
+log.transports.file.file = __dirname + '/../mirusan_electron.log';
 log.transports.file.streamConfig = { flags: 'w' };
 log.transports.file.maxSize = 5 * 1024 * 1024;
 log.transports.file.format = '{y}-{m}-{d} {h}:{i}:{s}:{ms} [{level}] {text}';
@@ -28,8 +28,6 @@ const {ipcMain, dialog} = require('electron');
 
 // Auto update
 const autoUpdater = require('electron-updater').autoUpdater;
-
-autoUpdater.setFeedURL('http://localhost:8001/mirusan.zip');
 
 autoUpdater.logger = require('electron-log');
 if (debug) {

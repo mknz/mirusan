@@ -12,8 +12,9 @@
     "compile": "npm-run-all -p  compile:*",
     "pack": "build --dir",
     "dist": "build",
-    "build": "npm-run-all compile dist",
+    "build": "npm-run-all clean:dist compile dist",
     "mkdir": "mkdir ./lib",
+    "clean:dist": "rimraf ./dist",
     "elm:init": "elm-make --yes",
     "postinstall": "npm-run-all -p mkdir elm:init"
   },
@@ -27,7 +28,8 @@
     "elm": "^0.18.0",
     "eslint": "^3.11.1",
     "eslint-config-google": "^0.7.1",
-    "npm-run-all": "^4.0.1"
+    "npm-run-all": "^4.0.1",
+    "rimraf": "^2.5.4"
   },
   "dependencies": {
     "babel-polyfill": "*",
@@ -62,7 +64,7 @@
     "win": {
       "publish": {
         "provider": "generic",
-        "url": "http://localhost:8001"
+        "url": ""
       }
     }
   }
