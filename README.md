@@ -10,41 +10,40 @@ A PDF collection reader with built-in full text search engine
 
 - Automatic text extraction
 
-- Local DB (no need to connect external server)
+- Local database (you have controll 100% of your data)
 
 - Multiplatform (Linux, Mac, Windows)
 
 ## Quickstart
 
 ```sh
-install python3
+(install python3)
 
-install npm
+(install node.js)
 
-git clone https://gitub.io/mknz/mirusan-git
+git clone https://github.com/mknz/mirusan.git
 
-cd mirusan
+cd ./mirusan
 
-cd search
+cd ./search
 pip install -r requirements.txt
 
 cd ../electron
 
 npm install
 
-npm compile
+npm run compile
 
 npm start
 ```
 
 ## Acknowledgements
-Whoosh (pure python search engine)
+[Whoosh (Pure Python search engine library)](http://whoosh.readthedocs.io/en/latest/)
 
-pdf.js
+[pdf.js](https://github.com/mozilla/pdf.js)
 
-Electron
+[Electron](http://electron.atom.io/)
 
-Elm
+[Elm](http://elm-lang.org/)
 
-Elm-electron
-https://github.com/elm-electron/electron/tree/master/examples/ipcRenderer
+[elm-electron](https://github.com/elm-electron/electron/tree/master/examples/ipcRenderer)
