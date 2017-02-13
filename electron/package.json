@@ -57,8 +57,6 @@
       "!**/elm-stuff"
     ],
     "extraFiles": [
-      "config.json",
-      "data/**",
       "mirusan_search.exe"
     ],
     "win": {
