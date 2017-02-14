@@ -2,6 +2,21 @@
 
 const debug = true;
 
+const fs = require('fs');
+const path = require('path');
+
+// Generate config file
+const baseWorkDir = process.cwd();
+const configPath = path.join(baseWorkDir, 'config.json');
+if (!fs.existsSync(configPath)) {
+  var config = {};
+  config.data_dir = "./data";
+  config.pdf_dir = "./data/pdf";
+  config.txt_dir = "txt_dir";
+  config.mode = "release";
+  fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
+}
+
 // i18n
 const i18n = require('i18n');
 i18n.configure({
@@ -12,7 +27,7 @@ i18n.configure({
 });
 
 var log = require('electron-log');
-log.transports.file.file = __dirname + '/../mirusan_electron.log';
+log.transports.file.file = path.join(baseWorkDir, 'mirusan_electron.log');
 log.transports.file.streamConfig = { flags: 'w' };
 log.transports.file.maxSize = 5 * 1024 * 1024;
 log.transports.file.format = '{y}-{m}-{d} {h}:{i}:{s}:{ms} [{level}] {text}';
