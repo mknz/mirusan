@@ -12,7 +12,7 @@ if (!fs.existsSync(configPath)) {
   var config = {};
   config.data_dir = "./data";
   config.pdf_dir = "./data/pdf";
-  config.txt_dir = "txt_dir";
+  config.txt_dir = "./data/txt";
   config.mode = "release";
   fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
 }
