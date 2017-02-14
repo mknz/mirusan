@@ -13,7 +13,7 @@
     "pack": "build --dir",
     "dist": "build",
     "build": "npm-run-all clean:dist compile dist",
-    "mkdir": "mkdir ./lib",
+    "mkdir": "mkdirp ./lib",
     "clean:dist": "rimraf ./dist",
     "elm:init": "elm-make --yes",
     "postinstall": "npm-run-all -p mkdir elm:init"
@@ -29,7 +29,8 @@
     "eslint": "^3.11.1",
     "eslint-config-google": "^0.7.1",
     "npm-run-all": "^4.0.1",
-    "rimraf": "^2.5.4"
+    "rimraf": "^2.5.4",
+    "mkdirp": "^0.5.1"
   },
   "dependencies": {
     "babel-polyfill": "*",
