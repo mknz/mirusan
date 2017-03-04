@@ -1,5 +1,6 @@
-{"data_dir": "./data",
- "pdf_dir" : "./data/pdf",
- "txt_dir" : "./data/txt",
- "mode"    : "debug"
+{
+  "data_dir": "./data",
+  "pdf_dir": "./data/pdf",
+  "txt_dir": "./data/txt",
+  "mode": "release"
 }

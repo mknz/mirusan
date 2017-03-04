@@ -1,7 +1,5 @@
 'use strict';
 
-const debug = true;
-
 const fs = require('fs');
 const path = require('path');
 
@@ -9,12 +7,20 @@ const path = require('path');
 const baseWorkDir = process.cwd();
 const configPath = path.join(baseWorkDir, 'config.json');
 if (!fs.existsSync(configPath)) {
-  var config = {};
-  config.data_dir = "./data";
-  config.pdf_dir = "./data/pdf";
-  config.txt_dir = "./data/txt";
-  config.mode = "release";
-  fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
+  var Config = {};
+  Config.data_dir = "./data";
+  Config.pdf_dir = "./data/pdf";
+  Config.txt_dir = "./data/txt";
+  Config.mode = "release";
+  fs.writeFileSync(configPath, JSON.stringify(Config, null, 2));
+} else {
+  var Config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+}
+
+if (Config.mode === 'debug') {
+  var debug = true;
+} else {
+  var debug = false;
 }
 
 // i18n
