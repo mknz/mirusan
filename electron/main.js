@@ -85,7 +85,7 @@ let mainWindow;
 
 if (process.platform == 'win32') {
   var subpy = require('child_process').spawn('./mirusan_search.exe', ['--server']);
-} else if (process.platform == 'linux') {
+} else if (process.platform == 'linux' || process.platform == 'darwin') {
   var subpy = require('child_process').spawn('python3', ['../search/search.py', '--server']);
 }
 
@@ -160,7 +160,7 @@ app.on('window-all-closed', function() {
       log.err(stderr);
       log.info(stdout);
     });
-  } else if (process.platform == 'linux') {
+  } else if (process.platform == 'linux' || process.platform == 'darwin') {
     console.log(i18n.__('Killing subprocess.'));
     subpy.kill('SIGINT');
   }
