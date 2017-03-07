@@ -13,6 +13,7 @@ import re
 import sys
 import json
 import unicodedata
+import langdetect
 
 
 def normalize(string):
@@ -169,6 +170,9 @@ class IndexManager:
 
         content_text_normalized = normalize(content_text)
 
+        # detect language from text
+        lang = langdetect.detect(content_text_normalized)
+
         # set initial title: filename without ext
         if title == "":
             title = os.path.splitext(os.path.basename(parent_file_path))[0]
@@ -181,6 +185,7 @@ class IndexManager:
                                    title              = title,
                                    content            = content_text_normalized,
                                    page               = num_page,
+                                   language           = lang,
                                    document_format    = 'txt',
                                    published_at       = pdatetime,
                                    created_at         = datetime.datetime.now())
@@ -190,6 +195,7 @@ class IndexManager:
                                    title              = title,
                                    content            = content_text,
                                    page               = num_page,
+                                   language           = lang,
                                    document_format    = 'txt',
                                    created_at         = datetime.datetime.now())
 
