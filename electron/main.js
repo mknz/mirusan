@@ -8,10 +8,11 @@ const baseWorkDir = process.cwd();
 const configPath = path.join(baseWorkDir, 'config.json');
 if (!fs.existsSync(configPath)) {
   var Config = {};
-  Config.data_dir = "./data";
-  Config.pdf_dir = "./data/pdf";
-  Config.txt_dir = "./data/txt";
-  Config.mode = "release";
+  Config.data_dir = './data';
+  Config.pdf_dir = './data/pdf';
+  Config.txt_dir = './data/txt';
+  Config.mode = 'release';
+  Config.locale = 'en';
   fs.writeFileSync(configPath, JSON.stringify(Config, null, 2));
 } else {
   var Config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
@@ -27,7 +28,7 @@ if (Config.mode === 'debug') {
 const i18n = require('i18n');
 i18n.configure({
   locales: ['en', 'ja'],
-  defaultLocale: 'en',
+  defaultLocale: Config.locale,
   directory: __dirname + "/locales_mirusan",
   objectNotation: true
 });
