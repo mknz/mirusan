@@ -309,11 +309,14 @@ class Search:
         with self.ix.searcher() as searcher:
             query = MultifieldParser(search_fields,
                                      self.ix.schema).parse(query_str)
+
+            # search onlyt text file
             results = searcher.search_page(query, n_page,
                                            pagelen=pagelen,
                                            sortedby=sort_field,
                                            reverse=reverse,
                                            filter=Term('document_format', 'txt'))
+
             n_hits = len(results)  # number of total hit documents
             total_pages = n_hits // pagelen + 1  # number of search result pages
             if n_page > total_pages:
