@@ -2,6 +2,7 @@
 ![mirusan_logo.png](images/mirusan_logo.png)
 
 A PDF collection reader with built-in full text search engine
+Written in Python / Electron / Elm
 
 ## Features
 
@@ -11,7 +12,7 @@ A PDF collection reader with built-in full text search engine
 
 - Local database (You have controll 100% of your data)
 
-- Easy installation (No need of external databases or tools)
+- Easy installation (No need to install external databases)
 
 - Multiplatform (Linux, Mac, Windows)
 
