@@ -25,7 +25,7 @@ function addFilesToDB(filePaths) {
   if (process.platform == 'win32') {
     var sub = require('child_process').spawn('./mirusan_search.exe', ['--add-files'].concat(filePaths));
   }
-  else if (process.platform == 'linux') {
+  else if (process.platform == 'linux' || process.platform == 'darwin') {
     var subpy = require('child_process').spawn('python3', ['../search/search.py', '--add-files'].concat(filePaths));
   }
 }
