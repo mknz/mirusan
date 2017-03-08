@@ -3,6 +3,8 @@
 // needed for async
 require("babel-polyfill");
 
+const mkdirp = require('mkdirp');
+
 // does not work if PDFJS is in local. Fix later.
 var PDFJS = require('./pdfjs/build/pdf.js');
 PDFJS.workerSrc = './pdfjs/build/pdf.worker.js';
@@ -117,7 +119,12 @@ var pdf2txt = (function () {
                 var ext = path.extname(pdfPath);
                 var pdfName = path.basename(pdfPath, ext);
                 var saveFileName = pdfName + '_p' + (i + 1).toString() + '.txt';
-                var savePath =  path.join(saveDir, saveFileName);
+
+                // save to txt/pdfName/*.txt
+                var dstDir = path.join(path.resolve(saveDir), pdfName);
+                mkdirp(dstDir);
+                var savePath =  path.join(dstDir, saveFileName);
+
                 console.log(savePath);
                 savePaths.push(savePath);
                 fs.writeFileSync(savePath, saveTexts[i]);

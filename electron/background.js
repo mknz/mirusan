@@ -6,11 +6,12 @@ const path = require('path');
 const Config = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
 
 // Copy multiple files synchronously
-function copyFilesSync(filePaths) {
+function copyPdfFilesSync(filePaths) {
   var newPaths = [];
   for (var i = 0; i < filePaths.length; i++) {
     var filePath = path.resolve(filePaths[i]);
-    var dstPath = path.join(path.resolve(Config.pdf_dir), path.basename(filePath));
+    var dstDir = path.resolve(Config.pdf_dir);
+    var dstPath = path.join(dstDir, path.basename(filePath));
     var data = fs.readFileSync(filePath);
     fs.writeFile(dstPath, data);
     console.log('Copied to: ' + dstPath);
@@ -36,7 +37,7 @@ require('electron').ipcRenderer.on('pdf-extract-request-background', (event, mes
   for (var i=0; i < pdfPaths.length; i++) {
     pdfAbsPaths.push(path.resolve(pdfPaths[i]));
   }
-  var newPdfPaths = copyFilesSync(pdfAbsPaths); // NOTE: blocking operation
+  var newPdfPaths = copyPdfFilesSync(pdfAbsPaths); // NOTE: blocking operation
   // Extract text, add to DB
   pdf2txt.pdfFilesTotxt(newPdfPaths, path.resolve(Config.txt_dir), addFilesToDB);
 })
