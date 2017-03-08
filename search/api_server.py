@@ -55,6 +55,14 @@ class SearchDB:
         resp.body = json.dumps(search_result, ensure_ascii=False)
 
 
+class DeleteDocument:
+    def on_get(self, req, resp):
+        im = IndexManager()
+        gid = req.get_param('gid')
+        im.delete_document(gid)
+        return
+
+
 class SortedIndex:
     search = Search()
 
@@ -92,6 +100,7 @@ class Server:
     api = falcon.API()
     api.add_route('/search', SearchDB())
     api.add_route('/sorted-index', SortedIndex())
+    api.add_route('/delete', DeleteDocument())
 
     def start(self):
         httpd = simple_server.make_server("127.0.0.1", 8000, self.api)
