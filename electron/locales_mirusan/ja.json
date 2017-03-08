@@ -1,3 +1,10 @@
 {
-	"Hello": "こんにちは"
+	"Closing window.": "ウィンドウを閉じます。",
+	"Closing background window.": "バックグラウンドウィンドウを閉じます。",
+	"Killing subprocess.": "サブプロセスを終了します。",
+	"Closing main window.": "メインウィンドウを閉じます。",
+	"Software update has been downloaded.": "アップデートがダウンロードされました。",
+	"Install update and reboot?": "アップデートをインストールしてソフトウェアを再起動しますか？",
+	"Reboot": "再起動する",
+	"Later": "後で"
 }

@@ -1,5 +1,4 @@
 {
-	"Hello": "Hello",
 	"Closing window.": "Closing window.",
 	"Closing background window.": "Closing background window.",
 	"Killing subprocess.": "Killing subprocess.",
@@ -7,6 +6,5 @@
 	"Software update has been downloaded.": "Software update has been downloaded.",
 	"Install update and reboot?": "Install update and reboot?",
 	"Reboot": "Reboot",
-	"Later": "Later",
-	"hoge": "hoge"
+	"Later": "Later"
 }
