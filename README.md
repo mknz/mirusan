@@ -2,7 +2,8 @@
 ![mirusan_logo.png](images/mirusan_logo.png)
 
 A PDF collection reader with built-in full text search engine
-Written in Python / Electron / Elm
+
+Written in Python / Electron / Elm / Javascript
 
 ## Features
 
