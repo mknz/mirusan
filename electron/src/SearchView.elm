@@ -6,7 +6,7 @@ import Html.Events exposing (onClick)
 import Markdown
 import Utils exposing (disableHyperlink)
 
-import Models exposing (Model)
+import Models exposing (Model, SearchResultRow)
 import Messages exposing (Msg(..))
 
 import ViewCommonComponents exposing (toolbarHeader, viewerContainer, pagenation)
@@ -14,6 +14,7 @@ import ViewCommonComponents exposing (toolbarHeader, viewerContainer, pagenation
 searchView : Model -> Html Msg
 searchView model =
   let
+    createComponent : SearchResultRow -> Html Msg
     createComponent row =
       let
         body = disableHyperlink row.body

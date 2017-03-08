@@ -5,7 +5,7 @@ import Html.Attributes exposing (class, id, type_, placeholder, value, href, sty
 import Html.Events exposing (onClick)
 import Markdown
 
-import Models exposing (Model)
+import Models exposing (Model, IndexResultRow)
 import Messages exposing (Msg(..))
 
 import ViewCommonComponents exposing (toolbarHeader, viewerContainer, pagenation)
@@ -14,6 +14,7 @@ indexView : Model -> Html Msg
 indexView model =
   let
     nPage = 1
+    createComponent : IndexResultRow -> Html Msg
     createComponent row =
       let
         title = div [ class "search-result", onClick (OpenDocument (row.file_path, nPage)) ] [ text row.title ]
