@@ -15,6 +15,7 @@ import re
 import sys
 import json
 import unicodedata
+import uuid
 import langdetect
 
 
@@ -109,6 +110,7 @@ class IndexManager:
     def create_index(self, ngram_min=1, ngram_max=2):
         ngram_tokenizer = NgramTokenizer(minsize=ngram_min, maxsize=ngram_max)
         schema = Schema(file_path        = ID(stored=True, unique=True),  # primary key
+                        gid              = ID(stored=True),  # document group id (pdf + texts)
                         parent_file_path = ID(stored=True),
                         title            = TEXT(stored=True, sortable=True, analyzer=ngram_tokenizer),
                         authors          = TEXT(stored=True, sortable=True, analyzer=ngram_tokenizer),
@@ -130,7 +132,7 @@ class IndexManager:
         ix.close()
 
     def secure_datetime(self, date):
-        """date: type unknown."""
+        """Normalize type-unknown date object."""
         if type(date) is datetime.datetime:
             pdatetime = date
         elif type(date) is datetime.date:
@@ -145,7 +147,7 @@ class IndexManager:
 
         return pdatetime
 
-    def add_pdf_file(self, file_path, summary="", published_date=None):
+    def add_pdf_file(self, file_path, gid=None, summary="", published_date=None):
         if not os.path.exists(Config.database_dir):
             raise ValueError('DB dir does not exist: ' + Config.database_dir)
 
@@ -153,6 +155,7 @@ class IndexManager:
         title = os.path.splitext(os.path.basename(file_path))[0]
 
         fields = {}
+        fields['gid']              = gid
         fields['file_path']        = file_path
         fields['title']            = title
         fields['summary']          = summary
@@ -201,7 +204,7 @@ class IndexManager:
             self.writer.commit()
             self.open()
 
-    def add_text_file(self, text_file_path, parent_file_path, title="",
+    def add_text_file(self, text_file_path, gid=None, parent_file_path='', title='',
                       num_page=1, published_date=None):
         if not os.path.exists(Config.database_dir):
             raise ValueError('DB dir does not exist: ' + Config.database_dir)
@@ -225,6 +228,7 @@ class IndexManager:
 
         # prepare published date
         fields = {}
+        fields['gid']              = gid
         fields['file_path']        = text_file_path
         fields['parent_file_path'] = parent_file_path
         fields['title']            = title
@@ -241,7 +245,7 @@ class IndexManager:
         self.writer.update_document(**fields)
         Config.logger.info('Added :' + text_file_path)
 
-    def add_text_page_file(self, text_file_path):
+    def add_text_page_file(self, text_file_path, gid=None):
         """Add database page-wise text file.
         filename format: {DOCUMENT_NAME}_p{NUM_PAGE}.txt
         """
@@ -261,6 +265,7 @@ class IndexManager:
             raise ValueError('Document file does not exist: ' + doc_file_path)
 
         self.add_text_file(text_file_path=text_file_path,
+                           gid=gid,
                            parent_file_path=doc_file_path,
                            num_page=num_page)
 
@@ -373,6 +378,54 @@ class Search:
                 print('')
 
 
+def separate_files(files):
+    pdfs = []
+    for file in files:
+        filename, ext = os.path.splitext(file)
+        if ext in ['.pdf', '.PDF']:
+            pdfs.append(file)
+
+    groups = []
+    for pdf in pdfs:
+        title, ext = os.path.splitext(pdf)
+        title = os.path.basename(title)
+        group = {}
+        # assign random uuid for document group
+        group['id'] = str(uuid.uuid4())
+        group['pdf_file'] = pdf
+        group['text_files'] = []
+        for file in files:
+            filename, ext = os.path.splitext(file)
+            if ext in ['.txt', '.TXT']:
+                if re.search(r'^' + title, os.path.basename(filename)):
+                    group['text_files'].append(file)
+        groups.append(group)
+
+    return groups
+
+
+def add_files(files):
+    """Using from electron, this argument consists of multiple pdf/txt file
+    pairs, due to the restriction in JS code.
+    """
+    try:
+        file_groups = separate_files(files)
+        im = IndexManager()
+        for group in file_groups:
+            gid = group['id']
+            im.add_pdf_file(group['pdf_file'], gid)
+            for tf in group['text_files']:
+                im.add_text_page_file(tf, gid)
+
+        im.writer.commit()
+
+    except Exception as err:
+        Config.logger.exception('Error at add_files: %s', err)
+
+    im.ix.close()
+    return
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', default='./config.json')
@@ -411,24 +464,7 @@ def main():
         return
 
     if args.add_files is not None:
-        try:
-            im = IndexManager()
-            for path in args.add_files:
-                _, ext = os.path.splitext(path)
-                if ext in ['.pdf', '.PDF']:
-                    im.add_pdf_file(path)
-                elif ext in ['.txt', '.TXT']:
-                    im.add_text_page_file(path)
-                else:
-                    raise ValueError(path)
-
-            im.writer.commit()
-
-        except Exception as err:
-            Config.logger.exception('Error at add_files: %s', err)
-
-        im.ix.close()
-        return
+        add_files(args.add_files)
 
     if args.add_dir is not None:
         im = IndexManager()
