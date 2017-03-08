@@ -3,7 +3,7 @@ module Search exposing (..)
 import Http
 import Json.Decode exposing (int, string, float, bool, nullable, map, map2, map3, map4, map5, field, at, list, Decoder)
 
-import Models exposing (SearchResult, SearchResultRow, IndexResult, IndexResultRow)
+import Models exposing (SearchResult, SearchResultRow, IndexResult, IndexResultRow, ResultMessage)
 import Messages exposing (Msg(..))
 
 
@@ -21,9 +21,14 @@ indexResultDecoder : Decoder IndexResult
 indexResultDecoder =
   let
     rowDecoder =
-      map4 IndexResultRow (field "title" string) (field "file_path" string) (field "summary" string) (field "created_at" string)
+      map5 IndexResultRow (field "title" string) (field "file_path" string) (field "summary" string) (field "created_at" string) (field "gid" string)
   in
     map3 IndexResult (at ["rows"] <| list rowDecoder) (at ["n_docs"] <| int) (at ["total_pages"] <| int)
+
+messageDecoder : Decoder ResultMessage
+messageDecoder =
+  at ["message"] <| string
+
 
 -- HTTP
 
@@ -46,3 +51,11 @@ getIndex sortField numResultPage reverse =
           ++ "&result-page=" ++ (toString numResultPage)
   in
       Http.send NewIndexResult (Http.get url indexResultDecoder)
+
+deleteDocument : String -> Cmd Msg
+deleteDocument gid =
+  let
+      url =
+        "http://localhost:8000/delete?gid=" ++ gid
+  in
+      Http.send DeleteResult (Http.get url messageDecoder)

@@ -1,6 +1,6 @@
 module Messages exposing (..)
 
-import Models exposing (SearchResult, IndexResult)
+import Models exposing (SearchResult, IndexResult, ResultMessage)
 import Http
 
 
@@ -15,3 +15,5 @@ type Msg
   | ShowIndex
   | GotoSearchMode
   | NewIndexResult (Result Http.Error IndexResult)
+  | DeleteDocument String
+  | DeleteResult (Result Http.Error ResultMessage)

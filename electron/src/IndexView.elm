@@ -1,6 +1,6 @@
 module IndexView exposing (..)
 
-import Html exposing (Html, program, text, button, h1, h2, div, input, a, span, p, header, iframe, nav, pre)
+import Html exposing (Html, program, text, button, h1, h2, div, input, a, span, p, i, header, iframe, nav, pre)
 import Html.Attributes exposing (class, id, type_, placeholder, value, href, style, src, title, size)
 import Html.Events exposing (onClick)
 import Markdown
@@ -18,9 +18,11 @@ indexView model =
     createComponent row =
       let
         title = div [ class "search-result", onClick (OpenDocument (row.file_path, nPage)) ] [ text row.title ]
+        config = div [ class "config" ] [ i [ class "fa fa-trash-o", onClick (DeleteDocument row.gid) ] [] ]
+        container = div [] [ title, config ]
         summary = div [] [ Markdown.toHtml [] row.summary ]
       in
-        div [] [ title, summary ]
+        div [ class "result-container" ] [ container, summary ]
 
     resultDisplay =
       List.map createComponent model.indexResult.rows

@@ -5,7 +5,7 @@ import Electron.IpcRenderer as IPC exposing (on, send)
 
 import Messages exposing (Msg(..))
 import Models exposing (Model, ViewMode(..), SearchResult, IndexResult)
-import Search exposing (search, getIndex)
+import Search exposing (search, getIndex, deleteDocument)
 import Ports exposing (openNewFile)
 
 
@@ -84,3 +84,12 @@ update msg model =
       -- send request to electron main process
         ( model, IPC.send "pdf-extract-request-main" Json.Encode.null)
 
+      DeleteDocument gid ->
+      -- Delete document (pdf + txt) using gid
+        ( model, deleteDocument gid )
+
+      DeleteResult (Ok res) ->
+        ( { model | serverMessage = res }, Cmd.none )
+
+      DeleteResult (Err _) ->
+        ( model , Cmd.none )

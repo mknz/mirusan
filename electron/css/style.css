@@ -27,7 +27,7 @@ div#pdf-viewer-container {
 }
 
 div.search-result {
-  margin-top: 10px;
+  float: left;
   color:#1111cc;
   text-decoration:none;
 }
@@ -57,4 +57,13 @@ div.notification {
 
 button.gray {
   color:#AAAAAA;
+}
+
+div.config {
+  float: right;
+  vertical-align: middle;
+}
+
+div.result-container {
+  margin-top: 10px;
 }
