@@ -99,12 +99,10 @@ function createWindow() {
 
   if (!debug) { win.setMenu(null); }
 
-  // and load the index.html of the app.
   win.loadURL('file://' + __dirname + '/index.html');
 
   if (debug) { win.webContents.openDevTools(); }
 
-  // Emitted when the window is closed.
   win.on('closed', function() {
    console.log(i18n.__('Closing main window.'));
    win = null;
@@ -119,12 +117,10 @@ function createBackgroundWindow(parentWindow) {
     var win = new BrowserWindow({width: 0, height: 0, show: false, parent: parentWindow});
   }
 
-  // and load the index.html of the app.
-  win.loadURL('file://' + __dirname + '/bg.html');
+  win.loadURL('file://' + __dirname + '/background.html');
 
   if (debug) { win.webContents.openDevTools(); }
 
-  // Emitted when the window is closed.
   win.on('closed', function() {
    console.log(i18n.__('Closing background window.'));
    win = null;
