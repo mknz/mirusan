@@ -1,6 +1,8 @@
 # Mirusan
 ![mirusan_logo.png](images/mirusan_logo.png)
 
+![screenshot.png](images/screenshot.png)
+
 A PDF collection reader with built-in full text search engine
 
 Written in Python / Electron / Elm / Javascript
