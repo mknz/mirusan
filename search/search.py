@@ -1,8 +1,10 @@
-from whoosh.index import create_in, open_dir
+from whoosh.index import create_in, open_dir, exists_in
 from whoosh.fields import TEXT, DATETIME, NUMERIC, KEYWORD, ID, Schema
-from whoosh.analysis import NgramTokenizer
+from whoosh.analysis import NgramTokenizer, StandardAnalyzer, LanguageAnalyzer
 from whoosh.qparser import QueryParser, MultifieldParser
 from whoosh.query import Every, Term, Wildcard
+from whoosh.lang import languages
+
 from dateutil.parser import parse
 
 import logging
@@ -88,9 +90,21 @@ class Config:
 
 
 class IndexManager:
-    def check_and_init_db(self):
-        if os.listdir(Config.database_dir) == []:
+    def __init__(self):
+        # Initialize db if not exist
+        if not exists_in(Config.database_dir):
             self.create_index()
+
+        self.ix = open_dir(Config.database_dir)
+        self.writer = self.ix.writer()
+
+    def open(self):
+        self.ix = open_dir(Config.database_dir)
+        self.writer = self.ix.writer()
+
+    def close(self):
+        del self.writer
+        self.ix.close()
 
     def create_index(self, ngram_min=1, ngram_max=2):
         ngram_tokenizer = NgramTokenizer(minsize=ngram_min, maxsize=ngram_max)
@@ -99,7 +113,6 @@ class IndexManager:
                         title            = TEXT(stored=True, sortable=True, analyzer=ngram_tokenizer),
                         authors          = TEXT(stored=True, sortable=True, analyzer=ngram_tokenizer),
                         publisher        = TEXT(stored=True, sortable=True, analyzer=ngram_tokenizer),
-                        content          = TEXT(stored=True, sortable=True, analyzer=ngram_tokenizer),
                         page             = NUMERIC(stored=True),
                         total_pages      = NUMERIC(stored=True),
                         tags             = KEYWORD(stored=True, lowercase=True, scorable=True),
@@ -132,7 +145,7 @@ class IndexManager:
 
         return pdatetime
 
-    def add_pdf_file(self, writer, file_path, summary="", published_date=None):
+    def add_pdf_file(self, file_path, summary="", published_date=None):
         if not os.path.exists(Config.database_dir):
             raise ValueError('DB dir does not exist: ' + Config.database_dir)
 
@@ -142,22 +155,51 @@ class IndexManager:
         # prepare published date
         if published_date is not None:
             pdatetime = self.secure_datetime(published_date)
-            writer.update_document(file_path          = file_path,
-                                   title              = title,
-                                   summary            = summary,
-                                   document_format    = 'pdf',
-                                   published_at       = pdatetime,
-                                   created_at         = datetime.datetime.now())
+            self.writer.update_document(file_path          = file_path,
+                                        title              = title,
+                                        summary            = summary,
+                                        document_format    = 'pdf',
+                                        published_at       = pdatetime,
+                                        created_at         = datetime.datetime.now())
         else:
-            writer.update_document(file_path          = file_path,
-                                   title              = title,
-                                   summary            = summary,
-                                   document_format    = 'pdf',
-                                   created_at         = datetime.datetime.now())
+            self.writer.update_document(file_path          = file_path,
+                                        title              = title,
+                                        summary            = summary,
+                                        document_format    = 'pdf',
+                                        created_at         = datetime.datetime.now())
 
         Config.logger.info('Added :' + file_path)
 
-    def add_text_file(self, writer, text_file_path, parent_file_path, title="", num_page=1, published_date=None):
+    def detect_lang(self, text):
+        lang = langdetect.detect(text)
+        lang_field_name = 'content_' + lang
+        return lang, lang_field_name
+
+    def add_lang_field(self, text):
+        """Auto-detect language and add field if necessary."""
+        lang, lang_field_name = self.detect_lang(text)
+        # Add field to schema only in new language
+        if lang_field_name not in self.ix.schema.names():
+            self.writer.commit()
+            self.open()
+            if lang == 'en':
+                self.writer.add_field(lang_field_name,
+                                      TEXT(stored=True, sortable=True,
+                                           analyzer=StandardAnalyzer()))
+            elif lang in languages:
+                self.writer.add_field(lang_field_name,
+                                      TEXT(stored=True, sortable=True,
+                                           analyzer=LanguageAnalyzer(lang)))
+            else:
+                ngram_tokenizer = NgramTokenizer(minsize=1, maxsize=2)
+                self.writer.add_field(lang_field_name,
+                                      TEXT(stored=True, sortable=True,
+                                           analyzer=ngram_tokenizer))
+            self.writer.commit()
+            self.open()
+
+    def add_text_file(self, text_file_path, parent_file_path, title="",
+                      num_page=1, published_date=None):
         if not os.path.exists(Config.database_dir):
             raise ValueError('DB dir does not exist: ' + Config.database_dir)
 
@@ -171,38 +213,34 @@ class IndexManager:
         content_text_normalized = normalize(content_text)
 
         # detect language from text
-        lang = langdetect.detect(content_text_normalized)
+        self.add_lang_field(content_text_normalized)
+        lang, lang_field_name = self.detect_lang(content_text_normalized)
 
         # set initial title: filename without ext
         if title == "":
             title = os.path.splitext(os.path.basename(parent_file_path))[0]
 
         # prepare published date
+        fields = {}
+        fields['file_path']        = text_file_path
+        fields['parent_file_path'] = parent_file_path
+        fields['title']            = title
+        fields[lang_field_name]    = content_text_normalized
+        fields['page']             = num_page
+        fields['language']         = lang
+        fields['document_format']  = 'txt'
+        fields['created_at']       = datetime.datetime.now()
+
         if published_date is not None:
             pdatetime = self.secure_datetime(published_date)
-            writer.update_document(file_path          = text_file_path,
-                                   parent_file_path   = parent_file_path,
-                                   title              = title,
-                                   content            = content_text_normalized,
-                                   page               = num_page,
-                                   language           = lang,
-                                   document_format    = 'txt',
-                                   published_at       = pdatetime,
-                                   created_at         = datetime.datetime.now())
+            fields['published_at'] = pdatetime,
+            self.writer.update_document(**fields)
         else:
-            writer.update_document(file_path          = text_file_path,
-                                   parent_file_path   = parent_file_path,
-                                   title              = title,
-                                   content            = content_text,
-                                   page               = num_page,
-                                   language           = lang,
-                                   document_format    = 'txt',
-                                   created_at         = datetime.datetime.now())
-
+            self.writer.update_document(**fields)
 
         Config.logger.info('Added :' + text_file_path)
 
-    def add_text_page_file(self, writer, text_file_path):
+    def add_text_page_file(self, text_file_path):
         """Add database page-wise text file.
         filename format: {DOCUMENT_NAME}_p{NUM_PAGE}.txt
         """
@@ -221,12 +259,11 @@ class IndexManager:
         if not os.path.exists(doc_file_path):
             raise ValueError('Document file does not exist: ' + doc_file_path)
 
-        self.add_text_file(writer=writer,
-                           text_file_path=text_file_path,
+        self.add_text_file(text_file_path=text_file_path,
                            parent_file_path=doc_file_path,
                            num_page=num_page)
 
-    def add_dir(self, writer, text_dir_path):
+    def add_dir(self, text_dir_path):
         if not os.path.exists(Config.database_dir):
             raise ValueError('DB dir does not exist: ' + Config.database_dir)
 
@@ -241,7 +278,7 @@ class IndexManager:
             raise ValueError('No text files in: ' + text_dir_path)
 
         for i, path in enumerate(text_file_paths):
-            self.add_text_page_file(writer, path)
+            self.add_text_page_file(self.writer, path)
             # show progress
             print(str(i + 1) + ' / ' + str(len(text_file_paths)))
 
@@ -254,8 +291,15 @@ class Search:
 
     def search(self, query_str, sort_field, reverse=False, n_page=1, pagelen=10):
         Config.logger.debug('Get query: ' + query_str)
+
+        content_fields = []  # langauge-wise content fields
+        for name in self.ix.schema.names():
+            if re.search(r'^content_', name):
+                content_fields.append(name)
+        search_fields = content_fields + ['title']
+
         with self.ix.searcher() as searcher:
-            query = MultifieldParser(['title', 'content'],
+            query = MultifieldParser(search_fields,
                                      self.ix.schema).parse(query_str)
             results = searcher.search_page(query, n_page,
                                            pagelen=pagelen,
@@ -276,8 +320,11 @@ class Search:
                     else:
                         d[key] = r[key]
 
+                content_field_name = 'content_' + r['language']
+                d['content'] = r[content_field_name]
+
                 # remove garbled characters
-                d['highlighted_body'] = self.remove_garble(r.highlights('content'))
+                d['highlighted_body'] = self.remove_garble(r.highlights(content_field_name))
                 res_list.append(d)
 
             return {'rows': res_list, 'n_hits': n_hits, 'total_pages': total_pages}
@@ -338,10 +385,9 @@ def main():
     args = parser.parse_args()
 
     if args.server:
-        # Initialize db if not exist
         im = IndexManager()
-        im.check_and_init_db()
-
+        im.close()
+        del im
         import api_server
         server = api_server.Server()
         Config.logger.info('Starting api server')
@@ -350,7 +396,6 @@ def main():
 
     if args.init:
         im = IndexManager()
-        im.create_index(ngram_min=args.ngram_min, ngram_max=args.ngram_max)
         return
 
     if args.query != '':
@@ -364,35 +409,28 @@ def main():
     if args.add_files is not None:
         try:
             im = IndexManager()
-            im.check_and_init_db()
-
-            ix = open_dir(Config.database_dir)
-            writer = ix.writer()
-
             for path in args.add_files:
                 _, ext = os.path.splitext(path)
                 if ext in ['.pdf', '.PDF']:
-                    im.add_pdf_file(writer, path)
+                    im.add_pdf_file(path)
                 elif ext in ['.txt', '.TXT']:
-                    im.add_text_page_file(writer, path)
+                    im.add_text_page_file(path)
                 else:
                     raise ValueError(path)
 
-            writer.commit()
+            im.writer.commit()
 
         except Exception as err:
             Config.logger.exception('Error at add_files: %s', err)
 
-        ix.close()
+        im.ix.close()
         return
 
     if args.add_dir is not None:
         im = IndexManager()
-        ix = open_dir(Config.database_dir)
-        writer = ix.writer()
-        im.add_dir(writer, args.add_dir)
-        writer.commit()
-        ix.close()
+        im.add_dir(args.add_dir)
+        im.writer.commit()
+        im.ix.close()
         return
 
     parser.print_help()
