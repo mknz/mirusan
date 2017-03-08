@@ -108,7 +108,7 @@ class IndexManager:
 
     def create_index(self, ngram_min=1, ngram_max=2):
         ngram_tokenizer = NgramTokenizer(minsize=ngram_min, maxsize=ngram_max)
-        schema = Schema(file_path        = ID(stored=True, unique=True),
+        schema = Schema(file_path        = ID(stored=True, unique=True),  # primary key
                         parent_file_path = ID(stored=True),
                         title            = TEXT(stored=True, sortable=True, analyzer=ngram_tokenizer),
                         authors          = TEXT(stored=True, sortable=True, analyzer=ngram_tokenizer),
@@ -152,22 +152,18 @@ class IndexManager:
         # set initial title: filename without ext
         title = os.path.splitext(os.path.basename(file_path))[0]
 
+        fields = {}
+        fields['file_path']        = file_path
+        fields['title']            = title
+        fields['summary']          = summary
+        fields['document_format']  = 'pdf'
+        fields['created_at']       = datetime.datetime.now()
+
         # prepare published date
         if published_date is not None:
             pdatetime = self.secure_datetime(published_date)
-            self.writer.update_document(file_path          = file_path,
-                                        title              = title,
-                                        summary            = summary,
-                                        document_format    = 'pdf',
-                                        published_at       = pdatetime,
-                                        created_at         = datetime.datetime.now())
-        else:
-            self.writer.update_document(file_path          = file_path,
-                                        title              = title,
-                                        summary            = summary,
-                                        document_format    = 'pdf',
-                                        created_at         = datetime.datetime.now())
-
+            fields['published_at'] = pdatetime
+        self.writer.update_document(**fields)
         Config.logger.info('Added :' + file_path)
 
     def detect_lang(self, text):
@@ -242,10 +238,7 @@ class IndexManager:
         if published_date is not None:
             pdatetime = self.secure_datetime(published_date)
             fields['published_at'] = pdatetime,
-            self.writer.update_document(**fields)
-        else:
-            self.writer.update_document(**fields)
-
+        self.writer.update_document(**fields)
         Config.logger.info('Added :' + text_file_path)
 
     def add_text_page_file(self, text_file_path):
