@@ -6,6 +6,7 @@ import unittest
 import sys
 import os
 import shutil
+import uuid
 
 sys.path.append(os.path.dirname(__file__) + '/../')
 
@@ -21,8 +22,8 @@ class TestSearch(unittest.TestCase):
 
     def test_add_pdf(self):
         im = IndexManager()
-
-        im.add_pdf_file(test_pdf_name, gid='1')
+        gid = str(uuid.uuid4())
+        im.add_pdf_file(test_pdf_name, gid=gid)
 
         im.writer.commit()
         im.ix.close()
@@ -40,7 +41,8 @@ class TestSearch(unittest.TestCase):
             f.write(test_text)
 
         im = IndexManager()
-        im.add_text_page_file(test_file_path, gid='1')
+        gid = str(uuid.uuid4())
+        im.add_text_page_file(test_file_path, gid=gid)
         im.writer.commit()
         im.ix.close()
 
@@ -50,6 +52,7 @@ class TestSearch(unittest.TestCase):
         with ix.searcher() as searcher:
             results = searcher.search(query)
             eq_(len(results), 2)  # expect number of records
+        ix.close()
 
     def test_search(self):
         search = Search()
@@ -63,6 +66,14 @@ class TestSearch(unittest.TestCase):
         eq_(len(groups), 1)
         eq_(groups[0]['pdf_file'], 'test.pdf')
         eq_(len(groups[0]['text_files']), 2)
+
+    def test_delete_document(self):
+        im = IndexManager()
+        with im.ix.searcher() as searcher:
+            results = searcher.search(Every())
+            r = results[0]
+            gid = r['gid']
+            im.delete_document(gid)
 
 
 def teardown(self):

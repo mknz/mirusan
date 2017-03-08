@@ -131,6 +131,11 @@ class IndexManager:
         Config.logger.info('Created db: ' + Config.database_dir)
         ix.close()
 
+    def delete_document(self, gid):
+        self.writer.delete_by_term('gid', gid)
+        self.writer.commit()
+        return
+
     def secure_datetime(self, date):
         """Normalize type-unknown date object."""
         if type(date) is datetime.datetime:
