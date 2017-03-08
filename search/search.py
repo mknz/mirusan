@@ -171,13 +171,20 @@ class IndexManager:
         Config.logger.info('Added :' + file_path)
 
     def detect_lang(self, text):
-        lang = langdetect.detect(text)
-        lang_field_name = 'content_' + lang
-        return lang, lang_field_name
+        try:
+            lang = langdetect.detect(text)
+            lang_field_name = 'content_' + lang
+            return lang, lang_field_name
+        except:
+            return None, None
 
     def add_lang_field(self, text):
         """Auto-detect language and add field if necessary."""
         lang, lang_field_name = self.detect_lang(text)
+
+        if lang is None:
+            return
+
         # Add field to schema only in new language
         if lang_field_name not in self.ix.schema.names():
             self.writer.commit()
@@ -225,9 +232,10 @@ class IndexManager:
         fields['file_path']        = text_file_path
         fields['parent_file_path'] = parent_file_path
         fields['title']            = title
-        fields[lang_field_name]    = content_text_normalized
+        if lang is not None:
+            fields[lang_field_name]    = content_text_normalized
+            fields['language']         = lang
         fields['page']             = num_page
-        fields['language']         = lang
         fields['document_format']  = 'txt'
         fields['created_at']       = datetime.datetime.now()
 
