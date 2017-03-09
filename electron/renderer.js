@@ -19,7 +19,6 @@
   // init elem sizes
   // workaround: wait until container elements appear
   setTimeout(resizeFrame, 100);
-
   window.addEventListener('resize', function(e) {
     resizeFrame()
   }, false);
@@ -34,6 +33,7 @@
     var pageNum = resp[1];
     var pdfAbsFilePath = path.resolve(path.join(Config.pdf_dir, pdfFileName));
     document.getElementById('pdf-viewer').contentWindow.location.replace('./pdfjs/web/viewer.html?file=' + pdfAbsFilePath + '&page=' + pageNum.toString());
+    resizeFrame();
   });
 
 })()
