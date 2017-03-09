@@ -8,7 +8,7 @@
 
   // Adjust inline frame size with window
   function resizeFrame() {
-    const margin = 50; // Influenced by header's height
+    const margin = 0; // Influenced by header's height
     var windowHeight = document.documentElement.clientHeight;
     var elem = document.getElementById('pdf-viewer-container');
     elem.style.height = windowHeight - margin + 'px';

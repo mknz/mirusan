@@ -23,8 +23,11 @@ searchView model =
         div [] [ div [ class "search-result", onClick (OpenDocument (row.parent_file_path, row.page)) ] [ Markdown.toHtml [] sBody ]
         ]
 
-    resultDisplay =
+    resultRows =
       List.map createComponent model.searchResult.rows
+
+    resultDisplay =
+      div [ class "result-container" ] resultRows
 
     resultSummary =
       let
@@ -37,10 +40,10 @@ searchView model =
           else
             resPageStr ++ " " ++ hitsStr
       in
-        div [] [ div [ style [ ("height", "15px") ] ] [ text summary ] ]
+        div [ class "result-summary" ] [ div [ style [ ("height", "15px") ] ] [ text summary ] ]
 
     sidebarContainer =
-      div [ id "sidebar-container" ] [ div [ id "search" ]  ( List.append [ pagenation model, resultSummary ] resultDisplay )  ]
+      div [ id "sidebar-container" ] [ div [ id "search" ]  [ pagenation model, resultSummary,  resultDisplay  ] ]
 
   in
     div []  [toolbarHeader model, sidebarContainer, viewerContainer]

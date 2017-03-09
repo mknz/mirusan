@@ -54,7 +54,7 @@ indexView model =
           div [] []
 
       in
-        div [] [ div [ style [ ("height", "15px") ] ] [ text summary ], addedMessage ]
+        div [ class "result-summary" ] [ div [ style [ ("height", "15px") ] ] [ text summary ], addedMessage ]
 
     sidebarContainer =
       div [ id "sidebar-container" ] [ div [ id "search" ]  [ pagenation model, resultSummary, resultDisplay ] ]
@@ -83,10 +83,10 @@ indexView model =
                    (div
                       []
                       [ button
-                         [ class "" , onClick DeleteDocument ]
+                         [ class "btn btn-primary" , onClick DeleteDocument ]
                          [ text "Yes" ]
                       , button
-                         [ class "" , onClick CancelDeleteDocument ]
+                         [ class "btn" , onClick CancelDeleteDocument ]
                          [ text "No" ]
                       ]
                    )

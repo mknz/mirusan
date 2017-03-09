@@ -28,13 +28,12 @@ div#pdf-viewer-container {
   float: right;
   width: 70%;
   height: 32768px;
-  overflow-y: hidden;
 }
 
 div.search-result {
   float: left;
-  color:#1111cc;
-  text-decoration:none;
+  color: #1111cc;
+  text-decoration: none;
 }
 
 div.search-result:hover {
@@ -74,6 +73,11 @@ div.config:hover {
   color: #333333;
 }
 
+div.result-summary {
+  margin-top: 0.5em;
+  -webkit-user-select: text;
+}
+
 div.index-title-container {
   clear: both;
 }
@@ -84,4 +88,7 @@ div.index-component-container {
 
 div.result-container {
   margin-top: 10px;
+}
+div.result-container p {
+  -webkit-user-select: text;
 }
