@@ -18,6 +18,9 @@ install:
   # Install build tools
   - cd ./electron
   - yarn install
+  - cd ../search
+  - pip install -r requirements.txt
+  - cd ..
 
 test_script:
 
@@ -26,11 +29,15 @@ branches:
     - master
 
 build_script:
+  - cd ./electron
   - yarn run build
+  - cd ../build/win
+  - build.bat
+
 
 artifacts:
   - path: electron\dist
-    name: dist
+    name: Mirusan
 
 build: on
 deploy: off
