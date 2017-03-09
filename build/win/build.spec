@@ -8,7 +8,7 @@ langdetect_util_file = os.path.join(os.path.dirname(langdetect.__file__), 'utils
 block_cipher = None
 
 added_files = [
-  (langdetect_util_file, 'site-packages/langdetect/utils')
+  (langdetect_util_file, 'langdetect/utils')
 ]
 
 # Add import directory to pathex
