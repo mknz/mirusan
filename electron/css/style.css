@@ -1,5 +1,7 @@
-html {
+html, body {
   overflow: hidden;
+  margin: 0px;
+  padding: 0px;
 }
 
 div#window {
@@ -11,6 +13,7 @@ div#window {
 div#sidebar-container {
   float: left;
   width: 30%;
+  height: 32768px;
   min-width: 200px;
   overflow-y: scroll;
   overflow-x: hidden;
@@ -24,6 +27,8 @@ div#search {
 div#pdf-viewer-container {
   float: right;
   width: 70%;
+  height: 32768px;
+  overflow-y: hidden;
 }
 
 div.search-result {
@@ -74,6 +79,7 @@ div.index-title-container {
 }
 
 div.index-component-container {
+  padding-bottom: 1.5em;
 }
 
 div.result-container {

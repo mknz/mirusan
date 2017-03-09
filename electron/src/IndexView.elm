@@ -13,15 +13,6 @@ import ViewCommonComponents exposing (toolbarHeader, viewerContainer, pagenation
 import Translation exposing (Language(..), TranslationId(..), translate)
 
 
-bootstrap : Html msg
-bootstrap =
-  node "link"
-    [ href "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
-    , rel "stylesheet"
-    ]
-    []
-
-
 indexView : Model -> Html Msg
 indexView model =
   let
@@ -69,15 +60,21 @@ indexView model =
       div [ id "sidebar-container" ] [ div [ id "search" ]  [ pagenation model, resultSummary, resultDisplay ] ]
 
     all =
+      div
+        []
+        [ toolbarHeader model
+        , sidebarContainer
+        , viewerContainer
+        ]
+
+  in
     div
       []
-      [ toolbarHeader model
-      , sidebarContainer
-      , viewerContainer
+      [ all
       , Dialog.view
           (if model.deleteDialog then
              Just { closeMessage = Nothing
-                  , containerClass = Nothing
+                  , containerClass = Just ""
                   , header = Nothing
                   , body = Just (p [] [text <| translate model.currentLanguage I18n_Ask_delete ])
                   , footer =
@@ -97,9 +94,3 @@ indexView model =
              Nothing
           )
       ]
-
-  in
-    div []
-        [
-        all
-        ]
