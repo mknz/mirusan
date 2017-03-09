@@ -5,6 +5,7 @@ version: 0.1.{build}
 cache:
   - electron/node_modules
   - '%USERPROFILE%\.electron'
+  - '%LOCALAPPDATA%\pip\Cache'
 
 environment:
   matrix:
@@ -29,11 +30,10 @@ branches:
     - master
 
 build_script:
-  - cd ./electron
-  - yarn run build
-  - cd ../build/win
+  - cd ./build/win
   - build.bat
-
+  - cd ../../electron
+  - yarn run build
 
 artifacts:
   - path: electron\dist
