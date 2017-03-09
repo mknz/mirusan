@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-from search import Search, IndexManager, normalize
+from helper import normalize
+from index_manager import IndexManager
+from search_manager import Search
 
 import falcon
 
