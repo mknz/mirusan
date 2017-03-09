@@ -60,6 +60,8 @@ class DeleteDocument:
         im = IndexManager()
         gid = req.get_param('gid')
         im.delete_document(gid)
+        res = {'message': 'Deleted a document.'}
+        resp.body = json.dumps(res, ensure_ascii=False)
         return
 
 

@@ -95,7 +95,9 @@ update msg model =
         ( { model | deleteDialog = False, deleteGid = "" }, Cmd.none )
 
       DeleteResult (Ok res) ->
-        ( { model | deleteDialog = False, deleteGid = "", serverMessage = res }, Cmd.none )
+        ( { model | deleteDialog = False, deleteGid = "", serverMessage = res }
+        , getIndex model.sortField model.numResultPage model.reverse
+        )
 
       DeleteResult (Err _) ->
         ( { model | deleteDialog = False, deleteGid = "", serverMessage = "" }, Cmd.none )

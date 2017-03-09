@@ -73,23 +73,24 @@ indexView model =
       [ all
       , Dialog.view
           (if model.deleteDialog then
-             Just { closeMessage = Nothing
-                  , containerClass = Just ""
-                  , header = Nothing
-                  , body = Just (p [] [text <| translate model.currentLanguage I18n_Ask_delete ])
-                  , footer =
-                    Just
-                      (div
-                         []
-                         [ button
-                            [ class "" , onClick DeleteDocument ]
-                            [ text "Yes" ]
-                         , button
-                            [ class "" , onClick CancelDeleteDocument ]
-                            [ text "No" ]
-                         ]
-                      )
-                  }
+             Just
+               { closeMessage = Nothing
+               , containerClass = Just ""
+               , header = Nothing
+               , body = Just (p [] [text <| translate model.currentLanguage I18n_Ask_delete ])
+               , footer =
+                 Just
+                   (div
+                      []
+                      [ button
+                         [ class "" , onClick DeleteDocument ]
+                         [ text "Yes" ]
+                      , button
+                         [ class "" , onClick CancelDeleteDocument ]
+                         [ text "No" ]
+                      ]
+                   )
+               }
            else
              Nothing
           )

@@ -14,7 +14,7 @@ toolbarHeader model =
 
 toolbarActions : Model -> Html Msg
 toolbarActions model =
-  div [ class "toolbar-actions" ] [ div [ class "btn-group" ] [ searchWindow model ], toolButtons model, span [] [ text model.serverMessage ] ]
+  div [ class "toolbar-actions" ] [ div [ class "btn-group" ] [ searchWindow model ], toolButtons model ]
 
 toolButtons : Model -> Html Msg
 toolButtons model =
