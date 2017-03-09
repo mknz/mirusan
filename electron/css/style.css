@@ -61,7 +61,12 @@ button.gray {
 
 div.config {
   float: right;
+  color: #bbbbbb;
   vertical-align: middle;
+}
+
+div.config:hover {
+  color: #333333;
 }
 
 div.index-title-container {
