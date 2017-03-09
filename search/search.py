@@ -1,19 +1,18 @@
+from config import Config
+
 from whoosh.index import create_in, open_dir, exists_in
 from whoosh.fields import TEXT, DATETIME, NUMERIC, KEYWORD, ID, Schema
 from whoosh.analysis import NgramTokenizer, StandardAnalyzer, LanguageAnalyzer
-from whoosh.qparser import QueryParser, MultifieldParser
-from whoosh.query import Every, Term, Wildcard
+from whoosh.qparser import MultifieldParser
+from whoosh.query import Every, Term
 from whoosh.lang import languages
 
 from dateutil.parser import parse
 
-import logging
 import argparse
 import os
 import datetime
 import re
-import sys
-import json
 import unicodedata
 import uuid
 import langdetect
@@ -21,73 +20,6 @@ import langdetect
 
 def normalize(string):
     return unicodedata.normalize('NFKC', string)
-
-
-class Config:
-    # Workaround: fix later
-    argvs = sys.argv
-    argc = len(argvs)
-    if argc == 3 and argvs[1] == '--config':
-        config_filename = argvs[2]
-    else:
-        config_filename = 'config.json'
-
-    if not os.path.exists(config_filename):
-        raise ValueError('config.json does not exist.')
-
-    # read config from json file
-    with open(config_filename) as f:
-        config = json.load(f)
-
-    if config['mode'] == 'debug':
-        debug = True
-    else:
-        debug = False
-
-    platform = sys.platform
-
-    def create_logger(debug):
-        logger = logging.getLogger()
-
-        file_handler = logging.FileHandler('search.log')
-        formatter = logging.Formatter(
-            '%(asctime)s %(levelname)s: %(message)s '
-            '[in %(pathname)s:%(lineno)d]'
-        )
-        file_handler.setFormatter(formatter)
-
-        if debug:
-            logger.setLevel(logging.DEBUG)
-            file_handler.setLevel(logging.DEBUG)
-        else:
-            logger.setLevel(logging.INFO)
-            file_handler.setLevel(logging.INFO)
-
-        logger.addHandler(file_handler)
-        logger.info('Start logging')
-        return logger
-
-    logger = create_logger(debug)
-
-    def check_and_create_dir(dirpath, logger):
-        if not os.path.exists(dirpath):
-            logger.info('Create dir: ' + dirpath)
-            os.mkdir(dirpath)
-
-    data_dir = config['data_dir']
-    if data_dir == '':
-        raise ValueError('data_dir is not properly set in config file.')
-
-    check_and_create_dir(data_dir, logger)
-
-    database_dir = os.path.join(data_dir, 'database')
-    check_and_create_dir(database_dir, logger)
-
-    pdf_dir = config['pdf_dir']
-    check_and_create_dir(pdf_dir, logger)
-
-    txt_dir = config['txt_dir']
-    check_and_create_dir(txt_dir, logger)
 
 
 class IndexManager:

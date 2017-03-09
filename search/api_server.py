@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from search import Config, Search, IndexManager, normalize
+from search import Search, IndexManager, normalize
 
 import falcon
 
