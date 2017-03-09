@@ -64,6 +64,13 @@ div.config {
   vertical-align: middle;
 }
 
+div.index-title-container {
+  clear: both;
+}
+
+div.index-component-container {
+}
+
 div.result-container {
   margin-top: 10px;
 }

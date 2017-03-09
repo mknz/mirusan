@@ -19,13 +19,16 @@ indexView model =
       let
         title = div [ class "search-result", onClick (OpenDocument (row.file_path, nPage)) ] [ text row.title ]
         config = div [ class "config" ] [ i [ class "fa fa-trash-o", onClick (DeleteDocument row.gid) ] [] ]
-        container = div [] [ title, config ]
+        container = div [ class "index-title-container" ] [ title, config ]
         summary = div [] [ Markdown.toHtml [] row.summary ]
       in
-        div [ class "result-container" ] [ container, summary ]
+        div [ class "index-component-container" ] [ container, summary ]
+
+    resultRows =
+      List.map createComponent model.indexResult.rows
 
     resultDisplay =
-      List.map createComponent model.indexResult.rows
+      div [ class "result-container" ] resultRows
 
     resultSummary =
       let
@@ -51,7 +54,7 @@ indexView model =
         div [] [ div [ style [ ("height", "15px") ] ] [ text summary ], addedMessage ]
 
     sidebarContainer =
-      div [ id "sidebar-container" ] [ div [ id "search" ]  ( List.append [ pagenation model, resultSummary ] resultDisplay )  ]
+      div [ id "sidebar-container" ] [ div [ id "search" ]  [ pagenation model, resultSummary, resultDisplay ] ]
 
   in
     div []  [toolbarHeader model, sidebarContainer, viewerContainer]
