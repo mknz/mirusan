@@ -58,7 +58,7 @@
       "!**/elm-stuff"
     ],
     "extraFiles": [
-      "../search/dist/mirusan_search.exe"
+      "mirusan_search.exe"
     ],
     "win": {
       "publish": {
