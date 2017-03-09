@@ -16,6 +16,8 @@ type alias Model =
   , viewMode: ViewMode
   , indexClick: Int  -- workaround
   , currentLanguage: Language
+  , deleteDialog: Bool
+  , deleteGid: String
   }
 
 type ViewMode = SearchMode | IndexMode

@@ -15,6 +15,7 @@ type TranslationId
     | I18n_Add_files_to_database
     | I18n_Search
     | I18n_page
+    | I18n_Ask_delete
 
 type Language
   = English
@@ -35,6 +36,8 @@ translate lang trans =
           TranslationSet "Search" "検索"
         I18n_page ->
           TranslationSet "page" "ページへ"
+        I18n_Ask_delete ->
+          TranslationSet "Delete this document?" "この文書を削除しますか？"
   in
     case lang of
       English ->

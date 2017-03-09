@@ -1,14 +1,26 @@
 module IndexView exposing (..)
 
-import Html exposing (Html, program, text, button, h1, h2, div, input, a, span, p, i, header, iframe, nav, pre)
-import Html.Attributes exposing (class, id, type_, placeholder, value, href, style, src, title, size)
+import Html exposing (Html, program, text, button, h1, h2, div, input, a, span, p, i, header, iframe, nav, pre, node)
+import Html.Attributes exposing (class, id, type_, placeholder, value, href, style, src, title, size, rel)
 import Html.Events exposing (onClick)
 import Markdown
+import Dialog
 
 import Models exposing (Model, IndexResultRow)
 import Messages exposing (Msg(..))
 
 import ViewCommonComponents exposing (toolbarHeader, viewerContainer, pagenation)
+import Translation exposing (Language(..), TranslationId(..), translate)
+
+
+bootstrap : Html msg
+bootstrap =
+  node "link"
+    [ href "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+    , rel "stylesheet"
+    ]
+    []
+
 
 indexView : Model -> Html Msg
 indexView model =
@@ -18,7 +30,7 @@ indexView model =
     createComponent row =
       let
         title = div [ class "search-result", onClick (OpenDocument (row.file_path, nPage)) ] [ text row.title ]
-        config = div [ class "config" ] [ i [ class "fa fa-trash-o", onClick (DeleteDocument row.gid) ] [] ]
+        config = div [ class "config" ] [ i [ class "fa fa-trash-o", onClick (AskDeleteDocument row.gid) ] [] ]
         container = div [ class "index-title-container" ] [ title, config ]
         summary = div [] [ Markdown.toHtml [] row.summary ]
       in
@@ -28,7 +40,7 @@ indexView model =
       List.map createComponent model.indexResult.rows
 
     resultDisplay =
-      div [ class "result-container" ] resultRows
+        div [ class "result-container" ] resultRows
 
     resultSummary =
       let
@@ -56,5 +68,38 @@ indexView model =
     sidebarContainer =
       div [ id "sidebar-container" ] [ div [ id "search" ]  [ pagenation model, resultSummary, resultDisplay ] ]
 
+    all =
+    div
+      []
+      [ toolbarHeader model
+      , sidebarContainer
+      , viewerContainer
+      , Dialog.view
+          (if model.deleteDialog then
+             Just { closeMessage = Nothing
+                  , containerClass = Nothing
+                  , header = Nothing
+                  , body = Just (p [] [text <| translate model.currentLanguage I18n_Ask_delete ])
+                  , footer =
+                    Just
+                      (div
+                         []
+                         [ button
+                            [ class "" , onClick DeleteDocument ]
+                            [ text "Yes" ]
+                         , button
+                            [ class "" , onClick CancelDeleteDocument ]
+                            [ text "No" ]
+                         ]
+                      )
+                  }
+           else
+             Nothing
+          )
+      ]
+
   in
-    div []  [toolbarHeader model, sidebarContainer, viewerContainer]
+    div []
+        [
+        all
+        ]

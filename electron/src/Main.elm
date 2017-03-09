@@ -43,6 +43,8 @@ init =
    , viewMode = Models.IndexMode
    , indexClick = 0
    , currentLanguage = English
+   , deleteDialog = False
+   , deleteGid = ""
    }
    , getIndex initSortField initPage sortOrder)
 

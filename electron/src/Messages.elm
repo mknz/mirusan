@@ -15,5 +15,7 @@ type Msg
   | ShowIndex
   | GotoSearchMode
   | NewIndexResult (Result Http.Error IndexResult)
-  | DeleteDocument String
+  | AskDeleteDocument String
+  | DeleteDocument
+  | CancelDeleteDocument
   | DeleteResult (Result Http.Error ResultMessage)

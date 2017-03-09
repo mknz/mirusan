@@ -84,12 +84,18 @@ update msg model =
       -- send request to electron main process
         ( model, IPC.send "pdf-extract-request-main" Json.Encode.null)
 
-      DeleteDocument gid ->
+      AskDeleteDocument gid ->
+        ( { model | deleteDialog = True, deleteGid = gid }, Cmd.none )
+
+      DeleteDocument ->
       -- Delete document (pdf + txt) using gid
-        ( model, deleteDocument gid )
+        ( model, deleteDocument model.deleteGid )
+
+      CancelDeleteDocument ->
+        ( { model | deleteDialog = False, deleteGid = "" }, Cmd.none )
 
       DeleteResult (Ok res) ->
-        ( { model | serverMessage = res }, Cmd.none )
+        ( { model | deleteDialog = False, deleteGid = "", serverMessage = res }, Cmd.none )
 
       DeleteResult (Err _) ->
-        ( model , Cmd.none )
+        ( { model | deleteDialog = False, deleteGid = "", serverMessage = "" }, Cmd.none )
