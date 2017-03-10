@@ -8,7 +8,7 @@
 
   // Adjust inline frame size with window
   function resizeFrame() {
-    const margin = 0; // Influenced by header's height
+    const margin = 40; // Influenced by header's height
     var windowHeight = document.documentElement.clientHeight;
     var elem = document.getElementById('pdf-viewer-container');
     elem.style.height = windowHeight - margin + 'px';
@@ -32,7 +32,9 @@
     var pdfFileName = path.basename(pdfFilePath);
     var pageNum = resp[1];
     var pdfAbsFilePath = path.resolve(path.join(Config.pdf_dir, pdfFileName));
-    document.getElementById('pdf-viewer').contentWindow.location.replace('./pdfjs/web/viewer.html?file=' + pdfAbsFilePath + '&page=' + pageNum.toString());
+    var pdfUrl = './pdfjs/web/viewer.html?file=' + pdfAbsFilePath + '&page=' + pageNum.toString()
+    document.getElementById('pdf-viewer').contentWindow.location.replace(pdfUrl);
+    app.ports.pdfUrl.send(pdfUrl);
     resizeFrame();
   });
 
