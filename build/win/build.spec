@@ -3,12 +3,15 @@
 import langdetect
 import os
 
-langdetect_util_file = os.path.join(os.path.dirname(langdetect.__file__), 'utils', 'messages.properties')
+langdetect_path = os.path.dirname(langdetect.__file__)
+langdetect_util_file = os.path.join(langdetect_path, 'utils', 'messages.properties')
+langdetect_profiles = os.path.join(langdetect_path, 'profiles')
 
 block_cipher = None
 
 added_files = [
-  (langdetect_util_file, 'langdetect/utils')
+  (langdetect_util_file, 'langdetect/utils'),
+  (langdetect_profiles, 'langdetect/profiles')
 ]
 
 # Add import directory to pathex
