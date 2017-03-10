@@ -64,7 +64,15 @@ viewerContainer =
 
 searchWindow : Model -> Html Msg
 searchWindow model =
-  span [] [ input [ type_ "text", placeholder <| translate model.currentLanguage I18n_Search, onInput SendSearch ] []
-  , span [ style [ ("font-size", "15pt") ] ] [ text " " ]
-  , span [ class "icon icon-search", style [ ("vertical-align", "middle"), ("font-size", "15pt") ] ] []
-  ]
+  span
+    []
+    [ input
+        [ type_ "text"
+        , placeholder <| translate model.currentLanguage I18n_Search
+        , onInput SendSearch
+        , value model.currentQuery
+        ]
+        []
+    , span [ style [ ("font-size", "15pt") ] ] [ text " " ]
+    , span [ class "icon icon-search", style [ ("vertical-align", "middle"), ("font-size", "15pt") ] ] []
+    ]
