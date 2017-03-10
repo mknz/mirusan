@@ -101,33 +101,33 @@ class IndexManager:
     def detect_lang(self, text):
         try:
             lang = langdetect.detect(text)
-            lang_field_name = 'content_' + lang
-            return lang, lang_field_name
+            content_field_name = 'content_' + lang
+            return lang, content_field_name
         except:
             return None, None
 
     def add_lang_field(self, text):
         """Auto-detect language and add field if necessary."""
-        lang, lang_field_name = self.detect_lang(text)
+        lang, content_field_name = self.detect_lang(text)
 
         if lang is None:
             return
 
         # Add field to schema only in new language
-        if lang_field_name not in self.ix.schema.names():
+        if content_field_name not in self.ix.schema.names():
             self.writer.commit()
             self.open()
             if lang == 'en':
-                self.writer.add_field(lang_field_name,
+                self.writer.add_field(content_field_name,
                                       TEXT(stored=True, sortable=True,
                                            analyzer=StandardAnalyzer()))
             elif lang in languages:
-                self.writer.add_field(lang_field_name,
+                self.writer.add_field(content_field_name,
                                       TEXT(stored=True, sortable=True,
                                            analyzer=LanguageAnalyzer(lang)))
             else:
                 ngram_tokenizer = NgramTokenizer(minsize=1, maxsize=2)
-                self.writer.add_field(lang_field_name,
+                self.writer.add_field(content_field_name,
                                       TEXT(stored=True, sortable=True,
                                            analyzer=ngram_tokenizer))
             self.writer.commit()
@@ -149,7 +149,10 @@ class IndexManager:
 
         # detect language from text
         self.add_lang_field(content_text_normalized)
-        lang, lang_field_name = self.detect_lang(content_text_normalized)
+        lang, content_field_name = self.detect_lang(content_text_normalized)
+
+        if lang is None:
+            Config.logger.info('Could not detect language :' + text_file_path)
 
         # set initial title: filename without ext
         if title == "":
@@ -162,7 +165,7 @@ class IndexManager:
         fields['parent_file_path'] = parent_file_path
         fields['title']            = title
         if lang is not None:
-            fields[lang_field_name]    = content_text_normalized
+            fields[content_field_name]    = content_text_normalized
             fields['language']         = lang
         fields['page']             = num_page
         fields['document_format']  = 'txt'
