@@ -18,6 +18,7 @@ type alias Model =
   , currentLanguage: Language
   , deleteDialog: Bool
   , deleteGid: String
+  , pdfUrl: String
   }
 
 type ViewMode = SearchMode | IndexMode

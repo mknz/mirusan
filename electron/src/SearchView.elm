@@ -46,4 +46,4 @@ searchView model =
       div [ id "sidebar-container" ] [ div [ id "search" ]  [ pagenation model, resultSummary,  resultDisplay  ] ]
 
   in
-    div []  [toolbarHeader model, sidebarContainer, viewerContainer]
+    div []  [toolbarHeader model, sidebarContainer, viewerContainer model]

@@ -56,11 +56,13 @@ pagenation model =
   in
     div [ style [ ("margin-top", "5px") ] ] [ span [] parts ]
 
-viewerIframe =
-  iframe [ id "pdf-viewer", style [ ("width", "100%"), ("height", "100%") ], src "./pdfjs/web/viewer.html" ] []
+viewerIframe : Model -> Html Msg
+viewerIframe model =
+  iframe [ id "pdf-viewer", style [ ("width", "100%"), ("height", "100%") ], src model.pdfUrl ] []
 
-viewerContainer =
-  div [ id "pdf-viewer-container" ] [ viewerIframe ]
+viewerContainer : Model -> Html Msg
+viewerContainer model =
+  div [ id "pdf-viewer-container" ] [ viewerIframe model ]
 
 searchWindow : Model -> Html Msg
 searchWindow model =

@@ -64,7 +64,7 @@ indexView model =
         []
         [ toolbarHeader model
         , sidebarContainer
-        , viewerContainer
+        , viewerContainer model
         ]
 
   in

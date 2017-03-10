@@ -45,6 +45,7 @@ init =
    , currentLanguage = English
    , deleteDialog = False
    , deleteGid = ""
+   , pdfUrl = "./pdfjs/web/viewer.html"
    }
    , getIndex initSortField initPage sortOrder)
 

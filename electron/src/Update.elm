@@ -101,3 +101,6 @@ update msg model =
 
       DeleteResult (Err _) ->
         ( { model | deleteDialog = False, deleteGid = "", serverMessage = "" }, Cmd.none )
+
+      PdfUrl url ->
+        ( { model | pdfUrl = url }, Cmd.none )

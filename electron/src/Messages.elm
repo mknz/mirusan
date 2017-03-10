@@ -19,3 +19,4 @@ type Msg
   | DeleteDocument
   | CancelDeleteDocument
   | DeleteResult (Result Http.Error ResultMessage)
+  | PdfUrl String
