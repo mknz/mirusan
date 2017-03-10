@@ -4,6 +4,7 @@ from index_manager import IndexManager
 from search_manager import Search
 
 import argparse
+import langdetect
 
 
 def add_files(files):
@@ -39,6 +40,7 @@ def main():
     parser.add_argument('--ngram-max', default=2)
 
     parser.add_argument('--server', action='store_true')
+    parser.add_argument('--lang-detect', default=None)  # for debug
 
     args = parser.parse_args()
 
@@ -85,6 +87,10 @@ def main():
         except Exception as err:
             Config.logger.exception('Could not add dir: %s', err)
             print(err)
+        return
+
+    if args.lang_detect:
+        print(langdetect.detect(args.lang_detect))
         return
 
     parser.print_help()
