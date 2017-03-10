@@ -54,16 +54,16 @@ class SearchDB:
                                            n_page=n_result_page,
                                            pagelen=pagelen)
 
-        resp.body = json.dumps(search_result, ensure_ascii=False)
+        resp.body = json.dumps(search_result, indent=4, ensure_ascii=False)
 
 
 class DeleteDocument:
     def on_get(self, req, resp):
         im = IndexManager()
         gid = req.get_param('gid')
-        im.delete_document(gid)
-        res = {'message': 'Deleted a document.'}
-        resp.body = json.dumps(res, ensure_ascii=False)
+        message = im.delete_document(gid)
+        res = {'message': message}
+        resp.body = json.dumps(res, indent=4, ensure_ascii=False)
         return
 
 
@@ -97,7 +97,7 @@ class SortedIndex:
 
         res = self.search.get_sorted_index(field=field, n_page=n_result_page,
                                            pagelen=pagelen, reverse=reverse)
-        resp.body = json.dumps(res, ensure_ascii=False)
+        resp.body = json.dumps(res, indent=4, ensure_ascii=False)
 
 
 class Server:

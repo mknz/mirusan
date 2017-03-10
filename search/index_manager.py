@@ -56,9 +56,10 @@ class IndexManager:
         ix.close()
 
     def delete_document(self, gid):
-        self.writer.delete_by_term('gid', gid)
+        n_doc = self.writer.delete_by_term('gid', gid)
         self.writer.commit()
-        return
+        message = str(n_doc) + ' documents deleted.'
+        return message
 
     def secure_datetime(self, date):
         """Normalize type-unknown date object."""
