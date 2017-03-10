@@ -10,20 +10,19 @@ def add_files(files):
     """Using from electron, this argument consists of multiple pdf/txt file
     pairs, due to the restriction in JS code.
     """
-    try:
-        file_groups = separate_files(files)
-        im = IndexManager()
-        for group in file_groups:
-            gid = group['id']
-            im.add_pdf_file(group['pdf_file'], gid)
-            for tf in group['text_files']:
-                im.add_text_page_file(tf, gid)
+    file_groups = separate_files(files)
+    if file_groups == []:
+        raise ValueError('Empty document group: ' + str(files))
 
-        im.writer.commit()
+    im = IndexManager()
+    for group in file_groups:
+        Config.logger.debug('Add document group: ' + str(group))
+        gid = group['id']
+        im.add_pdf_file(group['pdf_file'], gid)
+        for tf in group['text_files']:
+            im.add_text_page_file(tf, gid)
 
-    except Exception as err:
-        Config.logger.exception('Error at add_files: %s', err)
-
+    im.writer.commit()
     im.ix.close()
     return
 
@@ -49,7 +48,7 @@ def main():
         del im
         import api_server
         server = api_server.Server()
-        Config.logger.info('Starting api server')
+        print('Starting api server')
         server.start()
         return
 
@@ -58,21 +57,34 @@ def main():
         return
 
     if args.query != '':
+        print('search: ' + args.query)
         try:
             s = Search()
             s.search_print(args.query)
         except Exception as err:
-            Config.logger.exception('Error at search: %s', err)
+            Config.logger.exception('Error in search: %s', err)
+            print(err)
         return
 
     if args.add_files is not None:
-        add_files(args.add_files)
+        print('add files: ' + str(args.add_files))
+        try:
+            add_files(args.add_files)
+        except Exception as err:
+            Config.logger.exception('Could not add files: %s', err)
+            print(err)
+        return
 
     if args.add_dir is not None:
-        im = IndexManager()
-        im.add_dir(args.add_dir)
-        im.writer.commit()
-        im.ix.close()
+        print('add dir: ' + str(args.add_dir))
+        try:
+            im = IndexManager()
+            im.add_dir(args.add_dir)
+            im.writer.commit()
+            im.ix.close()
+        except Exception as err:
+            Config.logger.exception('Could not add dir: %s', err)
+            print(err)
         return
 
     parser.print_help()
