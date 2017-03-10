@@ -1,6 +1,6 @@
 from nose.tools import eq_, ok_
 from whoosh.index import open_dir, exists_in
-from whoosh.query import Every, Term, Wildcard
+from whoosh.query import Every
 
 import unittest
 import sys
@@ -10,7 +10,10 @@ import uuid
 
 sys.path.append(os.path.dirname(__file__) + '/../')
 
-from search import Config, Search, IndexManager, normalize, separate_files, add_files
+from config import Config
+from helper import separate_files
+from index_manager import IndexManager
+from search_manager import Search
 
 test_pdf_name = '../electron/pdfjs/web/compressed.tracemonkey-pldi-09.pdf'
 

@@ -5,12 +5,18 @@ import logging
 
 
 class Config:
+    # if executed as script
     p = sys.argv[0]
     exec_dir = os.path.dirname(os.path.abspath(p))
     config_file_path = os.path.join(exec_dir, 'config.json')
 
     if not os.path.exists(config_file_path):
-        raise ValueError('config.json does not exist.')
+        # if imported
+        file_dir = os.path.dirname(__file__)
+        config_file_path = os.path.join(file_dir, 'config.json')
+
+        if not os.path.exists(config_file_path):
+            raise ValueError('config.json does not exist.')
 
     # read config from json file
     with open(config_file_path) as f:
