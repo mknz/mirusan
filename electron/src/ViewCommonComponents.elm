@@ -61,13 +61,24 @@ pagenation model =
   in
     div [ style [ ("margin-top", "5px") ] ] [ span [] parts ]
 
+
+-- pdf viewer
+
+-- Always display gray background in Elm.
+-- PDF load is triggered only in renderer.js
+-- This is a workaround, to prevent unwanted reload of pdf-viewer.
+
 viewerIframe : Model -> Html Msg
 viewerIframe model =
-  iframe [ id "pdf-viewer", style [ ("width", "100%"), ("height", "100%") ], src model.pdfUrl ] []
+  --iframe [ id "pdf-viewer", style [ ("width", "100%"), ("height", "100%") ], src model.pdfUrl ] []
+  iframe [ id "pdf-viewer", style [ ("background-color", "#888888"), ("width", "100%"), ("height", "100%") ] ] []
 
 viewerContainer : Model -> Html Msg
 viewerContainer model =
   div [ id "pdf-viewer-container" ] [ viewerIframe model ]
+
+
+-- search input window
 
 searchWindow : Model -> Html Msg
 searchWindow model =
