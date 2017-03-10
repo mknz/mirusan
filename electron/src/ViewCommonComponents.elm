@@ -1,10 +1,11 @@
 module ViewCommonComponents exposing (..)
 
 import Html exposing (Html, program, text, button, h1, h2, div, input, a, span, p, header, iframe, nav)
-import Html.Attributes exposing (class, id, type_, placeholder, value, href, style, src, title, size)
-import Html.Events exposing (onClick, onInput)
+import Html.Attributes exposing (class, id, type_, placeholder, value, href, style, src, title, size, autofocus, disabled)
+import Html.Events exposing (onClick, onInput, onFocus)
+import List exposing (append)
 
-import Models exposing (Model)
+import Models exposing (Model, ViewMode(..))
 import Messages exposing (Msg(..))
 import Translation exposing (Language(..), TranslationId(..), translate)
 
@@ -14,7 +15,11 @@ toolbarHeader model =
 
 toolbarActions : Model -> Html Msg
 toolbarActions model =
-  div [ class "toolbar-actions" ] [ div [ class "btn-group" ] [ searchWindow model ], toolButtons model ]
+  case model.viewMode of
+    SearchMode ->
+      div [ class "toolbar-actions" ] [ div [ class "btn-group" ] [ searchWindow model ], toolButtons model ]
+    IndexMode ->
+      div [ class "toolbar-actions" ] [ div [ class "btn-group" ] [ searchWindow model ], toolButtons model ]
 
 toolButtons : Model -> Html Msg
 toolButtons model =
@@ -66,15 +71,31 @@ viewerContainer model =
 
 searchWindow : Model -> Html Msg
 searchWindow model =
-  span
-    []
-    [ input
-        [ type_ "text"
-        , placeholder <| translate model.currentLanguage I18n_Search
-        , onInput SendSearch
-        , value model.currentQuery
-        ]
-        []
-    , span [ style [ ("font-size", "15pt") ] ] [ text " " ]
-    , span [ class "icon icon-search", style [ ("vertical-align", "middle"), ("font-size", "15pt") ] ] []
-    ]
+  let
+    attrs =
+      [ type_ "text"
+      , placeholder <| translate model.currentLanguage I18n_Search
+      , onInput SendSearch
+      , value model.currentQuery
+      , autofocus True
+      , onFocus GotoSearchMode
+      ]
+    indexAttrs = [ disabled True, class "search-window-inactive"]
+
+    inputField =
+      case model.viewMode of
+        SearchMode ->
+          input
+            attrs
+            []
+        IndexMode ->
+          input
+            (append attrs indexAttrs)
+            []
+  in
+    span
+      []
+      [ inputField
+      , span [ style [ ("font-size", "15pt") ] ] [ text " " ]
+      , span [ class "icon icon-search", style [ ("vertical-align", "middle"), ("font-size", "15pt") ] ] []
+      ]

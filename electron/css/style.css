@@ -89,6 +89,11 @@ div.index-component-container {
 div.result-container {
   margin-top: 10px;
 }
+
 div.result-container p {
   -webkit-user-select: text;
+}
+
+input.search-window-inactive {
+  background-color: #dddddd;
 }

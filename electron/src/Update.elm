@@ -39,7 +39,7 @@ update msg model =
         ( { model | currentQuery = "", viewMode = Models.IndexMode }, getIndex model.sortField model.numResultPage model.reverse)
 
       GotoSearchMode ->
-        ( { model | numResultPage = 1, numTotalPage = 0, numArticles = 0, currentQuery = "", viewMode = Models.SearchMode, searchResult = { rows = [], n_hits = 0, total_pages = 0 }}, Cmd.none )
+        ( { model | numResultPage = 1, numTotalPage = 0, numArticles = 0, viewMode = Models.SearchMode, searchResult = { rows = [], n_hits = 0, total_pages = 0 }}, Cmd.none )
 
       NewIndexResult (Ok res) ->
         ( { model | indexResult = res, numTotalPage = res.total_pages, numArticles = res.n_docs, numAddedArticles = res.n_docs - model.numPreviousArticles, numPreviousArticles = res.n_docs, indexClick = model.indexClick + 1 }, Cmd.none )
