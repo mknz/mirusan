@@ -13,6 +13,7 @@ environment:
 
 install:
   - ps: Install-Product node $env:node_version
+  - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
   - node --version
   - yarn --version
   - python --version
