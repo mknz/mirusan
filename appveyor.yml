@@ -9,6 +9,7 @@ cache:
 environment:
   matrix:
     - node_version: "7"
+    - PYTHON: "C:\\Python35"
 
 install:
   - ps: Install-Product node $env:node_version
@@ -16,8 +17,11 @@ install:
   - yarn --version
 
   # Install build tools
+  # node
   - cd ./electron
   - yarn install
+
+  # Python
   - cd ../search
   - pip install -r requirements.txt
   - cd ..
