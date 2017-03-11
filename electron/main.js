@@ -84,9 +84,12 @@ const BrowserWindow = electron.BrowserWindow;
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 
-if (process.platform == 'win32') {
-  var subpy = require('child_process').spawn('./mirusan_search.exe', ['--server']);
-} else if (process.platform == 'linux' || process.platform == 'darwin') {
+// Laucn python subprocess
+if (Config.mode == 'release') {
+  if (process.platform == 'win32') { var subpyName = 'mirusan_search.exe'; }
+  else { var subpyName = 'mirusan_search'; }
+  var subpy = require('child_process').spawn('./' + subpyName, ['--server']);
+} else if (Config.mode == 'debug') {
   var subpy = require('child_process').spawn('python3', ['../search/search.py', '--server']);
 }
 
@@ -149,7 +152,7 @@ app.on('window-all-closed', function() {
   if (process.platform !== 'darwin') {
     app.quit();
   }
-  if (process.platform == 'win32') {
+  if (Config.mode == 'release' && process.platform == 'win32') {
     console.log(i18n.__('Killing subprocess.'));
     const killer = require('child_process').exec;
     killer('taskkill /im mirusan_search.exe /f /t', (err, stdout, stderr) => {
@@ -157,7 +160,7 @@ app.on('window-all-closed', function() {
       log.err(stderr);
       log.info(stdout);
     });
-  } else if (process.platform == 'linux' || process.platform == 'darwin') {
+  } else {
     console.log(i18n.__('Killing subprocess.'));
     subpy.kill('SIGINT');
   }
