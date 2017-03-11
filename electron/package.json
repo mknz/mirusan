@@ -50,9 +50,10 @@
     ]
   },
   "build": {
-    "appId": "com.electron.mirusan",
+    "appId": "com.mknz.mirusan",
     "mac": {
-      "category": "Utility"
+      "target": "dmg",
+      "category": "public.app-category.education"
     },
     "files": [
       "**/*",
@@ -60,8 +61,15 @@
       "!**/elm-stuff"
     ],
     "extraFiles": [
-      "mirusan_search.exe"
+      "mirusan_search.exe",
+      "mirusan_search"
     ],
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ]
+    },
     "win": {
       "publish": {
         "provider": "generic",
