@@ -1,0 +1,65 @@
+dist: trusty
+sudo: false
+
+language: c
+
+env :
+  - TRAVIS_PYTHON_VERSION="3.5"
+
+os :
+  - linux
+  - osx
+
+cache:
+  directories:
+  - electron/node_modules
+  - $HOME/.electron
+  - $HOME/.cache
+
+addons:
+  apt:
+    packages:
+      - icnsutils
+
+before_install:
+  - curl -o- -L https://yarnpkg.com/install.sh | bash
+  - export PATH="$HOME/.yarn/bin:$PATH"
+
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+      wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
+    else
+      wget https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -O miniconda.sh;
+    fi
+  - bash miniconda.sh -b -p $HOME/miniconda
+  - export PATH="$HOME/miniconda/bin:$PATH"
+  - hash -r
+  - conda config --set always_yes yes --set changeps1 no
+  - conda update -q conda
+  - conda info -a
+  - conda create -q -n test-env python=$TRAVIS_PYTHON_VERSION
+  - source activate test-env
+
+install:
+  - nvm install 7
+  - yarn install
+
+  - node --version
+  - yarn --version
+  - python --version
+
+  # Install build tools
+  # node
+  - cd ./electron
+  - yarn install
+
+  # Python
+  - cd ../search
+  - pip install -r requirements.txt
+  - cd ..
+
+script:
+  - cd ./build/linux
+  - build.sh
+
+  - cd ../electron
+  - yarn run build
