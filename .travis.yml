@@ -63,3 +63,7 @@ script:
 
   - cd ../electron
   - yarn run build
+
+branches:
+  only:
+  - master
