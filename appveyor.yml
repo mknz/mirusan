@@ -35,9 +35,8 @@ branches:
     - master
 
 build_script:
-  - cd ./search
-  - pyinstaller build.spec
-  - copy dist/mirusan_search.exe ../electron
+  - cd ./build/win
+  - build.bat
 
   - cd ../electron
   - yarn run build
