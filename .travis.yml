@@ -12,7 +12,7 @@ os :
 
 cache:
   directories:
-  - electron/node_modules
+  - $TRAVIS_BUILD_DIR/electron/node_modules
   - $HOME/.electron
   - $HOME/.cache
 
@@ -49,19 +49,18 @@ install:
 
   # Install build tools
   # node
-  - cd ./electron
+  - cd $TRAVIS_BUILD_DIR/electron
   - yarn install
 
   # Python
-  - cd ../search
+  - cd $TRAVIS_BUILD_DIR/search
   - pip install -r requirements.txt
-  - cd ..
 
 script:
-  - cd ./build/linux
+  - cd $TRAVIS_BUILD_DIR/build/linux
   - build.sh
 
-  - cd ../electron
+  - cd $TRAVIS_BUILD_DIR/electron
   - yarn run build
 
 branches:
