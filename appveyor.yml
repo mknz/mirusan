@@ -9,7 +9,7 @@ cache:
 environment:
   matrix:
     - node_version: "7"
-    - PYTHON: "C:\\Python35"
+      PYTHON: "C:\\Python35"
 
 install:
   - ps: Install-Product node $env:node_version
