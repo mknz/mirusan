@@ -41,7 +41,6 @@ before_install:
 
 install:
   - nvm install 7
-  - yarn install
 
   - node --version
   - yarn --version
@@ -58,6 +57,7 @@ install:
 
 script:
   - cd $TRAVIS_BUILD_DIR/build/linux
+  - pwd
   - build.sh
 
   - cd $TRAVIS_BUILD_DIR/electron
@@ -65,4 +65,4 @@ script:
 
 branches:
   only:
-  - master
+  - develop
