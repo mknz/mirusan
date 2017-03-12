@@ -5,6 +5,7 @@ version: 0.1.{build}
 cache:
   - electron/node_modules
   - '%USERPROFILE%\.electron'
+  - electron/elm-stuff
 
 environment:
   matrix:
