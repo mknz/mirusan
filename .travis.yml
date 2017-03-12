@@ -13,6 +13,7 @@ os :
 cache:
   directories:
   - $TRAVIS_BUILD_DIR/electron/node_modules
+  - $TRAVIS_BUILD_DIR/electron/elm-stuff
   - $HOME/.electron
   - $HOME/.cache
 
