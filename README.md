@@ -21,6 +21,32 @@ Written in Python / Electron / Elm / Javascript
 
 - Multiplatform (Linux, Mac, Windows)
 
+## Installation
+
+### Prerequisites
+
+- [Git](https://git-scm.com/)
+
+- [Node.js](https://nodejs.org)
+
+- python3
+
+### Instructions
+
+```sh
+git clone https://github.com/mknz/mirusan.git
+
+cd ./mirusan
+cd ./search
+pip install -r requirements.txt
+
+cd ../electron
+npm install
+npm run compile
+
+npm start
+```
+
 ## Language support
 
 Mirusan automatically detects input language using [Google's language-detection](https://pypi.python.org/pypi/langdetect). Tokenizer or analyzer for indexing is chosen according to the detected language.
@@ -49,25 +75,6 @@ Turkish
 ```
 
 For other languages, [N-gram tokenizer](http://whoosh.readthedocs.io/en/latest/api/analysis.html#whoosh.analysis.NgramTokenizer) (minsize=1, maxsize=2) is used.
-
-## Quickstart
-
-```sh
-#install python3
-#install node.js
-
-git clone https://github.com/mknz/mirusan.git
-
-cd ./mirusan
-cd ./search
-pip install -r requirements.txt
-
-cd ../electron
-npm install
-npm run compile
-
-npm start
-```
 
 ## License
 
