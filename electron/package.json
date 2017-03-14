@@ -17,7 +17,8 @@
     "mkdir": "mkdirp ./lib",
     "clean:dist": "rimraf ./dist",
     "elm:init": "elm-make --yes",
-    "postinstall": "npm-run-all -p mkdir elm:init"
+    "postinstall": "npm-run-all -p mkdir elm:init",
+    "release": "build"
   },
   "devDependencies": {
     "babel-cli": "^6.22.2",
@@ -71,10 +72,6 @@
       ]
     },
     "win": {
-      "publish": {
-        "provider": "generic",
-        "url": ""
-      }
     }
   }
 }
