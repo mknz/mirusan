@@ -46,7 +46,8 @@ script:
   - cd $TRAVIS_BUILD_DIR/build/linux
   - ./build.sh
   - cd $TRAVIS_BUILD_DIR/electron
-  - yarn run build
+  - yarn run release
+
 branches:
   only:
     - master
