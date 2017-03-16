@@ -102,20 +102,20 @@ class IndexManager:
     def detect_lang(self, text):
         try:
             lang = langdetect.detect(text)
-            content_field_name = 'content_' + lang
-            return lang, content_field_name
+            return lang
         except:
-            return None, None
+            return None
 
-    def add_lang_field(self, text):
-        """Auto-detect language and add field if necessary."""
-        lang, content_field_name = self.detect_lang(text)
-
+    def add_lang_field(self, text, lang):
+        """Add language field if necessary."""
         if lang is None:
-            return
+            return None
+
+        content_field_name = 'content_' + lang
 
         # Add field to schema only in new language
         if content_field_name not in self.ix.schema.names():
+            Config.logger.info('Add new content field: ' + content_field_name)
             self.writer.commit()
             self.open()
             if lang == 'en':
@@ -134,6 +134,8 @@ class IndexManager:
             self.writer.commit()
             self.open()
 
+        return content_field_name
+
     def add_text_file(self, text_file_path, gid=None, parent_file_path='', title='',
                       num_page=1, published_date=None):
         if not os.path.exists(Config.database_dir):
@@ -149,11 +151,12 @@ class IndexManager:
         content_text_normalized = normalize(content_text)
 
         # detect language from text
-        self.add_lang_field(content_text_normalized)
-        lang, content_field_name = self.detect_lang(content_text_normalized)
-
+        lang = self.detect_lang(content_text_normalized)
         if lang is None:
             Config.logger.info('Could not detect language :' + text_file_path)
+
+        # add lang field if necessary
+        content_field_name = self.add_lang_field(content_text_normalized, lang)
 
         # set initial title: filename without ext
         if title == "":
