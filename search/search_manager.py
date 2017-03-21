@@ -88,12 +88,5 @@ class Search:
         return str.replace('\uFFFD', '')
 
     def search_print(self, query_str):
-        with self.ix.searcher() as searcher:
-            query = MultifieldParser(['title', 'content'],
-                                     self.ix.schema).parse(query_str)
-            results = searcher.search(query)
-            for r in results:
-                print(r['file_path'])
-                print(r['title'])
-                print(r.highlights('content'))
-                print('')
+        res = self.search(query_str, sort_field='title')
+        print(res)
