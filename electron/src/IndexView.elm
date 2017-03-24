@@ -23,7 +23,7 @@ indexView model =
         title = div [ class "search-result", onClick (OpenDocument (row.file_path, nPage)) ] [ text row.title ]
         config = div [ class "config" ] [ i [ class "fa fa-trash-o", onClick (AskDeleteDocument row.gid) ] [] ]
         container = div [ class "index-title-container" ] [ title, config ]
-        summary = div [] [ Markdown.toHtml [] row.summary ]
+        summary = div [ class "summary" ] [ Markdown.toHtml [] row.summary ]
       in
         div [ class "index-component-container" ] [ container, summary ]
 

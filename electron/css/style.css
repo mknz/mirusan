@@ -79,7 +79,11 @@ div.result-summary {
 }
 
 div.index-title-container {
-  clear: both;
+  overflow: hidden;
+}
+
+div.summary {
+  display: block;
 }
 
 div.index-component-container {
