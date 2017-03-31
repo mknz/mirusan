@@ -11,7 +11,14 @@ function copyPdfFilesSync(filePaths) {
   for (var i = 0; i < filePaths.length; i++) {
     var filePath = path.resolve(filePaths[i]);
     var dstDir = path.resolve(Config.pdf_dir);
-    var dstPath = path.join(dstDir, path.basename(filePath));
+    var baseFileName = path.basename(filePath);
+
+    // unify ext to lower case
+    if(path.extname(baseFileName) == '.PDF') {
+      baseFileName = path.basename(baseFileName, '.PDF') + '.pdf';
+    }
+
+    var dstPath = path.join(dstDir, baseFileName);
     var data = fs.readFileSync(filePath);
     fs.writeFile(dstPath, data);
     console.log('Copied to: ' + dstPath);
