@@ -1,5 +1,4 @@
 'use strict';
-
 const fs = require('fs');
 const path = require('path');
 
@@ -114,6 +113,27 @@ function createWindow() {
   return win;
 }
 
+function addDirPdf(win) {
+  // Add pdf files in specified directory
+  if (process.argv.length == 4 && process.argv[2] == '-add-dir') {
+    var addDir = process.argv[3]
+    var pdfPaths = [];
+    if (fs.existsSync(addDir)) {
+      var fileList = fs.readdirSync(addDir);
+      for (let file of fileList) {
+        var ext = path.extname(file);
+        if ( ext == '.pdf' || ext == '.PDF') {
+          pdfPaths.push(path.join(addDir, file));
+        }
+      }
+      console.log('Add pdf files');
+      console.log(pdfPaths);
+      win.webContents.send('pdf-extract-request-background',
+      { pdfPaths: pdfPaths });
+    }
+  }
+}
+
 function createBackgroundWindow(parentWindow) {
   if (debug) {
     var win = new BrowserWindow({width: 300, height: 700, parent: parentWindow});
@@ -129,6 +149,7 @@ function createBackgroundWindow(parentWindow) {
    console.log(i18n.__('Closing background window.'));
    win = null;
   });
+  win.webContents.on('did-finish-load', () => {addDirPdf(win)});
   return win;
 }
 
@@ -143,6 +164,7 @@ app.on('ready', () => {
         { pdfPaths: filePaths });
       })
   });
+
 })
 
 // Quit when all windows are closed.
