@@ -16,12 +16,18 @@ def add_files(files):
         raise ValueError('Empty document group: ' + str(files))
 
     im = IndexManager()
-    for group in file_groups:
+
+    num_g = len(file_groups)
+    for i, group in enumerate(file_groups):
         Config.logger.debug('Add document group: ' + str(group))
         gid = group['id']
         im.add_pdf_file(group['pdf_file'], gid)
         for tf in group['text_files']:
             im.add_text_page_file(tf, gid)
+
+        progress = (i + 1) / num_g
+        with open('progress_add_db', 'w') as f:
+            f.write(str(progress))
 
     im.writer.commit()
     im.ix.close()
