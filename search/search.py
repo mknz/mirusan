@@ -5,6 +5,7 @@ from search_manager import Search
 
 import argparse
 import langdetect
+import os
 
 
 def add_files(files):
@@ -25,10 +26,12 @@ def add_files(files):
         for tf in group['text_files']:
             im.add_text_page_file(tf, gid)
 
+        # record progress, read from api server
         progress = (i + 1) / num_g
         with open('progress_add_db', 'w') as f:
             f.write(str(progress))
 
+    os.remove('progress_add_db')
     im.writer.commit()
     im.ix.close()
     return
