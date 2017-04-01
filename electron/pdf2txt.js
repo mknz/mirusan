@@ -16,6 +16,10 @@ var pdf2txt = (function () {
   const fs = require('fs');
   const path = require('path');
 
+  // For recording of progress
+  var numPdfTotal = 0;
+  var counterProgress = 0;
+
   // Concatenate text items to single text
   var catText = function (textItems) {
       var text = '';
@@ -99,7 +103,10 @@ var pdf2txt = (function () {
     // Extract and save all pages
     extractSaveAll: function (pdfPath, saveDir) {
       console.log(pdfPath);
-      fs.writeFileSync('progress_text_extraction', pdfPath);
+      var prog = counterProgress / numPdfTotal;
+      counterProgress += 1;
+      fs.writeFileSync('progress_text_extraction', prog);
+      //fs.writeFileSync('progress_text_extraction', pdfPath);
       return PDFJS.getDocument(pdfPath).then(
         (pdfDoc) => {
           var pageNums = pdfDoc.numPages;
@@ -161,6 +168,8 @@ var pdf2txt = (function () {
     pdfFilesTotxt: function (pdfPaths, saveDir, callback) {
       (async () => {
         var paths = [];
+        numPdfTotal = pdfPaths.length
+        counterProgress = 0
         for (let pdfPath of pdfPaths) {
           var res = await pdf2txt.extractSaveAll(pdfPath, saveDir);
           paths = paths.concat(res).concat(pdfPath);

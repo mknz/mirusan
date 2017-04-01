@@ -7,6 +7,7 @@ import falcon
 
 from wsgiref import simple_server
 import json
+import os
 
 
 class DataBaseResource:
@@ -100,11 +101,28 @@ class SortedIndex:
         resp.body = json.dumps(res, indent=4, ensure_ascii=False)
 
 
+class CheckProgress:
+    def on_get(self, req, resp):
+        def _get_state(file_name):
+            if os.path.exists(file_name):
+                with open(file_name, 'r') as f:
+                    progress = float(f.read())
+                state = str(round(progress * 100)) + '%'
+            else:
+                state = ''
+            return state
+        res = {'progress_db': _get_state('progress_add_db'),
+               'progress_text': _get_state('progress_text_extraction')}
+        resp.body = json.dumps(res, indent=4, ensure_ascii=False)
+        return
+
+
 class Server:
     api = falcon.API()
     api.add_route('/search', SearchDB())
     api.add_route('/sorted-index', SortedIndex())
     api.add_route('/delete', DeleteDocument())
+    api.add_route('/progress', CheckProgress())
 
     def start(self):
         httpd = simple_server.make_server("127.0.0.1", 8000, self.api)
