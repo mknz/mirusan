@@ -31,7 +31,9 @@ def add_files(files):
         with open('progress_add_db', 'w') as f:
             f.write(str(progress))
 
-    os.remove('progress_add_db')
+    with open('progress_add_db', 'w') as f:
+        f.write('Finished')
+
     im.writer.commit()
     im.ix.close()
     return

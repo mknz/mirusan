@@ -106,13 +106,28 @@ class CheckProgress:
         def _get_state(file_name):
             if os.path.exists(file_name):
                 with open(file_name, 'r') as f:
-                    progress = float(f.read())
+                    content = f.read()
+                    if content == 'Finished':
+                        return content
+                progress = float(content)
                 state = str(round(progress * 100)) + '%'
             else:
                 state = ''
             return state
-        res = {'progress_db': _get_state('progress_add_db'),
-               'progress_text': _get_state('progress_text_extraction')}
+
+        state = _get_state('progress_text_extraction')
+        if state not in ['', 'Finished']:
+            message = 'Extracting texts: ' + state
+        elif state == 'Finished':
+            state = _get_state('progress_add_db')
+            if state in ['Finished', '']:
+                message = state
+            else:
+                message = 'Adding to database: ' + state
+        else:
+            message = ''
+
+        res = {'message': message}
         resp.body = json.dumps(res, indent=4, ensure_ascii=False)
         return
 

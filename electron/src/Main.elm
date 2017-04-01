@@ -46,6 +46,7 @@ init =
    , deleteDialog = False
    , deleteGid = ""
    , pdfUrl = "./pdfjs/web/viewer.html"
+   , isUpdating = False
    }
    , getIndex initSortField initPage sortOrder)
 

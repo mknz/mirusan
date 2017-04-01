@@ -2,6 +2,7 @@ module Messages exposing (..)
 
 import Models exposing (SearchResult, IndexResult, ResultMessage)
 import Http
+import Time exposing (Time)
 
 
 type Msg
@@ -20,3 +21,5 @@ type Msg
   | CancelDeleteDocument
   | DeleteResult (Result Http.Error ResultMessage)
   | PdfUrl String
+  | GetProgress (Result Http.Error String)
+  | CheckProgress Time

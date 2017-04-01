@@ -29,6 +29,11 @@ messageDecoder : Decoder ResultMessage
 messageDecoder =
   at ["message"] <| string
 
+progressDecoder : Decoder String
+progressDecoder =
+  at ["message"] <| string
+
+
 
 -- HTTP
 
@@ -59,3 +64,11 @@ deleteDocument gid =
         "http://localhost:8000/delete?gid=" ++ gid
   in
       Http.send DeleteResult (Http.get url messageDecoder)
+
+getProgress : Cmd Msg
+getProgress =
+  let
+      url =
+        "http://localhost:8000/progress"
+  in
+      Http.send GetProgress (Http.get url progressDecoder)

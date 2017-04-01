@@ -23,7 +23,7 @@ toolbarActions model =
 
 toolButtons : Model -> Html Msg
 toolButtons model =
-  div [ class "btn-group" ] [ showIndexButton model, addFileButton model ]
+  div [ class "btn-group" ] [ showIndexButton model, addFileButton model, text model.serverMessage ]
 
 showIndexButton : Model -> Html Msg
 showIndexButton model =

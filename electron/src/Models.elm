@@ -19,6 +19,7 @@ type alias Model =
   , deleteDialog: Bool
   , deleteGid: String
   , pdfUrl: String
+  , isUpdating: Bool
   }
 
 type ViewMode = SearchMode | IndexMode

@@ -177,7 +177,7 @@ var pdf2txt = (function () {
         return paths;
       })().then(paths => {
         console.log('Finished all.');
-        fs.unlinkSync('progress_text_extraction');
+        fs.writeFileSync('progress_text_extraction', 'Finished');
         callback(paths);  // Add to db, both text and pdfs
       }).catch(() => {
         console.log('Failed');

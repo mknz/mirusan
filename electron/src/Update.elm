@@ -5,7 +5,7 @@ import Electron.IpcRenderer as IPC exposing (on, send)
 
 import Messages exposing (Msg(..))
 import Models exposing (Model, ViewMode(..), SearchResult, IndexResult)
-import Search exposing (search, getIndex, deleteDocument)
+import Search exposing (search, getIndex, deleteDocument, getProgress)
 import Ports exposing (openNewFile)
 
 
@@ -82,7 +82,7 @@ update msg model =
 
       AddFilesToDB ->
       -- send request to electron main process
-        ( model, IPC.send "pdf-extract-request-main" Json.Encode.null)
+        ( { model | isUpdating = True }, IPC.send "pdf-extract-request-main" Json.Encode.null)
 
       AskDeleteDocument gid ->
         ( { model | deleteDialog = True, deleteGid = gid }, Cmd.none )
@@ -104,3 +104,15 @@ update msg model =
 
       PdfUrl url ->
         ( { model | pdfUrl = url }, Cmd.none )
+
+      CheckProgress time ->
+        ( model, getProgress ) -- time is dummy
+
+      GetProgress (Ok res) ->
+        if res == "Finished" then
+          ( { model | serverMessage = "", isUpdating = False }, Cmd.none )
+        else
+          ( { model | serverMessage = res }, Cmd.none )
+
+      GetProgress (Err _) ->
+        ( { model | serverMessage = "" }, Cmd.none )
