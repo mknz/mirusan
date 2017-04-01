@@ -30,11 +30,14 @@ function copyPdfFilesSync(filePaths) {
 
 // for callback
 function addFilesToDB(filePaths) {
+  fs.writeFileSync('./addfiles', filePaths);
   if (process.platform == 'win32') {
-    var sub = require('child_process').spawn('./mirusan_search.exe', ['--add-files'].concat(filePaths));
+    //var sub = require('child_process').spawn('./mirusan_search.exe', ['--add-files'].concat(filePaths));
+    var sub = require('child_process').spawn('./mirusan_search.exe', ['--add-files', 'addfiles']);
   }
   else if (process.platform == 'linux' || process.platform == 'darwin') {
-    var subpy = require('child_process').spawn('python3', ['../search/search.py', '--add-files'].concat(filePaths));
+    //var subpy = require('child_process').spawn('python3', ['../search/search.py', '--add-files'].concat(filePaths));
+    var subpy = require('child_process').spawn('python3', ['../search/search.py', '--add-files', 'addfiles']);
   }
 }
 

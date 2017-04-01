@@ -70,8 +70,15 @@ def main():
 
     if args.add_files is not None:
         print('add files: ' + str(args.add_files))
+        if args.add_files == ['addfiles']:
+            with open('addfiles', 'r') as f:
+                text = f.read()
+            add_file_list = text.split(',')
+        else:
+            add_file_list = args.add_files
+
         try:
-            add_files(args.add_files)
+            add_files(add_file_list)
         except Exception as err:
             Config.logger.exception('Could not add files: %s', err)
             print(err)
