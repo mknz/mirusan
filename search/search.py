@@ -84,18 +84,6 @@ def main():
             print(err)
         return
 
-    if args.add_dir is not None:
-        print('add dir: ' + str(args.add_dir))
-        try:
-            im = IndexManager()
-            im.add_dir(args.add_dir)
-            im.writer.commit()
-            im.ix.close()
-        except Exception as err:
-            Config.logger.exception('Could not add dir: %s', err)
-            print(err)
-        return
-
     if args.lang_detect:
         print(langdetect.detect(args.lang_detect))
         return

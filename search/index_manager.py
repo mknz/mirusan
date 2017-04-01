@@ -204,22 +204,3 @@ class IndexManager:
                            gid=gid,
                            parent_file_path=doc_file_path,
                            num_page=num_page)
-
-    def add_dir(self, text_dir_path):
-        if not os.path.exists(Config.database_dir):
-            raise ValueError('DB dir does not exist: ' + Config.database_dir)
-
-        files = os.listdir(text_dir_path)
-        text_file_paths = []
-        for file in files:
-            _, ext = os.path.splitext(file)
-            if ext == '.txt':
-                text_file_paths.append(os.path.join(text_dir_path, file))
-
-        if text_file_paths == []:
-            raise ValueError('No text files in: ' + text_dir_path)
-
-        for i, path in enumerate(text_file_paths):
-            self.add_text_page_file(self.writer, path)
-            # show progress
-            print(str(i + 1) + ' / ' + str(len(text_file_paths)))
