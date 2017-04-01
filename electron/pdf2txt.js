@@ -99,6 +99,7 @@ var pdf2txt = (function () {
     // Extract and save all pages
     extractSaveAll: function (pdfPath, saveDir) {
       console.log(pdfPath);
+      fs.writeFileSync('progress_text_extraction', pdfPath);
       return PDFJS.getDocument(pdfPath).then(
         (pdfDoc) => {
           var pageNums = pdfDoc.numPages;
