@@ -2,6 +2,16 @@
 const fs = require('fs');
 const path = require('path');
 
+function cleanUp () {
+  // Remove temporary files
+  var tmpFiles = ['progress_add_db', 'progress_text_extraction'];
+  for (let file of tmpFiles) {
+    if (fs.existsSync(file)) { fs.unlink(file) }
+  }
+}
+
+cleanUp();
+
 // Generate config file
 const baseWorkDir = process.cwd();
 const configPath = path.join(baseWorkDir, 'config.json');
@@ -169,9 +179,7 @@ app.on('ready', () => {
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function() {
-  // Remove temporary files
-  fs.unlink('progress_add_db');
-  fs.unlink('progress_text_extraction');
+  cleanUp();  // Remove temporary files
 
   // On OS X it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
