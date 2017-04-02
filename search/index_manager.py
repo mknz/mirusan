@@ -213,14 +213,27 @@ class IndexManager:
                            parent_file_path=doc_file_path,
                            num_page=num_page)
 
+    def _result_to_dic(self, result):
+        res_dic = {}
+        for r in result:
+            res_dic[r] = result[r]
+        return res_dic
+
     def get_documents(self, search_field, query_str):
         query = QueryParser(search_field, self.ix.schema).parse(query_str)
         with self.ix.searcher() as searcher:
             results = searcher.search(query, limit=100000)
-            res = []
-            for r in results:
-                res_dic = {}
-                for rr in r:
-                    res_dic[rr] = r[rr]
-                res.append(res_dic)
+            res = [self._result_to_dic(r) for r in results]
         return res
+
+    def update_field(self, unique_field_name, unique_field_value,
+                     update_field_name, update_field_value):
+        query = QueryParser(unique_field_name, self.ix.schema).parse(unique_field_value)
+        with self.ix.searcher() as searcher:
+            results = searcher.search(query)
+            res = [self._result_to_dic(r) for r in results]
+        assert len(res) == 1
+        res[0][update_field_name] = update_field_value
+
+        self.writer.update_document(res[0])
+        self.writer.commit()
