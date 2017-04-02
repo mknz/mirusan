@@ -34,6 +34,7 @@ div.search-result {
   float: left;
   color: #1111cc;
   text-decoration: none;
+  -webkit-user-select: text;
 }
 
 div.search-result:hover {
@@ -75,7 +76,6 @@ div.config:hover {
 
 div.result-summary {
   margin-top: 0.5em;
-  -webkit-user-select: text;
 }
 
 div.index-title-container {
@@ -94,7 +94,7 @@ div.result-container {
   margin-top: 10px;
 }
 
-div.result-container p {
+div.result-container li, p {
   -webkit-user-select: text;
 }
 
