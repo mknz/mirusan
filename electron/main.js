@@ -4,7 +4,7 @@ const path = require('path');
 
 function cleanUp () {
   // Remove temporary files
-  var tmpFiles = ['progress_add_db', 'progress_text_extraction'];
+  var tmpFiles = ['progress_add_db', 'progress_text_extraction', 'addfiles'];
   for (let file of tmpFiles) {
     if (fs.existsSync(file)) { fs.unlink(file) }
   }
