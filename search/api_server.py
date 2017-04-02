@@ -8,6 +8,7 @@ import falcon
 from wsgiref import simple_server
 import json
 import os
+import threading
 
 
 class DataBaseResource:
@@ -133,12 +134,20 @@ class CheckProgress:
 
 
 class Server:
-    api = falcon.API()
-    api.add_route('/search', SearchDB())
-    api.add_route('/sorted-index', SortedIndex())
-    api.add_route('/delete', DeleteDocument())
-    api.add_route('/progress', CheckProgress())
-
     def start(self):
-        httpd = simple_server.make_server("127.0.0.1", 8000, self.api)
+        api = falcon.API()
+        api.add_route('/search', SearchDB())
+        api.add_route('/sorted-index', SortedIndex())
+        api.add_route('/delete', DeleteDocument())
+        api.add_route('/progress', CheckProgress())
+        handler = {}  # Ugly implementation
+
+        class Quit:
+            def on_get(self, req, resp):
+                threading.Thread(target=handler['httpd'].shutdown).start()
+
+        api.add_route('/quit', Quit())
+        httpd = simple_server.make_server("127.0.0.1", 8000, api)
+        handler['httpd'] = httpd
         httpd.serve_forever()
+        print('Server is shut down.')
