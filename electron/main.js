@@ -12,6 +12,9 @@ function cleanUp () {
 
 cleanUp();
 
+// Tell server to live
+fs.writeFileSync('main_process_alive', '');
+
 // Generate config file
 const baseWorkDir = process.cwd();
 const configPath = path.join(baseWorkDir, 'config.json');
@@ -174,7 +177,6 @@ app.on('ready', () => {
         { pdfPaths: filePaths });
       })
   });
-
 })
 
 // Quit when all windows are closed.
@@ -186,18 +188,8 @@ app.on('window-all-closed', function() {
   if (process.platform !== 'darwin') {
     app.quit();
   }
-  if (Config.mode == 'release' && process.platform == 'win32') {
-    console.log(i18n.__('Killing subprocess.'));
-    const killer = require('child_process').exec;
-    killer('taskkill /im mirusan_search.exe /f /t', (err, stdout, stderr) => {
-      log.err(err);
-      log.err(stderr);
-      log.info(stdout);
-    });
-  } else {
-    console.log(i18n.__('Killing subprocess.'));
-    subpy.kill('SIGINT');
-  }
+  // Tell server to quit
+  fs.unlink('main_process_alive');
 });
 
 app.on('activate', function() {

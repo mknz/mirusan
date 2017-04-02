@@ -140,14 +140,20 @@ class Server:
         api.add_route('/sorted-index', SortedIndex())
         api.add_route('/delete', DeleteDocument())
         api.add_route('/progress', CheckProgress())
-        handler = {}  # Ugly implementation
 
-        class Quit:
-            def on_get(self, req, resp):
-                threading.Thread(target=handler['httpd'].shutdown).start()
-
-        api.add_route('/quit', Quit())
         httpd = simple_server.make_server("127.0.0.1", 8000, api)
-        handler['httpd'] = httpd
+        is_server_alive = True
+
+        def check_alive():
+            if not is_server_alive:
+                return  # quit program
+            # alive monitor every 3 seconds
+            threading.Timer(3.0, check_alive).start()
+            if not os.path.exists('main_process_alive'):
+                print('Main process is down. Shut down.')
+                httpd.shutdown()
+
+        threading.Thread(target=check_alive).start()
         httpd.serve_forever()
         print('Server is shut down.')
+        is_server_alive = False
