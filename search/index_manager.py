@@ -177,7 +177,7 @@ class IndexManager:
 
         if published_date is not None:
             pdatetime = self.secure_datetime(published_date)
-            fields['published_at'] = pdatetime,
+            fields['published_at'] = pdatetime
         self.writer.update_document(**fields)
         Config.logger.info('Added :' + text_file_path)
 
