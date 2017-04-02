@@ -5,6 +5,7 @@ from whoosh.index import create_in, open_dir, exists_in
 from whoosh.fields import TEXT, DATETIME, NUMERIC, KEYWORD, ID, Schema
 from whoosh.analysis import NgramTokenizer, StandardAnalyzer, LanguageAnalyzer
 from whoosh.lang import languages
+from whoosh.qparser import QueryParser
 
 from dateutil.parser import parse
 
@@ -56,9 +57,16 @@ class IndexManager:
         ix.close()
 
     def delete_document(self, gid):
+        docs = self.get_documents('gid', gid)
+        title = docs[0]['title']
+        for doc in docs:
+            os.remove(doc['file_path'])
+        os.rmdir(os.path.join(Config.txt_dir, title))
+
         n_doc = self.writer.delete_by_term('gid', gid)
         self.writer.commit()
         message = str(n_doc) + ' documents deleted.'
+        Config.logger.info(message)
         return message
 
     def secure_datetime(self, date):
@@ -204,3 +212,15 @@ class IndexManager:
                            gid=gid,
                            parent_file_path=doc_file_path,
                            num_page=num_page)
+
+    def get_documents(self, search_field, query_str):
+        query = QueryParser(search_field, self.ix.schema).parse(query_str)
+        with self.ix.searcher() as searcher:
+            results = searcher.search(query, limit=100000)
+            res = []
+            for r in results:
+                res_dic = {}
+                for rr in r:
+                    res_dic[rr] = r[rr]
+                res.append(res_dic)
+        return res
