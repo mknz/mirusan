@@ -135,7 +135,20 @@ var pdf2txt = (function () {
 
                 console.log(savePath);
                 savePaths.push(savePath);
-                fs.writeFileSync(savePath, saveTexts[i]);
+                var retry = 0;
+                while (true) {
+                  if (retry > 10) { throw "Retry failed too many times." }
+                  try {
+                    fs.writeFileSync(savePath, saveTexts[i]);
+                  }
+                  catch (e) {
+                    console.log(e);
+                    console.log('Retry.');
+                    retry += 1;
+                    continue;
+                  }
+                  break;
+                }
               }
               console.log('Finished.');
               return savePaths;
