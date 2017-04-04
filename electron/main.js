@@ -177,6 +177,11 @@ app.on('ready', () => {
         { pdfPaths: filePaths });
       })
   });
+  // Delete tmp files when finished reading them (receive signal from Update.elm)
+  ipcMain.on('delete-tmpfile', (event, arg) => {
+  var tmpFiles = ['progress_add_db', 'progress_text_extraction'];
+    for (let file of tmpFiles) { if (fs.existsSync(file)) { fs.unlink(file) } }
+  })
 })
 
 // Quit when all windows are closed.

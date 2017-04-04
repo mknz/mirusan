@@ -101,3 +101,8 @@ div.result-container li, p {
 input.search-window-inactive {
   background-color: #dddddd;
 }
+
+span.server-message {
+  padding-left: 5px;
+  vertical-align: middle;
+}

@@ -110,7 +110,7 @@ update msg model =
 
       GetProgress (Ok res) ->
         if res == "Finished" then
-          ( { model | serverMessage = "", isUpdating = False }, Cmd.none )
+          ( { model | serverMessage = "", isUpdating = False }, IPC.send "delete-tmpfile" Json.Encode.null )
         else
           ( { model | serverMessage = res }, Cmd.none )
 
