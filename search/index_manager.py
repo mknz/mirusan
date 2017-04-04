@@ -6,6 +6,7 @@ from whoosh.fields import TEXT, DATETIME, NUMERIC, KEYWORD, ID, Schema
 from whoosh.analysis import NgramTokenizer, StandardAnalyzer, LanguageAnalyzer
 from whoosh.lang import languages
 from whoosh.qparser import QueryParser
+from whoosh.query import Every
 
 from dateutil.parser import parse
 
@@ -234,6 +235,12 @@ class IndexManager:
             res = [self._result_to_dic(r) for r in results]
         assert len(res) == 1
         res[0][update_field_name] = update_field_value
+        self.writer.update_document(**res[0])
+        #self.writer.commit()
 
-        self.writer.update_document(res[0])
-        self.writer.commit()
+    def get_all_documents(self):
+        query = Every()
+        with self.ix.searcher() as searcher:
+            results = searcher.search(query, limit=100000)
+            res = [self._result_to_dic(r) for r in results]
+        return res
