@@ -80,6 +80,9 @@ class IndexManager:
 
     def delete_by_title(self, title):
         docs = self.get_documents('title', title)
+        if docs == []:
+            raise ValueError('Not found: ' + title)
+
         self._delete_files(docs)
 
         n_doc = self.writer.delete_by_term('title', title)
