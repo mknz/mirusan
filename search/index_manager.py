@@ -14,6 +14,7 @@ import os
 import datetime
 import re
 import langdetect
+import shutil
 
 
 class IndexManager:
@@ -57,18 +58,34 @@ class IndexManager:
         Config.logger.info('Created db: ' + Config.database_dir)
         ix.close()
 
+    def _delete_files(self, docs):
+        for doc in docs:
+            fp = doc['file_path']
+            if os.path.exists(fp):
+                os.remove(fp)
+            title = doc['title']
+            title_txt_dir = os.path.join(Config.txt_dir, title)
+            if os.path.exists(title_txt_dir):
+                shutil.rmtree(title_txt_dir)
+
     def delete_document(self, gid):
         docs = self.get_documents('gid', gid)
-        title = docs[0]['title']
-        for doc in docs:
-            os.remove(doc['file_path'])
-        os.rmdir(os.path.join(Config.txt_dir, title))
+        self._delete_files(docs)
 
         n_doc = self.writer.delete_by_term('gid', gid)
         self.writer.commit()
         message = str(n_doc) + ' documents deleted.'
         Config.logger.info(message)
         return message
+
+    def delete_by_title(self, title):
+        docs = self.get_documents('title', title)
+        self._delete_files(docs)
+
+        n_doc = self.writer.delete_by_term('title', title)
+        message = str(n_doc) + ' documents deleted.'
+        Config.logger.info(message)
+        return
 
     def secure_datetime(self, date):
         """Normalize type-unknown date object."""

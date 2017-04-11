@@ -39,6 +39,15 @@ def add_files(files):
     return
 
 
+def delete_by_title(title):
+    im = IndexManager()
+    Config.logger.debug('Delete by title: ' + title)
+    im.delete_by_title(title)
+    im.writer.commit()
+    im.ix.close()
+    return
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', default='./config.json')
@@ -47,6 +56,8 @@ def main():
                         action='store_true')
     parser.add_argument('--add-dir', default=None)
     parser.add_argument('--add-files', default=None, nargs='+')
+    parser.add_argument('--delete-by-title', default=None)
+
     parser.add_argument('--ngram-min', default=1)
     parser.add_argument('--ngram-max', default=2)
 
@@ -93,6 +104,12 @@ def main():
         except Exception as err:
             Config.logger.exception('Could not add files: %s', err)
             print(err)
+        return
+
+    title = args.delete_by_title
+    if title is not None:
+        print('delete by title: ' + title)
+        delete_by_title(title)
         return
 
     if args.lang_detect:
