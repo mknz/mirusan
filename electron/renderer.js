@@ -6,23 +6,6 @@
   // Read config from file
   const Config = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
 
-  // Adjust inline frame size with window
-  function resizeFrame() {
-    const margin = 40; // Influenced by header's height
-    var windowHeight = document.documentElement.clientHeight;
-    var elem = document.getElementById('pdf-viewer-container');
-    elem.style.height = windowHeight - margin + 'px';
-    var elem = document.getElementById('sidebar-container');
-    elem.style.height = windowHeight - margin + 'px';
-  }
-
-  // init elem sizes
-  // workaround: wait until container elements appear
-  setTimeout(resizeFrame, 100);
-  window.addEventListener('resize', function(e) {
-    resizeFrame()
-  }, false);
-
   // Embed elm
   var app = Elm.Main.embed(document.getElementById('window'));
 
@@ -35,7 +18,6 @@
     var pdfUrl = './pdfjs/web/viewer.html?file=' + pdfAbsFilePath + '&page=' + pageNum.toString()
     document.getElementById('pdf-viewer').contentWindow.location.replace(pdfUrl);
     app.ports.pdfUrl.send(pdfUrl);
-    resizeFrame();
   });
 
 })()

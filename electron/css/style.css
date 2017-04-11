@@ -13,11 +13,8 @@ div#window {
 div#sidebar-container {
   float: left;
   width: 30%;
-  height: 32768px;
-  min-width: 200px;
   overflow-y: scroll;
   overflow-x: hidden;
-
 }
 div#search {
   margin: 10px;

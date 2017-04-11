@@ -9,7 +9,7 @@ import Utils exposing (disableHyperlink)
 import Models exposing (Model, SearchResultRow)
 import Messages exposing (Msg(..))
 
-import ViewCommonComponents exposing (toolbarHeader, viewerContainer, pagenation)
+import ViewCommonComponents exposing (toolbarHeader, viewerContainer, pagenation, getSideBarHeight)
 
 searchView : Model -> Html Msg
 searchView model =
@@ -43,7 +43,13 @@ searchView model =
         div [ class "result-summary" ] [ div [ style [ ("height", "15px") ] ] [ text summary ] ]
 
     sidebarContainer =
-      div [ id "sidebar-container" ] [ div [ id "search" ]  [ pagenation model, resultSummary,  resultDisplay  ] ]
-
+      div
+        [ id "sidebar-container"
+        , style [ ("height", getSideBarHeight model) ]
+        ]
+        [ div
+            [ id "search" ]
+            [ pagenation model, resultSummary,  resultDisplay  ]
+        ]
   in
     div []  [toolbarHeader model, sidebarContainer, viewerContainer model]

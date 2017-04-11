@@ -9,7 +9,7 @@ import Dialog
 import Models exposing (Model, IndexResultRow)
 import Messages exposing (Msg(..))
 
-import ViewCommonComponents exposing (toolbarHeader, viewerContainer, pagenation)
+import ViewCommonComponents exposing (toolbarHeader, viewerContainer, pagenation, getSideBarHeight)
 import Translation exposing (Language(..), TranslationId(..), translate)
 
 
@@ -54,10 +54,23 @@ indexView model =
           div [] []
 
       in
-        div [ class "result-summary" ] [ div [ style [ ("height", "15px") ] ] [ text summary ], addedMessage ]
+        div
+          [ class "result-summary" ]
+          [ div
+              [ style [ ("height", "15px") ] ]
+              [ text summary ]
+              , addedMessage
+          ]
 
     sidebarContainer =
-      div [ id "sidebar-container" ] [ div [ id "search" ]  [ pagenation model, resultSummary, resultDisplay ] ]
+      div
+        [ id "sidebar-container"
+        , style [ ("height",  getSideBarHeight model) ]
+        ]
+        [ div
+            [ id "search" ]
+            [ pagenation model, resultSummary, resultDisplay ]
+        ]
 
     all =
       div

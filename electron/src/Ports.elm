@@ -5,6 +5,7 @@ import Models exposing (Model)
 import Messages exposing (Msg(..))
 
 import Time exposing (Time, second)
+import Window exposing (resizes)
 
 
 port openNewFile : (String, Int) -> Cmd msg
@@ -23,4 +24,5 @@ subscriptions model =
     Sub.batch
     [ pdfUrl PdfUrl
     , check
+    , resizes CheckWindowSize
     ]

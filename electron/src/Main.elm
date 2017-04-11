@@ -47,6 +47,7 @@ init =
    , deleteGid = ""
    , pdfUrl = "./pdfjs/web/viewer.html"
    , isUpdating = False
+   , windowSize = {width = 1000, height = 700}
    }
    , getIndex initSortField initPage sortOrder)
 

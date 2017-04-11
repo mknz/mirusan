@@ -1,5 +1,6 @@
 module Models exposing (..)
 
+import Window exposing (Size)
 import Translation exposing (Language)
 
 type alias Model =
@@ -20,6 +21,7 @@ type alias Model =
   , deleteGid: String
   , pdfUrl: String
   , isUpdating: Bool
+  , windowSize: Size
   }
 
 type ViewMode = SearchMode | IndexMode

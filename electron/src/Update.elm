@@ -2,6 +2,7 @@ module Update exposing (..)
 
 import Json.Encode
 import Electron.IpcRenderer as IPC exposing (on, send)
+import Window
 
 import Messages exposing (Msg(..))
 import Models exposing (Model, ViewMode(..), SearchResult, IndexResult)
@@ -116,3 +117,6 @@ update msg model =
 
       GetProgress (Err _) ->
         ( { model | serverMessage = "" }, Cmd.none )
+
+      CheckWindowSize size ->
+        ( { model | windowSize = size }, Cmd.none )

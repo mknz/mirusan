@@ -3,6 +3,7 @@ module Messages exposing (..)
 import Models exposing (SearchResult, IndexResult, ResultMessage)
 import Http
 import Time exposing (Time)
+import Window exposing (Size)
 
 
 type Msg
@@ -23,3 +24,4 @@ type Msg
   | PdfUrl String
   | GetProgress (Result Http.Error String)
   | CheckProgress Time
+  | CheckWindowSize Size

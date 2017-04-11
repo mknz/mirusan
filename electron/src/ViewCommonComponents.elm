@@ -75,7 +75,10 @@ viewerIframe model =
 
 viewerContainer : Model -> Html Msg
 viewerContainer model =
-  div [ id "pdf-viewer-container" ] [ viewerIframe model ]
+  div [ id "pdf-viewer-container"
+      , style [ ("height", getSideBarHeight model) ]
+      ]
+      [ viewerIframe model ]
 
 
 -- search input window
@@ -110,3 +113,11 @@ searchWindow model =
       , span [ style [ ("font-size", "15pt") ] ] [ text " " ]
       , span [ class "icon icon-search", style [ ("vertical-align", "middle"), ("font-size", "15pt") ] ] []
       ]
+
+getSideBarHeight : Model -> String
+getSideBarHeight model =
+  let
+    margin = 40  -- header's height
+    sideBarHeight = model.windowSize.height - margin
+  in
+    (toString sideBarHeight) ++ "px"
