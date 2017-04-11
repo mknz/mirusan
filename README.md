@@ -1,5 +1,7 @@
 # Mirusan
-[![Build status](https://ci.appveyor.com/api/projects/status/limqxg20w65bshtw/branch/master?svg=true)](https://ci.appveyor.com/project/mknz/mirusan/branch/master)
+
+[![Build status: travis-ci](https://travis-ci.org/mknz/mirusan.svg?branch=master)](https://travis-ci.org/mknz/mirusan)
+[![Build status: appveyor](https://ci.appveyor.com/api/projects/status/limqxg20w65bshtw/branch/master?svg=true)](https://ci.appveyor.com/project/mknz/mirusan/branch/master)
 
 ![mirusan_logo.png](images/mirusan_logo.png)
 
