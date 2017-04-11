@@ -68,23 +68,27 @@ class IndexManager:
             if os.path.exists(title_txt_dir):
                 shutil.rmtree(title_txt_dir)
 
-    def delete_document(self, gid):
+    def delete_document(self, gid, is_keep_file=False):
         docs = self.get_documents('gid', gid)
-        self._delete_files(docs)
+        if docs == []:
+            Config.logger.info('No document: ' + str(gid))
+            return
+
+        if not is_keep_file:
+            self._delete_files(docs)
 
         n_doc = self.writer.delete_by_term('gid', gid)
         message = str(n_doc) + ' documents deleted.'
         Config.logger.info(message)
         return message
 
-    def delete_by_title(self, title):
+    def delete_by_title(self, title, is_keep_file=False):
         docs = self.get_documents('title', title)
         if docs == []:
             raise ValueError('Not found: ' + title)
 
-        self._delete_files(docs)
         for doc in docs:
-            self.delete_document(doc['gid'])
+            self.delete_document(doc['gid'], is_keep_file)
         return
 
     def secure_datetime(self, date):

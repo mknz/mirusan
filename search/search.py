@@ -52,10 +52,10 @@ def add_summary(title, summary_file):
     return
 
 
-def delete_by_title(title):
+def delete_by_title(title, is_keep_file=False):
     im = IndexManager()
     Config.logger.debug('Delete by title: ' + title)
-    im.delete_by_title(title)
+    im.delete_by_title(title, is_keep_file)
     im.writer.commit()
     im.ix.close()
     return
@@ -73,6 +73,7 @@ def main():
     parser.add_argument('--add-summary', default=None, nargs='+')
 
     parser.add_argument('--delete-by-title', default=None)
+    parser.add_argument('--keep-file', action='store_true')
 
     parser.add_argument('--ngram-min', default=1)
     parser.add_argument('--ngram-max', default=2)
@@ -132,7 +133,7 @@ def main():
     title = args.delete_by_title
     if title is not None:
         print('delete by title: ' + title)
-        delete_by_title(title)
+        delete_by_title(title, args.keep_file)
         return
 
     if args.lang_detect:
