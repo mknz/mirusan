@@ -39,6 +39,19 @@ def add_files(files):
     return
 
 
+def add_summary(title, summary_file):
+    if not os.path.exists(summary_file):
+        raise FileNotFoundError(summary_file)
+    with open(summary_file) as f:
+        summary = f.read()
+
+    im = IndexManager()
+    im.add_summary(title, summary)
+    im.writer.commit()
+    im.ix.close()
+    return
+
+
 def delete_by_title(title):
     im = IndexManager()
     Config.logger.debug('Delete by title: ' + title)
@@ -56,6 +69,9 @@ def main():
                         action='store_true')
     parser.add_argument('--add-dir', default=None)
     parser.add_argument('--add-files', default=None, nargs='+')
+
+    parser.add_argument('--add-summary', default=None, nargs='+')
+
     parser.add_argument('--delete-by-title', default=None)
 
     parser.add_argument('--ngram-min', default=1)
@@ -104,6 +120,13 @@ def main():
         except Exception as err:
             Config.logger.exception('Could not add files: %s', err)
             print(err)
+        return
+
+    if args.add_summary is not None:
+        print('add summary: ' + str(args.add_summary))
+        title = args.add_summary[0]
+        summary_file = args.add_summary[1]
+        add_summary(title, summary_file)
         return
 
     title = args.delete_by_title

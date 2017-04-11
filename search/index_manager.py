@@ -73,7 +73,6 @@ class IndexManager:
         self._delete_files(docs)
 
         n_doc = self.writer.delete_by_term('gid', gid)
-        self.writer.commit()
         message = str(n_doc) + ' documents deleted.'
         Config.logger.info(message)
         return message
@@ -84,10 +83,8 @@ class IndexManager:
             raise ValueError('Not found: ' + title)
 
         self._delete_files(docs)
-
-        n_doc = self.writer.delete_by_term('title', title)
-        message = str(n_doc) + ' documents deleted.'
-        Config.logger.info(message)
+        for doc in docs:
+            self.delete_document(doc['gid'])
         return
 
     def secure_datetime(self, date):
@@ -127,6 +124,23 @@ class IndexManager:
             fields['published_at'] = pdatetime
         self.writer.update_document(**fields)
         Config.logger.info('Added :' + file_path)
+
+    def add_summary(self, title, summary_text):
+        docs = self.get_documents('title', title)
+        if docs == []:
+            raise ValueError('Document not found: ' + title)
+
+        file_path = None
+        for doc in docs:
+            if doc['document_format'] == 'pdf':
+                file_path = doc['file_path']
+
+        if file_path is None:
+            raise ValueError('PDF document not found: ' + title)
+
+        self.update_field('file_path', file_path, 'summary', summary_text)
+        Config.logger.info('Add summary :' + file_path)
+        return
 
     def detect_lang(self, text):
         try:
