@@ -274,7 +274,10 @@ class IndexManager:
         assert len(res) == 1
         res[0][update_field_name] = update_field_value
         self.writer.update_document(**res[0])
-        #self.writer.commit()
+
+        # Avoid duplicates
+        if update_field_name == unique_field_name:
+            self.writer.delete_by_term(unique_field_name, unique_field_value)
 
     def get_all_documents(self):
         query = Every()
