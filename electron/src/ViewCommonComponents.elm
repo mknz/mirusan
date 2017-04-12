@@ -2,7 +2,7 @@ module ViewCommonComponents exposing (..)
 
 import Html exposing (Html, Attribute, program, text, button, h1, h2, div, input, a, span, p, header, iframe, nav)
 import Html.Attributes exposing (class, id, type_, placeholder, value, href, style, src, title, size, autofocus, disabled)
-import Html.Events exposing (onClick, onInput, onFocus, on)
+import Html.Events exposing (onClick, onInput, onFocus, on, onWithOptions, Options)
 import List exposing (append)
 import Mouse
 import Json.Decode as Decode
@@ -128,3 +128,7 @@ getSideBarHeight model =
 onMouseDown : Attribute Msg
 onMouseDown =
   on "mousedown" (Decode.map DragStart Mouse.position)
+
+onMouseDownFake : Attribute Msg
+onMouseDownFake =
+  onWithOptions "mousedown" (Options True True) (Decode.map DragNothing Mouse.position)

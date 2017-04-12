@@ -9,7 +9,7 @@ import Dialog
 import Models exposing (Model, IndexResultRow)
 import Messages exposing (Msg(..))
 
-import ViewCommonComponents exposing (toolbarHeader, viewerContainer, pagenation, getSideBarHeight, onMouseDown)
+import ViewCommonComponents exposing (toolbarHeader, viewerContainer, pagenation, getSideBarHeight, onMouseDown, onMouseDownFake)
 import Translation exposing (Language(..), TranslationId(..), translate)
 
 

@@ -125,10 +125,30 @@ update msg model =
       DragStart pos ->
         ( { model | mousePosition = pos, drag = Just (Drag pos pos) }, Cmd.none )
       DragAt pos ->
-        ( { model | mousePosition = pos, drag = (Maybe.map (\{start} -> Drag start pos) model.drag) }, Cmd.none )
+        let
+          newMousePosition = getPosition model
+          newSidebarWidth = newMousePosition.x
+        in
+          ( { model | mousePosition = pos
+            , drag = (Maybe.map (\{start} -> Drag start pos) model.drag)
+            , viewerContainerWidth = model.windowSize.width - newSidebarWidth
+            , sidebarWidth = newSidebarWidth
+            }, Cmd.none )
 
       DragEnd _ ->
-        ( { model | mousePosition = getPosition model, drag = Nothing }, Cmd.none )
+        let
+          newMousePosition = getPosition model
+          newSidebarWidth = newMousePosition.x
+        in
+          ( { model | mousePosition = newMousePosition
+              , drag = Nothing
+              , viewerContainerWidth = model.windowSize.width - newSidebarWidth
+              , sidebarWidth = newSidebarWidth
+            }
+            , Cmd.none )
+
+      DragNothing _ ->
+        ( model, Cmd.none )
 
 getPosition : Model -> Position
 getPosition model =
@@ -138,5 +158,7 @@ getPosition model =
 
     Just {start, current} ->
       Position
-        (model.mousePosition.x + current.x - start.x)
-        (model.mousePosition.y + current.y - start.y)
+        (current.x)
+        (current.y)
+        --(model.mousePosition.x + current.x - start.x)
+        --(model.mousePosition.y + current.y - start.y)

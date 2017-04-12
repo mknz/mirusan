@@ -29,3 +29,4 @@ type Msg
   | DragStart Position
   | DragAt Position
   | DragEnd Position
+  | DragNothing Position
