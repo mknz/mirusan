@@ -1,9 +1,11 @@
 module ViewCommonComponents exposing (..)
 
-import Html exposing (Html, program, text, button, h1, h2, div, input, a, span, p, header, iframe, nav)
+import Html exposing (Html, Attribute, program, text, button, h1, h2, div, input, a, span, p, header, iframe, nav)
 import Html.Attributes exposing (class, id, type_, placeholder, value, href, style, src, title, size, autofocus, disabled)
-import Html.Events exposing (onClick, onInput, onFocus)
+import Html.Events exposing (onClick, onInput, onFocus, on)
 import List exposing (append)
+import Mouse
+import Json.Decode as Decode
 
 import Models exposing (Model, ViewMode(..))
 import Messages exposing (Msg(..))
@@ -70,13 +72,14 @@ pagenation model =
 
 viewerIframe : Model -> Html Msg
 viewerIframe model =
-  --iframe [ id "pdf-viewer", style [ ("width", "100%"), ("height", "100%") ], src model.pdfUrl ] []
-  iframe [ id "pdf-viewer", style [ ("background-color", "#888888"), ("width", "100%"), ("height", "100%") ] ] []
+  iframe [ id "pdf-viewer", style [ ("background-color", "#888888"), ("width", "100%"), ("height", "100%"), ("overflow", "hidden") ] ] []
 
 viewerContainer : Model -> Html Msg
 viewerContainer model =
   div [ id "pdf-viewer-container"
-      , style [ ("height", getSideBarHeight model) ]
+      , style [ ("height", getSideBarHeight model)
+              , ("width", (toString (model.windowSize.width - model.mousePosition.x)) ++ "px")
+              ]
       ]
       [ viewerIframe model ]
 
@@ -121,3 +124,7 @@ getSideBarHeight model =
     sideBarHeight = model.windowSize.height - margin
   in
     (toString sideBarHeight) ++ "px"
+
+onMouseDown : Attribute Msg
+onMouseDown =
+  on "mousedown" (Decode.map DragStart Mouse.position)

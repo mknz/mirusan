@@ -4,6 +4,7 @@ import Models exposing (SearchResult, IndexResult, ResultMessage)
 import Http
 import Time exposing (Time)
 import Window exposing (Size)
+import Mouse exposing (Position)
 
 
 type Msg
@@ -25,3 +26,6 @@ type Msg
   | GetProgress (Result Http.Error String)
   | CheckProgress Time
   | CheckWindowSize Size
+  | DragStart Position
+  | DragAt Position
+  | DragEnd Position

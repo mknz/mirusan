@@ -9,7 +9,7 @@ import Dialog
 import Models exposing (Model, IndexResultRow)
 import Messages exposing (Msg(..))
 
-import ViewCommonComponents exposing (toolbarHeader, viewerContainer, pagenation, getSideBarHeight)
+import ViewCommonComponents exposing (toolbarHeader, viewerContainer, pagenation, getSideBarHeight, onMouseDown)
 import Translation exposing (Language(..), TranslationId(..), translate)
 
 
@@ -65,7 +65,9 @@ indexView model =
     sidebarContainer =
       div
         [ id "sidebar-container"
-        , style [ ("height",  getSideBarHeight model) ]
+        , style [ ("height",  getSideBarHeight model)
+                , ("width", (toString model.mousePosition.x ) ++ "px")
+                ]
         ]
         [ div
             [ id "search" ]

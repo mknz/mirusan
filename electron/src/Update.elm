@@ -3,9 +3,10 @@ module Update exposing (..)
 import Json.Encode
 import Electron.IpcRenderer as IPC exposing (on, send)
 import Window
+import Mouse exposing (Position)
 
 import Messages exposing (Msg(..))
-import Models exposing (Model, ViewMode(..), SearchResult, IndexResult)
+import Models exposing (Model, ViewMode(..), SearchResult, IndexResult, Drag)
 import Search exposing (search, getIndex, deleteDocument, getProgress)
 import Ports exposing (openNewFile)
 
@@ -120,3 +121,22 @@ update msg model =
 
       CheckWindowSize size ->
         ( { model | windowSize = size }, Cmd.none )
+
+      DragStart pos ->
+        ( { model | mousePosition = pos, drag = Just (Drag pos pos) }, Cmd.none )
+      DragAt pos ->
+        ( { model | mousePosition = pos, drag = (Maybe.map (\{start} -> Drag start pos) model.drag) }, Cmd.none )
+
+      DragEnd _ ->
+        ( { model | mousePosition = getPosition model, drag = Nothing }, Cmd.none )
+
+getPosition : Model -> Position
+getPosition model =
+  case model.drag of
+    Nothing ->
+      model.mousePosition
+
+    Just {start, current} ->
+      Position
+        (model.mousePosition.x + current.x - start.x)
+        (model.mousePosition.y + current.y - start.y)

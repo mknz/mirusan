@@ -1,6 +1,7 @@
 module Main exposing (..)
 
 import Html exposing (program)
+import Mouse exposing (Position)
 
 import Messages exposing (Msg)
 import Models exposing (Model, IndexResult, SearchResult)
@@ -48,6 +49,10 @@ init =
    , pdfUrl = "./pdfjs/web/viewer.html"
    , isUpdating = False
    , windowSize = {width = 1000, height = 700}
+   , mousePosition = Position 300 0
+   , drag = Nothing
+   , sidebarWidth = 300
+   , viewerContainerWidth = 700
    }
    , getIndex initSortField initPage sortOrder)
 

@@ -45,7 +45,9 @@ searchView model =
     sidebarContainer =
       div
         [ id "sidebar-container"
-        , style [ ("height", getSideBarHeight model) ]
+        , style [ ("height",  getSideBarHeight model)
+                , ("width", (toString model.mousePosition.x) ++ "px")
+                ]
         ]
         [ div
             [ id "search" ]

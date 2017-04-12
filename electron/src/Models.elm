@@ -2,6 +2,7 @@ module Models exposing (..)
 
 import Window exposing (Size)
 import Translation exposing (Language)
+import Mouse exposing (Position)
 
 type alias Model =
   { currentQuery: String
@@ -22,6 +23,10 @@ type alias Model =
   , pdfUrl: String
   , isUpdating: Bool
   , windowSize: Size
+  , mousePosition: Position
+  , drag: Maybe Drag
+  , viewerContainerWidth: Int
+  , sidebarWidth: Int
   }
 
 type ViewMode = SearchMode | IndexMode
@@ -55,3 +60,8 @@ type alias IndexResultRow =
   }
 
 type alias ResultMessage = String
+
+type alias Drag =
+  { start : Position
+  , current : Position
+  }
