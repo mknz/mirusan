@@ -25,13 +25,14 @@ toolbarActions model =
 
 toolButtons : Model -> Html Msg
 toolButtons model =
-  div [ class "btn-group" ] [ showIndexButton model, addFileButton model, span [ class "server-message" ] [ text model.serverMessage ] ]
+  div [ class "btn-group header-btns" ] [ showIndexButton model, addFileButton model, span [ class "server-message" ] [ text model.serverMessage ] ]
 
 showIndexButton : Model -> Html Msg
 showIndexButton model =
   case model.viewMode of
     Models.IndexMode ->
-      button [ class "btn active btn-large btn-default", onClick GotoSearchMode, title <| translate model.currentLanguage I18n_Go_to_search ] [ span [ class "icon icon-list" ] [] ]
+      button [ class "btn btn-large btn-default", onClick GotoSearchMode, title <| translate model.currentLanguage I18n_Go_to_search ] [ span [ class "icon icon-search" ] [] ]
+
     Models.SearchMode ->
       button [ class "btn btn-large btn-default", onClick ShowIndex, title <| translate model.currentLanguage I18n_Show_index ] [ span [ class "icon icon-list" ] [] ]
 
@@ -96,6 +97,7 @@ searchWindow model =
       , value model.currentQuery
       , autofocus True
       , onFocus GotoSearchMode
+      , class "search-window"
       ]
     indexAttrs = [ disabled True, class "search-window-inactive"]
 
@@ -114,7 +116,6 @@ searchWindow model =
       []
       [ inputField
       , span [ style [ ("font-size", "15pt") ] ] [ text " " ]
-      , span [ class "icon icon-search", style [ ("vertical-align", "middle"), ("font-size", "15pt") ] ] []
       ]
 
 getSideBarHeight : Model -> String

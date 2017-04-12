@@ -15,10 +15,21 @@ div#screen {
 
 div#dragger {
   position: absolute;
-  top: 33px;
+  top: 34px;
   z-index: 10;
-  font-size: 6px;
+  font-size: 8px;
+  opacity: 0;
+  transition: opacity 0.5s ease-out;
+}
+
+div#dragger:hover {
+  opacity: 1;
+  transition: opacity 1.0s ease-in;
   color: #888888;
+}
+
+div.header-btns {
+  margin-top: 2px;
 }
 
 div#sidebar-container {
@@ -109,6 +120,10 @@ div.result-container {
 
 div.result-container li, p {
   -webkit-user-select: text;
+}
+
+input.search-window {
+  height: 29px;
 }
 
 input.search-window-inactive {
