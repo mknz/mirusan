@@ -279,6 +279,23 @@ class IndexManager:
         if update_field_name == unique_field_name:
             self.writer.delete_by_term(unique_field_name, unique_field_value)
 
+    def update_fields(self, unique_field_name, unique_field_value,
+                      **update_fields):
+        query = QueryParser(unique_field_name, self.ix.schema).\
+                parse(unique_field_value)
+        with self.ix.searcher() as searcher:
+            results = searcher.search(query)
+            res = [self._result_to_dic(r) for r in results]
+        assert len(res) == 1
+
+        for key in update_fields:
+            res[0][key] = update_fields[key]
+        self.writer.update_document(**res[0])
+
+        # Avoid duplicates
+        if unique_field_name in update_fields.keys():
+            self.writer.delete_by_term(unique_field_name, unique_field_value)
+
     def get_all_documents(self):
         query = Every()
         with self.ix.searcher() as searcher:
