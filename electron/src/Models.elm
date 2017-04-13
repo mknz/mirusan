@@ -28,6 +28,7 @@ type alias Model =
   , drag: Maybe Drag
   , viewerContainerWidth: Int
   , sidebarWidth: Int
+  , newTitle: String
   }
 
 type ViewMode = SearchMode | IndexMode

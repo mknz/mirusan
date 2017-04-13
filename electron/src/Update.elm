@@ -7,7 +7,7 @@ import Mouse exposing (Position)
 
 import Messages exposing (Msg(..))
 import Models exposing (Model, ViewMode(..), SearchResult, IndexResult, IndexResultRow, itemRowInit, Drag)
-import Search exposing (search, getIndex, deleteDocument, getProgress)
+import Search exposing (search, getIndex, deleteDocument, getProgress, updateDocument)
 import Ports exposing (openNewFile)
 
 
@@ -38,10 +38,10 @@ update msg model =
         ( { model | numResultPage = 1, numTotalPage = 0, numArticles = 0, searchResult = { rows = [], n_hits = 0, total_pages = 0 } }, Cmd.none )
 
       ShowIndex ->
-        ( { model | currentQuery = "", viewMode = Models.IndexMode }, getIndex model.sortField model.numResultPage model.reverse)
+        ( { model | currentQuery = "", viewMode = Models.IndexMode, serverMessage="" }, getIndex model.sortField model.numResultPage model.reverse)
 
       GotoSearchMode ->
-        ( { model | numResultPage = 1, numTotalPage = 0, numArticles = 0, viewMode = Models.SearchMode, searchResult = { rows = [], n_hits = 0, total_pages = 0 }}, Cmd.none )
+        ( { model | numResultPage = 1, numTotalPage = 0, numArticles = 0, viewMode = Models.SearchMode, searchResult = { rows = [], n_hits = 0, total_pages = 0 }, serverMessage="" }, Cmd.none )
 
       NewIndexResult (Ok res) ->
         ( { model | indexResult = res, numTotalPage = res.total_pages, numArticles = res.n_docs, numAddedArticles = res.n_docs - model.numPreviousArticles, numPreviousArticles = res.n_docs, indexClick = model.indexClick + 1 }, Cmd.none )
@@ -87,7 +87,7 @@ update msg model =
         ( { model | isUpdating = True }, IPC.send "pdf-extract-request-main" Json.Encode.null)
 
       OpenItemDialog row ->
-        ( { model | itemDialog = True, itemRow = row }, Cmd.none )
+        ( { model | itemDialog = True, itemRow = row, newTitle = row.title }, Cmd.none )
 
       AskDeleteDocument ->
         ( { model | askDelete = True }, Cmd.none )
@@ -97,7 +97,7 @@ update msg model =
         ( { model | askDelete = False }, deleteDocument model.itemRow.gid )
 
       UpdateDocument ->
-        ( { model | askDelete = False, itemDialog = False, itemRow = itemRowInit }, Cmd.none )
+        ( { model | askDelete = False, itemDialog = False, itemRow = itemRowInit }, updateDocument model.itemRow model.newTitle )
 
       CancelUpdateDocument ->
         ( { model | askDelete = False, itemDialog = False, itemRow = itemRowInit }, Cmd.none )
@@ -155,6 +155,16 @@ update msg model =
 
       DragNothing _ ->
         ( model, Cmd.none )
+
+      SetNewTitle newTitle ->
+        ( { model | newTitle = newTitle }, Cmd.none )
+
+      GetUpdateResult (Ok res) ->
+        ( { model | serverMessage = res }, Cmd.none )
+
+      GetUpdateResult (Err _) ->
+        ( { model | serverMessage = "" }, Cmd.none )
+
 
 getPosition : Model -> Position
 getPosition model =

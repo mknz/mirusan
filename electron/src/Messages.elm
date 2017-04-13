@@ -18,6 +18,7 @@ type Msg
   | ShowIndex
   | GotoSearchMode
   | NewIndexResult (Result Http.Error IndexResult)
+  | GetUpdateResult (Result Http.Error String)
   | OpenItemDialog IndexResultRow
   | AskDeleteDocument
   | DeleteDocument
@@ -32,3 +33,4 @@ type Msg
   | DragAt Position
   | DragEnd Position
   | DragNothing Position
+  | SetNewTitle String

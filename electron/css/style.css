@@ -157,3 +157,14 @@ td.item-setting-table {
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
+
+input.item-setting-input {
+  border: none;
+  height: 2em;
+  width: 100%;
+  padding: 10px;
+}
+
+input.item-setting-input::-webkit-input-placeholder {
+  color: #666666;
+}

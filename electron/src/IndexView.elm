@@ -2,7 +2,7 @@ module IndexView exposing (..)
 
 import Html exposing (Html, program, text, button, h1, h2, div, input, a, span, p, i, header, iframe, nav, pre, node, table, thead, tbody, tr, th, td, colgroup, col)
 import Html.Attributes exposing (class, id, type_, placeholder, value, href, style, src, title, size, rel)
-import Html.Events exposing (onClick)
+import Html.Events exposing (onClick, onInput)
 import Markdown
 import Dialog
 
@@ -112,33 +112,13 @@ indexView model =
                   ]
               , tbody
                   []
-                  [ tr
-                      []
-                      [ td [] [ text title ]
-                      , td [] [ text model.itemRow.title ]
-                      ]
-                  , tr
-                      []
-                      [ td [ class "item-setting-table" ] [ text summary ]
-                      , td [] [ text model.itemRow.summary ]
-                      ]
-                  , tr
-                      []
-                      [ td [] [ text file_path ]
-                      , td [] [ text model.itemRow.file_path ]
-                      ]
-                  , tr
-                      []
-                      [ td [] [ text published_at ]
-                      , td [] [ text model.itemRow.published_at ]
-                      ]
-                  , tr
-                      []
-                      [ td [] [ text created_at ]
-                      , td [] [ text model.itemRow.created_at ]
-                      ]
+                  [ tr [] [ td [] [ text title ] , td [] [ input [ class "item-setting-input" , type_ "text" , value <| model.newTitle, onInput SetNewTitle ] [] ] ]
+                  , tr [] [ td [] [ text summary ] , td [] [ input [ class "item-setting-input" , type_ "text" , value <| .summary model.itemRow ] [] ] ]
+                  , tr [] [ td [] [ text file_path ] , td [] [ input [ class "item-setting-input" , type_ "text" , value <| .file_path model.itemRow ] [] ] ]
+                  , tr [] [ td [] [ text published_at ] , td [] [ input [ class "item-setting-input" , type_ "text" , value <| .published_at model.itemRow ] [] ] ]
+                  , tr [] [ td [] [ text created_at ] , td [] [ input [ class "item-setting-input" , type_ "text" , value <| .created_at model.itemRow ] [] ] ]
                   ]
-                ]
+              ]
           , deleteConfirm
           ]
 

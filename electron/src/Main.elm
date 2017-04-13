@@ -54,6 +54,7 @@ init =
    , drag = Nothing
    , sidebarWidth = 300
    , viewerContainerWidth = 700
+   , newTitle = ""
    }
    , getIndex initSortField initPage sortOrder)
 

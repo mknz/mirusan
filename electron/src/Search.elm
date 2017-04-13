@@ -72,3 +72,11 @@ getProgress =
         "http://localhost:8000/progress"
   in
       Http.send GetProgress (Http.get url progressDecoder)
+
+updateDocument : IndexResultRow -> String -> Cmd Msg
+updateDocument row newTitle =
+  let
+      url =
+        "http://localhost:8000/update-document?" ++ "primary-key=" ++ row.file_path ++ "&field=" ++ "title" ++ "&value=" ++ newTitle
+  in
+      Http.send GetUpdateResult (Http.get url messageDecoder)

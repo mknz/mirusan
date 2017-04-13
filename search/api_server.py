@@ -84,6 +84,27 @@ class DeleteDocument:
         return
 
 
+class UpdateDocument:
+    def on_get(self, req, resp):
+        try:
+            im = IndexManager()
+            unique_field_value = req.get_param('primary-key')
+            update_field_name = req.get_param('field')
+            update_field_value = req.get_param('value')
+            im.update_field('file_path', unique_field_value,
+                            update_field_name, update_field_value)
+
+            im.writer.commit()
+            res = {'message': 'Update success'}
+            resp.body = json.dumps(res, indent=4, ensure_ascii=False)
+        except Exception as err:
+            Config.logger.exception('Error in update db: %s', err)
+            print(err)
+            res = {'message': str(err)}
+            resp.body = json.dumps(res, indent=4, ensure_ascii=False)
+        return
+
+
 class SortedIndex:
     search = Search()
 
@@ -167,6 +188,7 @@ class Server:
         api.add_route('/sorted-index', SortedIndex())
         api.add_route('/delete', DeleteDocument())
         api.add_route('/progress', CheckProgress())
+        api.add_route('/update-document', UpdateDocument())
         self.api = api
 
     def start(self):
