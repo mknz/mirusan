@@ -1,7 +1,7 @@
 module IndexView exposing (..)
 
 import Html exposing (Html, program, text, button, h1, h2, div, input, a, span, p, i, header, iframe, nav, pre, node, table, thead, tbody, tr, th, td, colgroup, col, form, label, textarea)
-import Html.Attributes exposing (class, id, type_, placeholder, value, href, style, src, title, size, rel)
+import Html.Attributes exposing (class, id, type_, placeholder, value, href, style, src, title, size, rel, disabled)
 import Html.Events exposing (onClick, onInput)
 import Markdown
 import Dialog
@@ -113,22 +113,22 @@ indexView model =
               , div
                   [ class "form-group" ]
                   [ label [] [ text summary]
-                  , input [ class "form-control", type_ "text" , value <| model.itemRow.summary ] []
+                  , input [ class "form-control", type_ "text" , disabled True, value <| model.itemRow.summary ] []
                   ]
               , div
                   [ class "form-group" ]
                   [ label [] [ text file_path]
-                  , input [ class "form-control" , type_ "text" , value <| model.itemRow.file_path ] []
+                  , input [ class "form-control", type_ "text" , disabled True, value <| model.itemRow.file_path ] []
                   ]
               , div
                   [ class "form-group" ]
                   [ label [] [ text published_at]
-                  , input [ class "form-control" , type_ "text" , value <| model.itemRow.published_at ] []
+                  , input [ class "form-control", type_ "text" , disabled True, value <| model.itemRow.published_at ] []
                   ]
               , div
                   [ class "form-group" ]
                   [ label [] [ text created_at]
-                  , input [ class "form-control" , type_ "text" , value <| model.itemRow.created_at ] []
+                  , input [ class "form-control" , type_ "text", disabled True,  value <| model.itemRow.created_at ] []
                   ]
               ]
             , deleteConfirm
