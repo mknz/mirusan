@@ -1,6 +1,6 @@
 module Messages exposing (..)
 
-import Models exposing (SearchResult, IndexResult, ResultMessage)
+import Models exposing (SearchResult, IndexResult, IndexResultRow, ResultMessage)
 import Http
 import Time exposing (Time)
 import Window exposing (Size)
@@ -18,7 +18,7 @@ type Msg
   | ShowIndex
   | GotoSearchMode
   | NewIndexResult (Result Http.Error IndexResult)
-  | AskDeleteDocument String
+  | OpenItemDialog IndexResultRow
   | DeleteDocument
   | CancelDeleteDocument
   | DeleteResult (Result Http.Error ResultMessage)

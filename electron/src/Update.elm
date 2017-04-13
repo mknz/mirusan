@@ -6,7 +6,7 @@ import Window
 import Mouse exposing (Position)
 
 import Messages exposing (Msg(..))
-import Models exposing (Model, ViewMode(..), SearchResult, IndexResult, Drag)
+import Models exposing (Model, ViewMode(..), SearchResult, IndexResult, IndexResultRow, itemRowInit, Drag)
 import Search exposing (search, getIndex, deleteDocument, getProgress)
 import Ports exposing (openNewFile)
 
@@ -86,23 +86,23 @@ update msg model =
       -- send request to electron main process
         ( { model | isUpdating = True }, IPC.send "pdf-extract-request-main" Json.Encode.null)
 
-      AskDeleteDocument gid ->
-        ( { model | deleteDialog = True, deleteGid = gid }, Cmd.none )
+      OpenItemDialog row ->
+        ( { model | itemDialog = True, itemRow = row }, Cmd.none )
 
       DeleteDocument ->
       -- Delete document (pdf + txt) using gid
-        ( model, deleteDocument model.deleteGid )
+        ( model, deleteDocument model.itemRow.gid )
 
       CancelDeleteDocument ->
-        ( { model | deleteDialog = False, deleteGid = "" }, Cmd.none )
+        ( { model | itemDialog = False, itemRow = itemRowInit }, Cmd.none )
 
       DeleteResult (Ok res) ->
-        ( { model | deleteDialog = False, deleteGid = "", serverMessage = "" }
+        ( { model | itemDialog = False, itemRow = itemRowInit, serverMessage = "" }
         , getIndex model.sortField model.numResultPage model.reverse
         )
 
       DeleteResult (Err _) ->
-        ( { model | deleteDialog = False, deleteGid = "", serverMessage = "" }, Cmd.none )
+        ( { model | itemDialog = False, itemRow = itemRowInit, serverMessage = "" }, Cmd.none )
 
       PdfUrl url ->
         ( { model | pdfUrl = url }, Cmd.none )

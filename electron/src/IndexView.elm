@@ -21,7 +21,7 @@ indexView model =
     createComponent row =
       let
         title = div [ class "search-result", onClick (OpenDocument (row.file_path, nPage)) ] [ text row.title ]
-        config = div [ class "config" ] [ i [ class "fa fa-trash-o", onClick (AskDeleteDocument row.gid) ] [] ]
+        config = div [ class "config" ] [ i [ class "fa fa-trash-o", onClick (OpenItemDialog row) ] [] ]
         container = div [ class "index-title-container" ] [ title, config ]
         summary = div [ class "summary" ] [ Markdown.toHtml [] row.summary ]
       in
@@ -87,7 +87,7 @@ indexView model =
       []
       [ all
       , Dialog.view
-          (if model.deleteDialog then
+          (if model.itemDialog then
              Just
                { closeMessage = Nothing
                , containerClass = Just ""

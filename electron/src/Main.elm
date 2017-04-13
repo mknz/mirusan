@@ -4,7 +4,7 @@ import Html exposing (program)
 import Mouse exposing (Position)
 
 import Messages exposing (Msg)
-import Models exposing (Model, IndexResult, SearchResult)
+import Models exposing (Model, IndexResult, IndexResultRow, itemRowInit, SearchResult)
 import Update exposing (update)
 import View exposing (view)
 import Ports exposing (subscriptions)
@@ -44,8 +44,8 @@ init =
    , viewMode = Models.IndexMode
    , indexClick = 0
    , currentLanguage = English
-   , deleteDialog = False
-   , deleteGid = ""
+   , itemDialog = False
+   , itemRow =  itemRowInit
    , pdfUrl = "./pdfjs/web/viewer.html"
    , isUpdating = False
    , windowSize = {width = 992, height = 700} -- width is workaround for windows

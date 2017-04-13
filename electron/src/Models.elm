@@ -18,8 +18,8 @@ type alias Model =
   , viewMode: ViewMode
   , indexClick: Int  -- workaround
   , currentLanguage: Language
-  , deleteDialog: Bool
-  , deleteGid: String
+  , itemDialog: Bool
+  , itemRow: IndexResultRow
   , pdfUrl: String
   , isUpdating: Bool
   , windowSize: Size
@@ -57,7 +57,10 @@ type alias IndexResultRow =
   , summary: String
   , created_at: String
   , gid: String
+  , published_at: String
   }
+
+itemRowInit = IndexResultRow "" "" "" "" "" ""
 
 type alias ResultMessage = String
 
