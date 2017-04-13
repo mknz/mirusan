@@ -45,9 +45,9 @@ translate lang trans =
         I18n_page ->
           TranslationSet "page" "ページへ"
         I18n_Ask_delete ->
-          TranslationSet "Delete this document?" "この文書を削除しますか？"
+          TranslationSet "Delete this document" "削除"
         I18n_Confirm_delete ->
-          TranslationSet "Are you sure?" "削除を実行する"
+          TranslationSet "Are you sure?" "削除を実行しますか？"
         I18n_title ->
           TranslationSet "Title" "題名"
         I18n_file_path ->

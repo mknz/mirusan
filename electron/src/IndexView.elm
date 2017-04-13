@@ -1,6 +1,6 @@
 module IndexView exposing (..)
 
-import Html exposing (Html, program, text, button, h1, h2, div, input, a, span, p, i, header, iframe, nav, pre, node, table, thead, tbody, tr, th, td, colgroup, col)
+import Html exposing (Html, program, text, button, h1, h2, div, input, a, span, p, i, header, iframe, nav, pre, node, table, thead, tbody, tr, th, td, colgroup, col, form, label, textarea)
 import Html.Attributes exposing (class, id, type_, placeholder, value, href, style, src, title, size, rel)
 import Html.Events exposing (onClick, onInput)
 import Markdown
@@ -92,34 +92,46 @@ indexView model =
 
           deleteConfirm =
             if model.askDelete == False then
-              p
-                [ onClick AskDeleteDocument, class "ask-delete" ]
+              button
+                [ onClick AskDeleteDocument, class "btn btn-secondary btn-sm ask-delete" ]
                 [ text <| translate model.currentLanguage I18n_Ask_delete ]
             else
-              p
-                [ onClick DeleteDocument, class "ask-delete" ]
+              button
+                [ onClick DeleteDocument, class "btn btn-secondary btn-sm btn-danger ask-delete" ]
                 [ text <| translate model.currentLanguage I18n_Confirm_delete ]
       in
         div
           []
-          [ table
-              [ class "table item-setting-table" ]
-              [
-                colgroup
-                  []
-                  [ col [ class "item-setting-table-field" ] []
-                  , col [ class "item-setting-table-value" ] []
+          [
+            form
+              []
+              [ div
+                  [ class "form-group" ]
+                  [ label [] [ text title]
+                  , input [ class "form-control" , type_ "text" , value <| model.newTitle, onInput SetNewTitle ] []
                   ]
-              , tbody
-                  []
-                  [ tr [] [ td [] [ text title ] , td [] [ input [ class "item-setting-input" , type_ "text" , value <| model.newTitle, onInput SetNewTitle ] [] ] ]
-                  , tr [] [ td [] [ text summary ] , td [] [ input [ class "item-setting-input" , type_ "text" , value <| .summary model.itemRow ] [] ] ]
-                  , tr [] [ td [] [ text file_path ] , td [] [ input [ class "item-setting-input" , type_ "text" , value <| .file_path model.itemRow ] [] ] ]
-                  , tr [] [ td [] [ text published_at ] , td [] [ input [ class "item-setting-input" , type_ "text" , value <| .published_at model.itemRow ] [] ] ]
-                  , tr [] [ td [] [ text created_at ] , td [] [ input [ class "item-setting-input" , type_ "text" , value <| .created_at model.itemRow ] [] ] ]
+              , div
+                  [ class "form-group" ]
+                  [ label [] [ text summary]
+                  , input [ class "form-control", type_ "text" , value <| model.itemRow.summary ] []
+                  ]
+              , div
+                  [ class "form-group" ]
+                  [ label [] [ text file_path]
+                  , input [ class "form-control" , type_ "text" , value <| model.itemRow.file_path ] []
+                  ]
+              , div
+                  [ class "form-group" ]
+                  [ label [] [ text published_at]
+                  , input [ class "form-control" , type_ "text" , value <| model.itemRow.published_at ] []
+                  ]
+              , div
+                  [ class "form-group" ]
+                  [ label [] [ text created_at]
+                  , input [ class "form-control" , type_ "text" , value <| model.itemRow.created_at ] []
                   ]
               ]
-          , deleteConfirm
+            , deleteConfirm
           ]
 
     dialogView =
