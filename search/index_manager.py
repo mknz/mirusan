@@ -59,14 +59,18 @@ class IndexManager:
         ix.close()
 
     def _delete_files(self, docs):
+        txt_dirs = []
         for doc in docs:
             fp = doc['file_path']
+            if fp.endswith('.txt'):
+                txt_dirs.append(os.path.dirname(fp))
             if os.path.exists(fp):
                 os.remove(fp)
-            title = doc['title']
-            title_txt_dir = os.path.join(Config.txt_dir, title)
-            if os.path.exists(title_txt_dir):
-                shutil.rmtree(title_txt_dir)
+
+        # remove empty directories
+        for td in txt_dirs:
+            if os.path.exists(td):
+                os.rmdir(td)
 
     def delete_document(self, gid, is_keep_file=False):
         docs = self.get_documents('gid', gid)
