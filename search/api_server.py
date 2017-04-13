@@ -91,6 +91,8 @@ class UpdateDocument:
             unique_field_value = req.get_param('primary-key')
             update_field_name = req.get_param('field')
             update_field_value = req.get_param('value')
+            if update_field_value is None:
+                raise ValueError('Error: field: ' + update_field_name + ' value: ' + str(update_field_value))
             im.update_field('file_path', unique_field_value,
                             update_field_name, update_field_value)
 
