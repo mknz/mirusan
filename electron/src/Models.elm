@@ -20,6 +20,7 @@ type alias Model =
   , currentLanguage: Language
   , itemDialog: Bool
   , itemRow: IndexResultRow
+  , askDelete: Bool
   , pdfUrl: String
   , isUpdating: Bool
   , windowSize: Size

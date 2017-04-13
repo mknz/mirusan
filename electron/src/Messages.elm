@@ -19,8 +19,10 @@ type Msg
   | GotoSearchMode
   | NewIndexResult (Result Http.Error IndexResult)
   | OpenItemDialog IndexResultRow
+  | AskDeleteDocument
   | DeleteDocument
-  | CancelDeleteDocument
+  | UpdateDocument
+  | CancelUpdateDocument
   | DeleteResult (Result Http.Error ResultMessage)
   | PdfUrl String
   | GetProgress (Result Http.Error String)

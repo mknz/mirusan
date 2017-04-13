@@ -46,6 +46,7 @@ init =
    , currentLanguage = English
    , itemDialog = False
    , itemRow =  itemRowInit
+   , askDelete = False
    , pdfUrl = "./pdfjs/web/viewer.html"
    , isUpdating = False
    , windowSize = {width = 992, height = 700} -- width is workaround for windows

@@ -134,3 +134,26 @@ span.server-message {
   padding-left: 5px;
   vertical-align: middle;
 }
+
+p.ask-delete {
+  color: red;
+  font-size: 0.8em;
+}
+
+table.item-setting-table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+col.item-setting-table-field {
+  width: 20%;
+}
+
+col.item-setting-table-value {
+  width: 80%;
+}
+
+td.item-setting-table {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}

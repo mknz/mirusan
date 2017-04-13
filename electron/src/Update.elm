@@ -89,12 +89,18 @@ update msg model =
       OpenItemDialog row ->
         ( { model | itemDialog = True, itemRow = row }, Cmd.none )
 
+      AskDeleteDocument ->
+        ( { model | askDelete = True }, Cmd.none )
+
       DeleteDocument ->
       -- Delete document (pdf + txt) using gid
-        ( model, deleteDocument model.itemRow.gid )
+        ( { model | askDelete = False }, deleteDocument model.itemRow.gid )
 
-      CancelDeleteDocument ->
-        ( { model | itemDialog = False, itemRow = itemRowInit }, Cmd.none )
+      UpdateDocument ->
+        ( { model | askDelete = False, itemDialog = False, itemRow = itemRowInit }, Cmd.none )
+
+      CancelUpdateDocument ->
+        ( { model | askDelete = False, itemDialog = False, itemRow = itemRowInit }, Cmd.none )
 
       DeleteResult (Ok res) ->
         ( { model | itemDialog = False, itemRow = itemRowInit, serverMessage = "" }

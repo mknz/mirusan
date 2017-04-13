@@ -1,6 +1,6 @@
 module IndexView exposing (..)
 
-import Html exposing (Html, program, text, button, h1, h2, div, input, a, span, p, i, header, iframe, nav, pre, node)
+import Html exposing (Html, program, text, button, h1, h2, div, input, a, span, p, i, header, iframe, nav, pre, node, table, thead, tbody, tr, th, td, colgroup, col)
 import Html.Attributes exposing (class, id, type_, placeholder, value, href, style, src, title, size, rel)
 import Html.Events exposing (onClick)
 import Markdown
@@ -21,7 +21,7 @@ indexView model =
     createComponent row =
       let
         title = div [ class "search-result", onClick (OpenDocument (row.file_path, nPage)) ] [ text row.title ]
-        config = div [ class "config" ] [ i [ class "fa fa-trash-o", onClick (OpenItemDialog row) ] [] ]
+        config = div [ class "config" ] [ i [ class "fa fa-cogs", onClick (OpenItemDialog row) ] [] ]
         container = div [ class "index-title-container" ] [ title, config ]
         summary = div [ class "summary" ] [ Markdown.toHtml [] row.summary ]
       in
@@ -82,31 +82,93 @@ indexView model =
         , viewerContainer model
         ]
 
+    dialogBody =
+      let
+          title = translate model.currentLanguage I18n_title
+          file_path = translate model.currentLanguage I18n_file_path
+          summary = translate model.currentLanguage I18n_summary
+          published_at = translate model.currentLanguage I18n_published_at
+          created_at = translate model.currentLanguage I18n_created_at
+
+          deleteConfirm =
+            if model.askDelete == False then
+              p
+                [ onClick AskDeleteDocument, class "ask-delete" ]
+                [ text <| translate model.currentLanguage I18n_Ask_delete ]
+            else
+              p
+                [ onClick DeleteDocument, class "ask-delete" ]
+                [ text <| translate model.currentLanguage I18n_Confirm_delete ]
+      in
+        div
+          []
+          [ table
+              [ class "table item-setting-table" ]
+              [
+                colgroup
+                  []
+                  [ col [ class "item-setting-table-field" ] []
+                  , col [ class "item-setting-table-value" ] []
+                  ]
+              , tbody
+                  []
+                  [ tr
+                      []
+                      [ td [] [ text title ]
+                      , td [] [ text model.itemRow.title ]
+                      ]
+                  , tr
+                      []
+                      [ td [ class "item-setting-table" ] [ text summary ]
+                      , td [] [ text model.itemRow.summary ]
+                      ]
+                  , tr
+                      []
+                      [ td [] [ text file_path ]
+                      , td [] [ text model.itemRow.file_path ]
+                      ]
+                  , tr
+                      []
+                      [ td [] [ text published_at ]
+                      , td [] [ text model.itemRow.published_at ]
+                      ]
+                  , tr
+                      []
+                      [ td [] [ text created_at ]
+                      , td [] [ text model.itemRow.created_at ]
+                      ]
+                  ]
+                ]
+          , deleteConfirm
+          ]
+
+    dialogView =
+      Dialog.view
+        (if model.itemDialog then
+           Just
+             { closeMessage = Nothing
+             , containerClass = Just ""
+             , header = Nothing
+             , body = Just dialogBody
+             , footer =
+               Just
+                 (div
+                    []
+                    [ button
+                       [ class "btn btn-primary", onClick UpdateDocument ]
+                       [ text <| translate model.currentLanguage I18n_Update ]
+                    , button
+                       [ class "btn" , onClick CancelUpdateDocument ]
+                       [ text <| translate model.currentLanguage I18n_Quit ]
+                    ]
+                 )
+             }
+         else
+           Nothing
+        )
   in
     div
       []
       [ all
-      , Dialog.view
-          (if model.itemDialog then
-             Just
-               { closeMessage = Nothing
-               , containerClass = Just ""
-               , header = Nothing
-               , body = Just (p [] [text <| translate model.currentLanguage I18n_Ask_delete ])
-               , footer =
-                 Just
-                   (div
-                      []
-                      [ button
-                         [ class "btn btn-primary" , onClick DeleteDocument ]
-                         [ text "Yes" ]
-                      , button
-                         [ class "btn" , onClick CancelDeleteDocument ]
-                         [ text "No" ]
-                      ]
-                   )
-               }
-           else
-             Nothing
-          )
+      , dialogView
       ]
