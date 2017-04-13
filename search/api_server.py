@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from config import Config
 from helper import normalize
 from index_manager import IndexManager
 from search_manager import Search
@@ -20,53 +21,66 @@ class SearchDB:
     search = Search()
 
     def on_get(self, req, resp):
-        qstr = req.get_param('q')
-        if qstr is None:
-            return
-        if qstr is '':
-            return
+        try:
+            qstr = req.get_param('q')
+            if qstr is None:
+                return
+            if qstr is '':
+                return
 
-        qstr = normalize(qstr)  # normalize query string
+            qstr = normalize(qstr)  # normalize query string
 
-        sort_field = req.get_param('sort-field')
-        if sort_field is None:
-            sort_field = 'title'
+            sort_field = req.get_param('sort-field')
+            if sort_field is None:
+                sort_field = 'title'
 
-        rev = req.get_param('reverse')
-        if rev == '1':
-            reverse = True
-        else:
-            reverse = False
+            rev = req.get_param('reverse')
+            if rev == '1':
+                reverse = True
+            else:
+                reverse = False
 
-        rp = req.get_param('result-page')
-        if rp is None:
-            n_result_page = 1
-        else:
-            n_result_page = int(rp)
+            rp = req.get_param('result-page')
+            if rp is None:
+                n_result_page = 1
+            else:
+                n_result_page = int(rp)
 
-        pl = req.get_param('pagelen')
-        if pl is None:
-            pagelen = 10  # number of articles per result page
-        else:
-            pagelen = int(pl)
+            pl = req.get_param('pagelen')
+            if pl is None:
+                pagelen = 10  # number of articles per result page
+            else:
+                pagelen = int(pl)
 
-        search_result = self.search.search(query_str=qstr,
-                                           sort_field=sort_field,
-                                           reverse=reverse,
-                                           n_page=n_result_page,
-                                           pagelen=pagelen)
+            search_result = self.search.search(query_str=qstr,
+                                               sort_field=sort_field,
+                                               reverse=reverse,
+                                               n_page=n_result_page,
+                                               pagelen=pagelen)
 
-        resp.body = json.dumps(search_result, indent=4, ensure_ascii=False)
+            resp.body = json.dumps(search_result, indent=4, ensure_ascii=False)
+        except Exception as err:
+            Config.logger.exception('Error in search: %s', err)
+            print(err)
+            res = {'message': str(err)}
+            resp.body = json.dumps(res, indent=4, ensure_ascii=False)
+        return
 
 
 class DeleteDocument:
     def on_get(self, req, resp):
-        im = IndexManager()
-        gid = req.get_param('gid')
-        message = im.delete_document(gid)
-        im.writer.commit()
-        res = {'message': message}
-        resp.body = json.dumps(res, indent=4, ensure_ascii=False)
+        try:
+            im = IndexManager()
+            gid = req.get_param('gid')
+            message = im.delete_document(gid)
+            im.writer.commit()
+            res = {'message': message}
+            resp.body = json.dumps(res, indent=4, ensure_ascii=False)
+        except Exception as err:
+            Config.logger.exception('Error in delete db: %s', err)
+            print(err)
+            res = {'message': str(err)}
+            resp.body = json.dumps(res, indent=4, ensure_ascii=False)
         return
 
 
@@ -74,36 +88,45 @@ class SortedIndex:
     search = Search()
 
     def on_get(self, req, resp):
-        field = req.get_param('field')
-        if field is None:
-            return
-        if field is '':
-            return
+        try:
+            field = req.get_param('field')
+            if field is None:
+                return
+            if field is '':
+                return
 
-        rev = req.get_param('reverse')
-        if rev == '1':
-            reverse = True
-        else:
-            reverse = False
+            rev = req.get_param('reverse')
+            if rev == '1':
+                reverse = True
+            else:
+                reverse = False
 
-        rp = req.get_param('result-page')
-        if rp is None:
-            n_result_page = 1
-        else:
-            n_result_page = int(rp)
+            rp = req.get_param('result-page')
+            if rp is None:
+                n_result_page = 1
+            else:
+                n_result_page = int(rp)
 
-        pl = req.get_param('pagelen')
-        if pl is None:
-            pagelen = 10  # number of articles per result page
-        else:
-            pagelen = int(pl)
+            pl = req.get_param('pagelen')
+            if pl is None:
+                pagelen = 10  # number of articles per result page
+            else:
+                pagelen = int(pl)
 
-        res = self.search.get_sorted_index(field=field, n_page=n_result_page,
-                                           pagelen=pagelen, reverse=reverse)
-        for row in res['rows']:
-            if 'published_at' not in row.keys():
-                row['published_at'] = ''
-        resp.body = json.dumps(res, indent=4, ensure_ascii=False)
+            res = self.search.get_sorted_index(field=field,
+                                               n_page=n_result_page,
+                                               pagelen=pagelen,
+                                               reverse=reverse)
+            for row in res['rows']:
+                if 'published_at' not in row.keys():
+                    row['published_at'] = ''
+            resp.body = json.dumps(res, indent=4, ensure_ascii=False)
+        except Exception as err:
+            Config.logger.exception('Error in sorted index: %s', err)
+            print(err)
+            res = {'message': str(err)}
+            resp.body = json.dumps(res, indent=4, ensure_ascii=False)
+        return
 
 
 class CheckProgress:
