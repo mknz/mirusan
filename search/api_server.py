@@ -134,14 +134,17 @@ class CheckProgress:
 
 
 class Server:
-    def start(self):
+    def __init__(self):
         api = falcon.API()
         api.add_route('/search', SearchDB())
         api.add_route('/sorted-index', SortedIndex())
         api.add_route('/delete', DeleteDocument())
         api.add_route('/progress', CheckProgress())
+        self.api = api
 
-        httpd = simple_server.make_server("127.0.0.1", 8000, api)
+    def start(self):
+        print('Start server.')
+        httpd = simple_server.make_server("127.0.0.1", 8000, self.api)
         is_server_alive = True
 
         def check_alive():
@@ -157,3 +160,8 @@ class Server:
         httpd.serve_forever()
         print('Server is shut down.')
         is_server_alive = False
+
+    def start_stand_alone(self):
+        print('Start stand alone server.')
+        httpd = simple_server.make_server("127.0.0.1", 8000, self.api)
+        httpd.serve_forever()

@@ -79,6 +79,7 @@ def main():
     parser.add_argument('--ngram-max', default=2)
 
     parser.add_argument('--server', action='store_true')
+    parser.add_argument('--stand-alone', action='store_true')
     parser.add_argument('--lang-detect', default=None)  # for debug
 
     args = parser.parse_args()
@@ -89,8 +90,11 @@ def main():
         del im
         import api_server
         server = api_server.Server()
-        print('Starting api server')
-        server.start()
+        if args.stand_alone:
+            server.start_stand_alone()
+        else:
+            server.start()
+
         return
 
     if args.init:
@@ -142,6 +146,7 @@ def main():
 
     parser.print_help()
     return
+
 
 if __name__ == '__main__':
     main()
