@@ -48,7 +48,7 @@ init =
    , deleteGid = ""
    , pdfUrl = "./pdfjs/web/viewer.html"
    , isUpdating = False
-   , windowSize = {width = 1000, height = 700}
+   , windowSize = {width = 992, height = 700} -- width is workaround for windows
    , mousePosition = Position 300 0
    , drag = Nothing
    , sidebarWidth = 300
