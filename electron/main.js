@@ -24,10 +24,15 @@ if (!fs.existsSync(configPath)) {
   Config.pdf_dir = './data/pdf';
   Config.txt_dir = './data/txt';
   Config.mode = 'release';
-  Config.locale = 'en';
+  const osLocale = require('os-locale');
+  Config.locale = osLocale.sync().slice(0, 2);
   fs.writeFileSync(configPath, JSON.stringify(Config, null, 2));
 } else {
   var Config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+  if (Config.locale == '' || typeof Config.locale === 'undefined') {
+    const osLocale = require('os-locale');
+    Config.locale = osLocale.sync().slice(0, 2);
+  }
 }
 
 if (Config.mode === 'debug') {
