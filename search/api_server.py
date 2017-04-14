@@ -12,6 +12,19 @@ import os
 import threading
 
 
+class ConfigResource:
+    def on_get(self, req, resp):
+        try:
+            config = Config.get()
+            resp.body = json.dumps(config, indent=4, ensure_ascii=False)
+        except Exception as err:
+            Config.logger.exception('Error in get config: %s', err)
+            print(err)
+            res = {'message': str(err)}
+            resp.body = json.dumps(res, indent=4, ensure_ascii=False)
+        return
+
+
 class DataBaseResource:
     def on_delete(self, req, resp):
         pass
@@ -186,6 +199,7 @@ class CheckProgress:
 class Server:
     def __init__(self):
         api = falcon.API()
+        api.add_route('/config', ConfigResource())
         api.add_route('/search', SearchDB())
         api.add_route('/sorted-index', SortedIndex())
         api.add_route('/delete', DeleteDocument())

@@ -71,3 +71,7 @@ class Config:
 
     txt_dir = config['txt_dir']
     check_and_create_dir(txt_dir, logger)
+
+    @classmethod
+    def get(cls):
+        return cls.config
