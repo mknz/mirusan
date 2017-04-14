@@ -10,7 +10,7 @@ import Models exposing (Model, IndexResultRow)
 import Messages exposing (Msg(..))
 
 import ViewCommonComponents exposing (toolbarHeader, viewerContainer, pagenation, getSideBarHeight, onMouseDown, onMouseDownFake)
-import Translation exposing (Language(..), TranslationId(..), translate)
+import Translation exposing (TranslationId(..), translate)
 
 
 indexView : Model -> Html Msg
@@ -84,21 +84,21 @@ indexView model =
 
     dialogBody =
       let
-          title = translate model.currentLanguage I18n_title
-          file_path = translate model.currentLanguage I18n_file_path
-          summary = translate model.currentLanguage I18n_summary
-          published_at = translate model.currentLanguage I18n_published_at
-          created_at = translate model.currentLanguage I18n_created_at
+          title = translate model.config.locale I18n_title
+          file_path = translate model.config.locale I18n_file_path
+          summary = translate model.config.locale I18n_summary
+          published_at = translate model.config.locale I18n_published_at
+          created_at = translate model.config.locale I18n_created_at
 
           deleteConfirm =
             if model.askDelete == False then
               button
                 [ onClick AskDeleteDocument, class "btn btn-secondary btn-sm ask-delete" ]
-                [ text <| translate model.currentLanguage I18n_Ask_delete ]
+                [ text <| translate model.config.locale I18n_Ask_delete ]
             else
               button
                 [ onClick DeleteDocument, class "btn btn-secondary btn-sm btn-danger ask-delete" ]
-                [ text <| translate model.currentLanguage I18n_Confirm_delete ]
+                [ text <| translate model.config.locale I18n_Confirm_delete ]
       in
         div
           []
@@ -148,10 +148,10 @@ indexView model =
                     []
                     [ button
                        [ class "btn btn-primary", onClick UpdateDocument ]
-                       [ text <| translate model.currentLanguage I18n_Update ]
+                       [ text <| translate model.config.locale I18n_Update ]
                     , button
                        [ class "btn" , onClick CancelUpdateDocument ]
-                       [ text <| translate model.currentLanguage I18n_Quit ]
+                       [ text <| translate model.config.locale I18n_Quit ]
                     ]
                  )
              }

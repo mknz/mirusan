@@ -1,6 +1,6 @@
 module Messages exposing (..)
 
-import Models exposing (SearchResult, IndexResult, IndexResultRow, ResultMessage)
+import Models exposing (Config, SearchResult, IndexResult, IndexResultRow, ResultMessage)
 import Http
 import Time exposing (Time)
 import Window exposing (Size)
@@ -34,3 +34,4 @@ type Msg
   | DragEnd Position
   | DragNothing Position
   | SetNewTitle String
+  | GetConfigResult (Result Http.Error Config)

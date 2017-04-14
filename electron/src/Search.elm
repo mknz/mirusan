@@ -3,7 +3,7 @@ module Search exposing (..)
 import Http
 import Json.Decode exposing (int, string, float, bool, nullable, map, map2, map3, map4, map5, map6, field, at, list, Decoder)
 
-import Models exposing (SearchResult, SearchResultRow, IndexResult, IndexResultRow, ResultMessage)
+import Models exposing (Config, SearchResult, SearchResultRow, IndexResult, IndexResultRow, ResultMessage)
 import Messages exposing (Msg(..))
 
 
@@ -33,7 +33,13 @@ progressDecoder : Decoder String
 progressDecoder =
   at ["message"] <| string
 
-
+configDecoder : Decoder Config
+configDecoder =
+  map5 Config (field "data_dir" string)
+              (field "pdf_dir" string)
+              (field "txt_dir" string)
+              (field "mode" string)
+              (field "locale" string)
 
 -- HTTP
 
@@ -80,3 +86,11 @@ updateDocument row newTitle =
         "http://localhost:8000/update-document?" ++ "primary-key=" ++ row.file_path ++ "&field=" ++ "title" ++ "&value=" ++ newTitle
   in
       Http.send GetUpdateResult (Http.get url messageDecoder)
+
+getConfig : Cmd Msg
+getConfig =
+  let
+      url =
+        "http://localhost:8000/config"
+  in
+      Http.send GetConfigResult (Http.get url configDecoder)

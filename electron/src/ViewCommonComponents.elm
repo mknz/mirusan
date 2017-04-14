@@ -9,7 +9,7 @@ import Json.Decode as Decode
 
 import Models exposing (Model, ViewMode(..))
 import Messages exposing (Msg(..))
-import Translation exposing (Language(..), TranslationId(..), translate)
+import Translation exposing (TranslationId(..), translate)
 
 toolbarHeader : Model -> Html Msg
 toolbarHeader model =
@@ -31,14 +31,14 @@ showIndexButton : Model -> Html Msg
 showIndexButton model =
   case model.viewMode of
     Models.IndexMode ->
-      button [ class "btn btn-large btn-default", onClick GotoSearchMode, title <| translate model.currentLanguage I18n_Go_to_search ] [ span [ class "icon icon-search" ] [] ]
+      button [ class "btn btn-large btn-default", onClick GotoSearchMode, title <| translate model.config.locale I18n_Go_to_search ] [ span [ class "icon icon-search" ] [] ]
 
     Models.SearchMode ->
-      button [ class "btn btn-large btn-default", onClick ShowIndex, title <| translate model.currentLanguage I18n_Show_index ] [ span [ class "icon icon-list" ] [] ]
+      button [ class "btn btn-large btn-default", onClick ShowIndex, title <| translate model.config.locale I18n_Show_index ] [ span [ class "icon icon-list" ] [] ]
 
 addFileButton : Model -> Html Msg
 addFileButton model =
-  button [ class "btn btn-large btn-default", onClick AddFilesToDB, title <| translate model.currentLanguage I18n_Add_files_to_database ] [ span [ class "icon icon-folder" ] [] ]
+  button [ class "btn btn-large btn-default", onClick AddFilesToDB, title <| translate model.config.locale I18n_Add_files_to_database ] [ span [ class "icon icon-folder" ] [] ]
 
 
 pagenation : Model -> Html Msg
@@ -50,7 +50,7 @@ pagenation model =
     nextPageButtonDisabled = button [ class "btn btn-default gray" ] [ span [ class "icon icon-right" ] [] ]
     inputPage = input [ style [ ("margin-left", "10px"), ("line-height", "18px") ]
                       , type_ "text"
-                      , placeholder <| translate model.currentLanguage I18n_page, size 6, onInput GotoResultPage ] []
+                      , placeholder <| translate model.config.locale I18n_page, size 6, onInput GotoResultPage ] []
 
     parts =
       if model.numResultPage == 1 then
@@ -92,7 +92,7 @@ searchWindow model =
   let
     attrs =
       [ type_ "text"
-      , placeholder <| translate model.currentLanguage I18n_Search
+      , placeholder <| translate model.config.locale I18n_Search
       , onInput SendSearch
       , value model.currentQuery
       , autofocus True

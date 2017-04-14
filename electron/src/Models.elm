@@ -1,7 +1,6 @@
 module Models exposing (..)
 
 import Window exposing (Size)
-import Translation exposing (Language)
 import Mouse exposing (Position)
 
 type alias Model =
@@ -17,7 +16,6 @@ type alias Model =
   , serverMessage: ResultMessage
   , viewMode: ViewMode
   , indexClick: Int  -- workaround
-  , currentLanguage: Language
   , itemDialog: Bool
   , itemRow: IndexResultRow
   , askDelete: Bool
@@ -29,6 +27,15 @@ type alias Model =
   , viewerContainerWidth: Int
   , sidebarWidth: Int
   , newTitle: String
+  , config: Config
+  }
+
+type alias Config =
+  { data_dir: String
+  , pdf_dir: String
+  , txt_dir: String
+  , mode: String
+  , locale: String
   }
 
 type ViewMode = SearchMode | IndexMode

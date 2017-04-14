@@ -165,6 +165,11 @@ update msg model =
       GetUpdateResult (Err _) ->
         ( { model | serverMessage = "" }, Cmd.none )
 
+      GetConfigResult (Ok res) ->
+        ( { model | config = res }, Cmd.none )
+
+      GetConfigResult (Err _) ->
+        ( { model | serverMessage = "Error: Could not get config info" }, Cmd.none )
 
 getPosition : Model -> Position
 getPosition model =

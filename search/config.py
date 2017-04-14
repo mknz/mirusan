@@ -21,6 +21,7 @@ class Config:
     # read config from json file
     with open(config_file_path) as f:
         config = json.load(f)
+        config['config_file_path'] = config_file_path
 
     if config['mode'] == 'debug':
         debug = True

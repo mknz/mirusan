@@ -2,14 +2,14 @@ module Main exposing (..)
 
 import Html exposing (program)
 import Mouse exposing (Position)
+import Platform.Cmd exposing (batch)
 
 import Messages exposing (Msg)
-import Models exposing (Model, IndexResult, IndexResultRow, itemRowInit, SearchResult)
+import Models exposing (Model, IndexResult, IndexResultRow, itemRowInit, SearchResult, Config)
 import Update exposing (update)
 import View exposing (view)
 import Ports exposing (subscriptions)
-import Search exposing (search, getIndex)
-import Translation exposing (Language(..))
+import Search exposing (search, getIndex, getConfig)
 
 main : Program Never Model Msg
 main =
@@ -43,7 +43,6 @@ init =
    , serverMessage = ""
    , viewMode = Models.IndexMode
    , indexClick = 0
-   , currentLanguage = English
    , itemDialog = False
    , itemRow =  itemRowInit
    , askDelete = False
@@ -55,6 +54,7 @@ init =
    , sidebarWidth = 300
    , viewerContainerWidth = 700
    , newTitle = ""
+   , config = Config "" "" "" "" ""
    }
-   , getIndex initSortField initPage sortOrder)
+   , batch [ getIndex initSortField initPage sortOrder, getConfig ])
 
