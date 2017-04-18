@@ -16,7 +16,14 @@ class Search:
             raise ValueError('DB dir does not exist: ' + Config.database_dir)
         self.ix = open_dir(Config.database_dir)
 
-    def search(self, query_str, sort_field, reverse=False, n_page=1, pagelen=10):
+    def _normalize_path(self, path):
+        """Convert path separator for windows."""
+        if Config.platform == 'win32':
+            path.replace('/', os.path.sep)
+        return path
+
+    def search(self, query_str, sort_field, reverse=False,
+               n_page=1, pagelen=10):
         Config.logger.debug('Get query: ' + query_str)
 
         content_fields = []  # langauge-wise content fields
@@ -36,10 +43,14 @@ class Search:
                                            reverse=reverse,
                                            filter=Term('document_format', 'txt'))
 
-            n_hits = len(results)  # number of total hit documents
-            total_pages = n_hits // pagelen + 1  # number of search result pages
+            # number of total hit documents
+            n_hits = len(results)
+
+            # number of search result pages
+            total_pages = n_hits // pagelen + 1
+
             if n_page > total_pages:
-                raise ValueError
+                raise ValueError('n_page exceeds total_pages: ' + str(n_page))
 
             res_list = []
             for r in results:
@@ -47,6 +58,8 @@ class Search:
                 for key in r.keys():  # copy all fields
                     if type(r[key]) == datetime.datetime:
                         d[key] = r[key].isoformat()
+                    elif key == 'file_path':
+                        d[key] = self._normalize_path(r[key])
                     else:
                         d[key] = r[key]
 
@@ -76,6 +89,8 @@ class Search:
                 for key in r.keys():  # copy all fields
                     if type(r[key]) == datetime.datetime:
                         d[key] = r[key].isoformat()
+                    elif key == 'file_path':
+                        d[key] = self._normalize_path(r[key])
                     else:
                         d[key] = r[key]
                 res_list.append(d)
