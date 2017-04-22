@@ -174,7 +174,10 @@ class CheckProgress:
                     if content == 'Finished':
                         return content
                 progress = float(content)
-                state = str(round(progress * 100)) + '%'
+                if progress == 0.:
+                    '...'
+                else:
+                    state = str(round(progress * 100)) + '%'
             else:
                 state = ''
             return state
