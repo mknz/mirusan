@@ -14,7 +14,6 @@ import os
 import datetime
 import re
 import langdetect
-import shutil
 
 
 class IndexManager:
