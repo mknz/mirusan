@@ -71,20 +71,6 @@ class IndexManager:
             if os.path.exists(td):
                 os.rmdir(td)
 
-    def delete_document(self, gid, is_keep_file=False):
-        docs = self.get_documents('gid', gid)
-        if docs == []:
-            Config.logger.info('No document: ' + str(gid))
-            return
-
-        if not is_keep_file:
-            self._delete_files(docs)
-
-        n_doc = self.writer.delete_by_term('gid', gid)
-        message = str(n_doc) + ' documents deleted.'
-        Config.logger.info(message)
-        return message
-
     def delete_by_title(self, title, is_keep_file=False):
         docs = self.get_documents('title', title)
         if docs == []:
@@ -93,6 +79,24 @@ class IndexManager:
         for doc in docs:
             self.delete_document(doc['gid'], is_keep_file)
         return
+
+    def delete_by_field(self, field, value, is_keep_file=False):
+        docs = self.get_documents(field, value)
+        if docs == []:
+            Config.logger.info(
+                    'No document found: {:s} {:s}'.format(field, str(value)))
+            return
+
+        if not is_keep_file:
+            self._delete_files(docs)
+
+        n_doc = self.writer.delete_by_term(field, value)
+        message = str(n_doc) + ' documents deleted.'
+        Config.logger.info(message)
+        return message
+
+    def delete_document(self, gid, is_keep_file=False):
+        return self.delete_by_field('gid', gid, is_keep_file=is_keep_file)
 
     def secure_datetime(self, date):
         """Normalize type-unknown date object."""
