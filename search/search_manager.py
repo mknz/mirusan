@@ -68,17 +68,20 @@ class Search:
                 d['content'] = r[content_field_name]
 
                 # remove garbled characters
-                d['highlighted_body'] = self.remove_garble(r.highlights(content_field_name))
+                d['highlighted_body'] = self.remove_garble(
+                        r.highlights(content_field_name))
                 res_list.append(d)
 
-            return {'rows': res_list, 'n_hits': n_hits, 'total_pages': total_pages}
+            return {'rows': res_list,
+                    'n_hits': n_hits, 'total_pages': total_pages}
 
     def get_sorted_index(self, field, n_page=1, pagelen=10, reverse=False):
         with self.ix.searcher() as searcher:
             query = Every()
             results = searcher.search_page(query, n_page, pagelen=pagelen,
                                            sortedby=field, reverse=reverse,
-                                           filter=Term('document_format', 'pdf'))
+                                           filter=Term(
+                                               'document_format', 'pdf'))
             n_docs = len(results)  # number of total documents
             total_pages = n_docs // pagelen + 1  # number of result pages
             if n_page > total_pages:
@@ -96,7 +99,8 @@ class Search:
                         d[key] = r[key]
                 res_list.append(d)
 
-            return {'rows': res_list, 'n_docs': n_docs, 'total_pages': total_pages}
+            return {'rows': res_list,
+                    'n_docs': n_docs, 'total_pages': total_pages}
 
     def remove_garble(self, str):
         """Remove (visually annoying) unicode replacement characters."""
