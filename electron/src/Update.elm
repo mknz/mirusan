@@ -30,6 +30,13 @@ update msg model =
     case msg of
       UpdateQuery query ->
         ( { model | currentQuery = query}, Cmd.none )
+
+      SearchKeyDown key ->
+        if key == 13 then
+          ( { model | viewMode = Models.SearchMode }, search model.currentQuery model.numResultPage model.sortField model.reverse )
+        else
+          ( model, Cmd.none )
+
       SendSearch query ->
         ( { model | currentQuery = query, viewMode = Models.SearchMode }, search query model.numResultPage model.sortField model.reverse )
 

@@ -2,7 +2,7 @@ module ViewCommonComponents exposing (..)
 
 import Html exposing (Html, Attribute, program, text, button, h1, h2, div, input, a, span, p, header, iframe, nav)
 import Html.Attributes exposing (class, id, type_, placeholder, value, href, style, src, title, size, autofocus, disabled)
-import Html.Events exposing (onClick, onInput, onFocus, on, onWithOptions, Options)
+import Html.Events exposing (onClick, onInput, onFocus, on, onWithOptions, Options, keyCode)
 import List exposing (append)
 import Mouse
 import Json.Decode as Decode
@@ -86,6 +86,10 @@ viewerContainer model =
 
 -- search input window
 
+onKeyDown : (Int -> msg) -> Attribute msg
+onKeyDown tagger =
+  on "keydown" (Decode.map tagger keyCode)
+
 searchWindow : Model -> Html Msg
 searchWindow model =
   let
@@ -93,6 +97,7 @@ searchWindow model =
       [ type_ "text"
       , placeholder <| translate model.config.locale I18n_Search
       , onInput UpdateQuery
+      , onKeyDown SearchKeyDown
       , value model.currentQuery
       , autofocus True
       , class "search-window"
