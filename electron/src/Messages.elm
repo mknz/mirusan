@@ -9,6 +9,7 @@ import Mouse exposing (Position)
 
 type Msg
   = SendSearch String
+  | UpdateQuery String
   | NewSearchResult (Result Http.Error SearchResult)
   | GetNextResultPage
   | GetPrevResultPage

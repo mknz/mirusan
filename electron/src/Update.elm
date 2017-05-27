@@ -28,6 +28,8 @@ update msg model =
 
   in
     case msg of
+      UpdateQuery query ->
+        ( { model | currentQuery = query}, Cmd.none )
       SendSearch query ->
         ( { model | currentQuery = query, viewMode = Models.SearchMode }, search query model.numResultPage model.sortField model.reverse )
 
@@ -41,7 +43,8 @@ update msg model =
         ( { model | currentQuery = "", viewMode = Models.IndexMode, serverMessage="" }, getIndex model.sortField model.numResultPage model.reverse)
 
       GotoSearchMode ->
-        ( { model | numResultPage = 1, numTotalPage = 0, numArticles = 0, viewMode = Models.SearchMode, searchResult = { rows = [], n_hits = 0, total_pages = 0 }, serverMessage="" }, Cmd.none )
+        --( { model | numResultPage = 1, numTotalPage = 0, numArticles = 0, viewMode = Models.SearchMode, searchResult = { rows = [], n_hits = 0, total_pages = 0 }, serverMessage="" }, Cmd.none )
+        ( { model | numResultPage = 1, numTotalPage = 0, numArticles = 0, viewMode = Models.SearchMode, searchResult = { rows = [], n_hits = 0, total_pages = 0 }, serverMessage="" }, search model.currentQuery model.numResultPage model.sortField model.reverse )
 
       NewIndexResult (Ok res) ->
         ( { model | indexResult = res, numTotalPage = res.total_pages, numArticles = res.n_docs, numAddedArticles = res.n_docs - model.numPreviousArticles, numPreviousArticles = res.n_docs, indexClick = model.indexClick + 1 }, Cmd.none )

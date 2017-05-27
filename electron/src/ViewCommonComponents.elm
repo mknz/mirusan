@@ -25,16 +25,15 @@ toolbarActions model =
 
 toolButtons : Model -> Html Msg
 toolButtons model =
-  div [ class "btn-group header-btns" ] [ showIndexButton model, addFileButton model, span [ class "server-message" ] [ text model.serverMessage ] ]
+  div [ class "btn-group header-btns" ] [ searchButton model, indexButton model, addFileButton model, span [ class "server-message" ] [ text model.serverMessage ] ]
 
-showIndexButton : Model -> Html Msg
-showIndexButton model =
-  case model.viewMode of
-    Models.IndexMode ->
-      button [ class "btn btn-large btn-default", onClick GotoSearchMode, title <| translate model.config.locale I18n_Go_to_search ] [ span [ class "icon icon-search" ] [] ]
+indexButton : Model -> Html Msg
+indexButton model =
+    button [ class "btn btn-large btn-default", onClick ShowIndex, title <| translate model.config.locale I18n_Show_index ] [ span [ class "icon icon-list" ] [] ]
 
-    Models.SearchMode ->
-      button [ class "btn btn-large btn-default", onClick ShowIndex, title <| translate model.config.locale I18n_Show_index ] [ span [ class "icon icon-list" ] [] ]
+searchButton : Model -> Html Msg
+searchButton model =
+      button [ class "btn btn-large btn-default", onClick GotoSearchMode, title <| translate model.config.locale I18n_Go_to_search ] [ span [ class "icon icon-search", onClick (SendSearch model.currentQuery)] [] ]
 
 addFileButton : Model -> Html Msg
 addFileButton model =
@@ -93,24 +92,16 @@ searchWindow model =
     attrs =
       [ type_ "text"
       , placeholder <| translate model.config.locale I18n_Search
-      , onInput SendSearch
+      , onInput UpdateQuery
       , value model.currentQuery
       , autofocus True
-      , onFocus GotoSearchMode
       , class "search-window"
       ]
-    indexAttrs = [ disabled True, class "search-window-inactive"]
 
     inputField =
-      case model.viewMode of
-        SearchMode ->
-          input
-            attrs
-            []
-        IndexMode ->
-          input
-            (append attrs indexAttrs)
-            []
+      input
+        attrs
+        []
   in
     span
       []
