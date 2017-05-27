@@ -30,7 +30,7 @@ translate locale trans =
     translationSet =
       case trans of
         I18n_Go_to_search ->
-          TranslationSet "Go to search mode" "検索モードへ"
+          TranslationSet "Search" "検索する"
         I18n_Show_index ->
           TranslationSet "Show index" "一覧を表示"
         I18n_Add_files_to_database ->
