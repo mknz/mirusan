@@ -10,6 +10,7 @@ from wsgiref import simple_server
 import json
 import os
 import threading
+import time
 
 
 class ConfigResource:
@@ -105,7 +106,9 @@ class UpdateDocument:
             update_field_name = req.get_param('field')
             update_field_value = req.get_param('value')
             if update_field_value is None:
-                raise ValueError('Error: field: ' + update_field_name + ' value: ' + str(update_field_value))
+                raise ValueError(
+                        'Error: field: {:s} value: {:s}'.
+                        format(update_field_name, str(update_field_value)))
             im.update_field('file_path', unique_field_value,
                             update_field_name, update_field_value)
 
@@ -218,8 +221,8 @@ class Server:
         def check_alive():
             if not is_server_alive:
                 return  # quit program
-            # alive monitor every 3 seconds
-            threading.Timer(3.0, check_alive).start()
+            # alive monitor every 2 seconds
+            threading.Timer(2.0, check_alive).start()
             if not os.path.exists('main_process_alive'):
                 print('Main process is down. Shut down.')
                 httpd.shutdown()
