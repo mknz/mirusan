@@ -41,7 +41,8 @@ class Search:
                                            pagelen=pagelen,
                                            sortedby=sort_field,
                                            reverse=reverse,
-                                           filter=Term('document_format', 'txt'))
+                                           filter=Term(
+                                               'document_format', 'txt'))
 
             # number of total hit documents
             n_hits = len(results)

@@ -17,13 +17,13 @@ import langdetect
 
 
 class IndexManager:
-    def __init__(self):
+    def __init__(self, limitmb=256, procs=1):
         # Initialize db if not exist
         if not exists_in(Config.database_dir):
             self.create_index()
 
         self.ix = open_dir(Config.database_dir)
-        self.writer = self.ix.writer()
+        self.writer = self.ix.writer(limitmb=limitmb, procs=procs)
 
     def open(self):
         self.ix = open_dir(Config.database_dir)
