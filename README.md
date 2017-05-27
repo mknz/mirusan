@@ -13,8 +13,6 @@ Written in Python / Electron / Elm / Javascript
 
 ## Features
 
-- Quick incremental search
-
 - Simple UI
 
 - Local database (You have controll 100% of your data)
