@@ -25,14 +25,13 @@ view model =
       div
         [ id "screen" ]
         [ div
-            [ onMouseDown
-            , id "dragger"
+            [ id "dragger"
             , style
                 [ ("left", (toString (model.sidebarWidth - 10)) ++ "px")
                 , ("height", (toString model.windowSize.height) ++ "px")
                 ]
             ]
-            [ i [ class "fa fa-circle" ][] ]
+            [ i [ onMouseDown, class "fa fa-circle" ][] ]
         ]
   in
     div
