@@ -25,7 +25,7 @@ class Search:
 
     def search(self, query_str, sort_field, reverse=False,
                n_page=1, pagelen=10):
-        #self.searcher = self.ix.searcher()
+        self.searcher = self.searcher.refresh()
         Config.logger.debug('Get query: ' + query_str)
 
         content_fields = []  # langauge-wise content fields
@@ -78,7 +78,7 @@ class Search:
                 'n_hits': n_hits, 'total_pages': total_pages}
 
     def get_sorted_index(self, field, n_page=1, pagelen=10, reverse=False):
-        #self.searcher = self.ix.searcher()
+        self.searcher = self.searcher.refresh()
         query = Every()
         results = self.searcher.search_page(query, n_page, pagelen=pagelen,
                                             sortedby=field, reverse=reverse,

@@ -17,7 +17,7 @@ import langdetect
 
 
 class IndexManager:
-    def __init__(self, limitmb=256, procs=1):
+    def __init__(self, limitmb=128, procs=1):
         # Initialize db if not exist
         if not exists_in(Config.database_dir):
             self.create_index()
