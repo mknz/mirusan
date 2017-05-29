@@ -10,7 +10,6 @@ from wsgiref import simple_server
 import json
 import os
 import threading
-import time
 
 
 class ConfigResource:
@@ -31,8 +30,9 @@ class DataBaseResource:
         pass
 
 
-class SearchDB:
-    search = Search()
+class SearchResource:
+    def __init__(self, search):
+        self.search = search
 
     def on_get(self, req, resp):
         try:
@@ -124,7 +124,8 @@ class UpdateDocument:
 
 
 class SortedIndex:
-    search = Search()
+    def __init__(self, search):
+        self.search = search
 
     def on_get(self, req, resp):
         try:
@@ -204,10 +205,11 @@ class CheckProgress:
 
 class Server:
     def __init__(self):
+        search = Search()
         api = falcon.API()
         api.add_route('/config', ConfigResource())
-        api.add_route('/search', SearchDB())
-        api.add_route('/sorted-index', SortedIndex())
+        api.add_route('/search', SearchResource(search))
+        api.add_route('/sorted-index', SortedIndex(search))
         api.add_route('/delete', DeleteDocument())
         api.add_route('/progress', CheckProgress())
         api.add_route('/update-document', UpdateDocument())
