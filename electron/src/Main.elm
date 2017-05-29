@@ -9,7 +9,7 @@ import Models exposing (Model, IndexResult, IndexResultRow, itemRowInit, SearchR
 import Update exposing (update)
 import View exposing (view)
 import Ports exposing (subscriptions)
-import Search exposing (search, getIndex, getConfig)
+import Search exposing (search, getIndex, getConfigWait)
 
 main : Program Never Model Msg
 main =
@@ -56,5 +56,4 @@ init =
    , newTitle = ""
    , config = Config "" "" "" "" ""
    }
-   , batch [ getIndex initSortField initPage sortOrder, getConfig ])
-
+   , batch [ getIndex initSortField initPage sortOrder, getConfigWait 2 ])

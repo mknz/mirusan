@@ -7,7 +7,7 @@ import Mouse exposing (Position)
 
 import Messages exposing (Msg(..))
 import Models exposing (Model, ViewMode(..), SearchResult, IndexResult, IndexResultRow, itemRowInit, Drag)
-import Search exposing (search, getIndex, deleteDocument, getProgress, updateDocument)
+import Search exposing (search, getIndex, deleteDocument, getProgress, updateDocument, getConfig, getConfigWait)
 import Ports exposing (openNewFile)
 
 
@@ -175,11 +175,14 @@ update msg model =
       GetUpdateResult (Err _) ->
         ( { model | serverMessage = "" }, Cmd.none )
 
+      GetConfig ->
+        ( model, getConfig )
+
       GetConfigResult (Ok res) ->
-        ( { model | config = res }, Cmd.none )
+        ( { model | config = res }, getIndex model.sortField model.numResultPage model.reverse )
 
       GetConfigResult (Err _) ->
-        ( { model | serverMessage = "Error: Could not get config info" }, Cmd.none )
+        ( model, getConfigWait 2 ) -- Wait 2 sec and retry
 
 getPosition : Model -> Position
 getPosition model =

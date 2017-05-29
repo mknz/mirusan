@@ -5,6 +5,9 @@ import Json.Decode exposing (int, string, float, bool, nullable, map, map2, map3
 
 import Models exposing (Config, SearchResult, SearchResultRow, IndexResult, IndexResultRow, ResultMessage)
 import Messages exposing (Msg(..))
+import Task
+import Process
+import Time
 
 
 -- JSON decoders
@@ -94,3 +97,8 @@ getConfig =
         "http://localhost:8000/config"
   in
       Http.send GetConfigResult (Http.get url configDecoder)
+
+getConfigWait : Float -> Cmd Msg
+getConfigWait waitSec =
+    Process.sleep (waitSec * Time.second)
+      |> Task.perform (\_ -> GetConfig)

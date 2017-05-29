@@ -36,4 +36,5 @@ type Msg
   | DragEnd Position
   | DragNothing Position
   | SetNewTitle String
+  | GetConfig
   | GetConfigResult (Result Http.Error Config)
