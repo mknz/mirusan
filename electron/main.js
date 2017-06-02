@@ -116,7 +116,7 @@ if (Config.mode == 'release') {
  */
 function createWindow() {
   // Create the browser window.
-  let win = new BrowserWindow({width: 1000, height: 700});
+  let win = new BrowserWindow({width: 1010, height: 700});
 
   if (!debug) { win.setMenu(null); }
 
