@@ -73,6 +73,17 @@ class Config:
     txt_dir = config['txt_dir']
     check_and_create_dir(txt_dir, logger)
 
+    if 'db_readonly' in config:
+        val = config['db_readonly']
+        if val == 'true':
+            db_readonly = True
+        elif val == 'false':
+            db_readonly = False
+        else:
+            raise ValueError('Invalid config setting: ' + val)
+    else:
+        db_readonly = False
+
     @classmethod
     def get(cls):
         return cls.config

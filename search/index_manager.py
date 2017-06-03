@@ -17,10 +17,16 @@ import langdetect
 
 
 class IndexManager:
+    def create_db(self, database_dir):
+        self.create_index(database_dir)
+
     def __init__(self, limitmb=128, procs=1):
+        if Config.db_readonly:
+            raise ValueError('Readonly mode. Cannot create index manager.')
+
         # Initialize db if not exist
         if not exists_in(Config.database_dir):
-            self.create_index()
+            self.create_index(Config.database_dir)
 
         self.ix = open_dir(Config.database_dir)
         self.writer = self.ix.writer(limitmb=limitmb, procs=procs)
@@ -33,7 +39,7 @@ class IndexManager:
         del self.writer
         self.ix.close()
 
-    def create_index(self, ngram_min=1, ngram_max=2):
+    def create_index(self, database_dir, ngram_min=1, ngram_max=2):
         ngram_tokenizer = NgramTokenizer(minsize=ngram_min, maxsize=ngram_max)
         schema = Schema(file_path        = ID(stored=True, unique=True),  # primary key
                         gid              = ID(stored=True),  # document group id (pdf + texts)
@@ -53,8 +59,8 @@ class IndexManager:
                         published_at     = DATETIME(stored=True, sortable=True),
                         created_at       = DATETIME(stored=True, sortable=True))
 
-        ix = create_in(Config.database_dir, schema)
-        Config.logger.info('Created db: ' + Config.database_dir)
+        ix = create_in(database_dir, schema)
+        Config.logger.info('Created db: ' + database_dir)
         ix.close()
 
     def _delete_files(self, docs):

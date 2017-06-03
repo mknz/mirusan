@@ -4,17 +4,16 @@ from whoosh.index import open_dir
 from whoosh.qparser import MultifieldParser
 from whoosh.query import Every, Term
 
-
 import os
 import datetime
 import re
 
 
 class Search:
-    def __init__(self):
+    def __init__(self, db_readonly=False):
         if not os.path.exists(Config.database_dir):
             raise ValueError('DB dir does not exist: ' + Config.database_dir)
-        self.ix = open_dir(Config.database_dir)
+        self.ix = open_dir(Config.database_dir, readonly=db_readonly)
         self.searcher = self.ix.searcher()
 
     def _normalize_path(self, path):

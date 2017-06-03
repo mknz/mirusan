@@ -3,6 +3,7 @@ from helper import separate_files
 from index_manager import IndexManager
 from search_manager import Search
 
+from whoosh.index import exists_in
 import argparse
 import langdetect
 import os
@@ -85,11 +86,13 @@ def main():
     args = parser.parse_args()
 
     if args.server:
-        im = IndexManager()
-        im.close()
-        del im
+        if not exists_in(Config.database_dir):
+            im = IndexManager()
+            im.create_db(Config.database_dir)
+            im.close()
+
         import api_server
-        server = api_server.Server()
+        server = api_server.Server(db_readonly=Config.db_readonly)
         if args.stand_alone:
             server.start_stand_alone()
         else:
