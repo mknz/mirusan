@@ -210,9 +210,9 @@ class Server:
         api.add_route('/config', ConfigResource())
         api.add_route('/search', SearchResource(search))
         api.add_route('/sorted-index', SortedIndex(search))
-        #api.add_route('/delete', DeleteDocument())
+        api.add_route('/delete', DeleteDocument())
         api.add_route('/progress', CheckProgress())
-        #api.add_route('/update-document', UpdateDocument())
+        api.add_route('/update-document', UpdateDocument())
         self.api = api
 
     def start(self):
